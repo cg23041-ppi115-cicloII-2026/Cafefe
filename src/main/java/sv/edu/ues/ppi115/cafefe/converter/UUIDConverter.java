@@ -4,10 +4,20 @@
  */
 package sv.edu.ues.ppi115.cafefe.converter;
 
-/**
- *
- * @author 659684
- */
-public class UUIDConverter {
-    
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+import java.util.UUID;
+
+@Converter(autoApply = true)
+public class UUIDConverter implements AttributeConverter<UUID, UUID> {
+
+    @Override
+    public UUID convertToDatabaseColumn(UUID attribute) {
+        return attribute;
+    }
+
+    @Override
+    public UUID convertToEntityAttribute(UUID dbData) {
+        return dbData;
+    }
 }
