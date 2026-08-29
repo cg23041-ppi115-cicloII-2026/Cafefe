@@ -9,7 +9,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -18,7 +17,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
-
+import java.util.UUID;
 /**
  *
  * @author 659684
@@ -37,9 +36,8 @@ public class TipoCaracteristica implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Column(name = "id_tipo_caracteristica")
-    private Object idTipoCaracteristica;
+    private UUID idTipoCaracteristica;
     @Size(max = 155)
     @Column(name = "nombre")
     private String nombre;
@@ -57,15 +55,15 @@ public class TipoCaracteristica implements Serializable {
     public TipoCaracteristica() {
     }
 
-    public TipoCaracteristica(Object idTipoCaracteristica) {
+    public TipoCaracteristica(UUID idTipoCaracteristica) {
         this.idTipoCaracteristica = idTipoCaracteristica;
     }
 
-    public Object getIdTipoCaracteristica() {
+    public UUID getIdTipoCaracteristica() {
         return idTipoCaracteristica;
     }
 
-    public void setIdTipoCaracteristica(Object idTipoCaracteristica) {
+    public void setIdTipoCaracteristica(UUID idTipoCaracteristica) {
         this.idTipoCaracteristica = idTipoCaracteristica;
     }
 

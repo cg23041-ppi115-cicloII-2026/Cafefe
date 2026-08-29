@@ -10,7 +10,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -19,7 +18,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
-
+import java.util.UUID;
 /**
  *
  * @author 659684
@@ -38,9 +37,9 @@ public class PagoDetalle implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Lob
+    
     @Column(name = "id_pago_detalle")
-    private Object idPagoDetalle;
+    private UUID idPagoDetalle;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "monto")
     private BigDecimal monto;
@@ -60,15 +59,15 @@ public class PagoDetalle implements Serializable {
     public PagoDetalle() {
     }
 
-    public PagoDetalle(Object idPagoDetalle) {
+    public PagoDetalle(UUID idPagoDetalle) {
         this.idPagoDetalle = idPagoDetalle;
     }
 
-    public Object getIdPagoDetalle() {
+    public UUID getIdPagoDetalle() {
         return idPagoDetalle;
     }
 
-    public void setIdPagoDetalle(Object idPagoDetalle) {
+    public void setIdPagoDetalle(UUID idPagoDetalle) {
         this.idPagoDetalle = idPagoDetalle;
     }
 

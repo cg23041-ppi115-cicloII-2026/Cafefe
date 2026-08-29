@@ -9,7 +9,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -18,7 +17,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
-
+import java.util.UUID;
 /**
  *
  * @author 659684
@@ -36,9 +35,8 @@ public class Rol implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Column(name = "id_rol")
-    private Object idRol;
+    private UUID idRol;
     @Size(max = 155)
     @Column(name = "nombre")
     private String nombre;
@@ -53,15 +51,15 @@ public class Rol implements Serializable {
     public Rol() {
     }
 
-    public Rol(Object idRol) {
+    public Rol(UUID idRol) {
         this.idRol = idRol;
     }
 
-    public Object getIdRol() {
+    public UUID getIdRol() {
         return idRol;
     }
 
-    public void setIdRol(Object idRol) {
+    public void setIdRol(UUID idRol) {
         this.idRol = idRol;
     }
 

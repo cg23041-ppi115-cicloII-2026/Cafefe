@@ -18,7 +18,7 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
-
+import java.util.UUID;
 /**
  *
  * @author 659684
@@ -54,7 +54,7 @@ public class ProductoTipoProducto implements Serializable {
         this.productoTipoProductoPK = productoTipoProductoPK;
     }
 
-    public ProductoTipoProducto(Object idProductoTipoProducto, Object idProducto) {
+    public ProductoTipoProducto(UUID idProductoTipoProducto, UUID idProducto) {
         this.productoTipoProductoPK = new ProductoTipoProductoPK(idProductoTipoProducto, idProducto);
     }
 

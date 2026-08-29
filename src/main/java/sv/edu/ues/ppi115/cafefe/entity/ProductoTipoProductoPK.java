@@ -7,10 +7,9 @@ package sv.edu.ues.ppi115.cafefe.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
-
+import java.util.UUID;
 /**
  *
  * @author 659684
@@ -20,36 +19,34 @@ public class ProductoTipoProductoPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Column(name = "id_producto_tipo_producto")
-    private Object idProductoTipoProducto;
+    private UUID idProductoTipoProducto;
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Column(name = "id_producto")
-    private Object idProducto;
+    private UUID idProducto;
 
     public ProductoTipoProductoPK() {
     }
 
-    public ProductoTipoProductoPK(Object idProductoTipoProducto, Object idProducto) {
+    public ProductoTipoProductoPK(UUID idProductoTipoProducto, UUID idProducto) {
         this.idProductoTipoProducto = idProductoTipoProducto;
         this.idProducto = idProducto;
     }
 
-    public Object getIdProductoTipoProducto() {
+    public UUID getIdProductoTipoProducto() {
         return idProductoTipoProducto;
     }
 
-    public void setIdProductoTipoProducto(Object idProductoTipoProducto) {
+    public void setIdProductoTipoProducto(UUID idProductoTipoProducto) {
         this.idProductoTipoProducto = idProductoTipoProducto;
     }
 
-    public Object getIdProducto() {
+    public UUID getIdProducto() {
         return idProducto;
     }
 
-    public void setIdProducto(Object idProducto) {
+    public void setIdProducto(UUID idProducto) {
         this.idProducto = idProducto;
     }
 
