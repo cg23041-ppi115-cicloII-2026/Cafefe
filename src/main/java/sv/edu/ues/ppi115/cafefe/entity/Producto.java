@@ -14,11 +14,11 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
@@ -35,7 +35,6 @@ public class Producto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_producto")
     private UUID idProducto;
     @Size(max = 155)
@@ -43,7 +42,6 @@ public class Producto implements Serializable {
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
-    @Size(max = 2147483647)
     @Column(name = "comentarios")
     private String comentarios;
     @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
@@ -150,5 +148,5 @@ public class Producto implements Serializable {
     public String toString() {
         return "sv.edu.ues.ppi115.cafefe.Producto[ idProducto=" + idProducto + " ]";
     }
-    
+
 }

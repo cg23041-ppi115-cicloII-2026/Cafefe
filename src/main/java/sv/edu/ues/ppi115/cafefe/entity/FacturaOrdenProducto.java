@@ -14,8 +14,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -34,14 +32,11 @@ public class FacturaOrdenProducto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
-    
     @Column(name = "id_factura_orden_producto")
     private UUID idFacturaOrdenProducto;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "precio")
     private BigDecimal precio;
-    @Size(max = 2147483647)
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "id_factura", referencedColumnName = "id_factura")

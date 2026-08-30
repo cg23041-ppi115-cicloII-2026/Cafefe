@@ -10,7 +10,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -41,8 +40,9 @@ public class EmpleadoRol implements Serializable {
     @Column(name = "id_empleado_rol")
     private UUID idEmpleadoRol;
     
-    @Column(name = "id_empleado")
-    private UUID idEmpleado;
+    @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Empleado idEmpleado;
     @Column(name = "activo")
     private Boolean activo;
     @Size(max = 2147483647)
@@ -71,11 +71,11 @@ public class EmpleadoRol implements Serializable {
         this.idEmpleadoRol = idEmpleadoRol;
     }
 
-    public UUID getIdEmpleado() {
+    public Empleado getIdEmpleado() {
         return idEmpleado;
     }
 
-    public void setIdEmpleado(UUID idEmpleado) {
+    public void setIdEmpleado(Empleado idEmpleado) {
         this.idEmpleado = idEmpleado;
     }
 

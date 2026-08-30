@@ -17,7 +17,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
@@ -41,8 +40,6 @@ public class Factura implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
-
     @Column(name = "id_factura")
     private UUID idFactura;
     @Size(max = 155)
@@ -54,7 +51,6 @@ public class Factura implements Serializable {
     @Size(max = 20)
     @Column(name = "estado")
     private String estado;
-    @Size(max = 2147483647)
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(mappedBy = "idFactura", fetch = FetchType.LAZY)

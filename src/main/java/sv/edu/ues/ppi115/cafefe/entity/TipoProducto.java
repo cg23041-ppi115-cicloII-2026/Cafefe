@@ -18,6 +18,7 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
@@ -34,7 +35,6 @@ public class TipoProducto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_tipo_producto")
     private UUID idTipoProducto;
     @Size(max = 155)
@@ -42,7 +42,6 @@ public class TipoProducto implements Serializable {
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
-    @Size(max = 2147483647)
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(mappedBy = "idTipoProducto", fetch = FetchType.LAZY)
@@ -119,5 +118,5 @@ public class TipoProducto implements Serializable {
     public String toString() {
         return "sv.edu.ues.ppi115.cafefe.TipoProducto[ idTipoProducto=" + idTipoProducto + " ]";
     }
-    
+
 }

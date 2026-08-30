@@ -14,10 +14,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
@@ -32,10 +31,8 @@ public class ProductoCaracteristica implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_producto_caracteristica")
     private UUID idProductoCaracteristica;
-    @Size(max = 2147483647)
     @Column(name = "valor")
     private String valor;
     @JoinColumn(name = "id_caracteristica", referencedColumnName = "id_caracteristica")
@@ -108,5 +105,5 @@ public class ProductoCaracteristica implements Serializable {
     public String toString() {
         return "sv.edu.ues.ppi115.cafefe.ProductoCaracteristica[ idProductoCaracteristica=" + idProductoCaracteristica + " ]";
     }
-    
+
 }

@@ -35,18 +35,15 @@ public class TipoCaracteristica implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_tipo_caracteristica")
     private UUID idTipoCaracteristica;
     @Size(max = 155)
     @Column(name = "nombre")
     private String nombre;
-    @Size(max = 2147483647)
     @Column(name = "expresion_regular")
     private String expresionRegular;
     @Column(name = "activo")
     private Boolean activo;
-    @Size(max = 2147483647)
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(mappedBy = "idTipoCaracteristica", fetch = FetchType.LAZY)

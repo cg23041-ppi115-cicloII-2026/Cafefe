@@ -36,8 +36,6 @@ public class PagoDetalle implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
-    
     @Column(name = "id_pago_detalle")
     private UUID idPagoDetalle;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -46,10 +44,8 @@ public class PagoDetalle implements Serializable {
     @Size(max = 20)
     @Column(name = "tipo_pago")
     private String tipoPago;
-    @Size(max = 2147483647)
     @Column(name = "observaciones")
     private String observaciones;
-    @Size(max = 2147483647)
     @Column(name = "referencia_externa")
     private String referenciaExterna;
     @JoinColumn(name = "id_pago", referencedColumnName = "id_pago")

@@ -7,14 +7,16 @@ package sv.edu.ues.ppi115.cafefe.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.UUID;
 /**
  *
@@ -48,7 +50,9 @@ public class Empleado implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "comentarios")
     private String comentarios;
-
+    @OneToMany(mappedBy = "idEmpleado", fetch = FetchType.LAZY)
+    private Collection<EmpleadoRol> empleadoRolCollection;
+    
     public Empleado() {
     }
 
@@ -95,7 +99,13 @@ public class Empleado implements Serializable {
     public void setComentarios(String comentarios) {
         this.comentarios = comentarios;
     }
+    public Collection<EmpleadoRol> getEmpleadoRolCollection() {
+        return empleadoRolCollection;
+    }
 
+    public void setEmpleadoRolCollection(Collection<EmpleadoRol> empleadoRolCollection) {
+        this.empleadoRolCollection = empleadoRolCollection;
+    }
     @Override
     public int hashCode() {
         int hash = 0;

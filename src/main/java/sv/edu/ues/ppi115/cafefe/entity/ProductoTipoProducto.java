@@ -37,7 +37,6 @@ public class ProductoTipoProducto implements Serializable {
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
-    @Size(max = 2147483647)
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "id_producto", referencedColumnName = "id_producto", insertable = false, updatable = false)

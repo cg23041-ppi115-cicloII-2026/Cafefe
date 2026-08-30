@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
@@ -32,17 +33,16 @@ public class TipoDescuento implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_tipo_descuento")
+
     private UUID idTipoDescuento;
-    @Size(max = 2147483647)
     @Column(name = "nombre")
+
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
     @Column(name = "descuento_maximo")
     private Integer descuentoMaximo;
-    @Size(max = 2147483647)
     @Column(name = "observaciones")
     private String observaciones;
 
@@ -117,5 +117,5 @@ public class TipoDescuento implements Serializable {
     public String toString() {
         return "sv.edu.ues.ppi115.cafefe.TipoDescuento[ idTipoDescuento=" + idTipoDescuento + " ]";
     }
-    
+
 }

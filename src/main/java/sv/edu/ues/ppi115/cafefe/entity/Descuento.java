@@ -9,7 +9,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -44,8 +45,9 @@ public class Descuento implements Serializable {
     @Column(name = "id_descuento")
     private UUID idDescuento;
     
-    @Column(name = "id_tipo_descuento")
-    private UUID idTipoDescuento;
+    @JoinColumn(name = "id_tipo_descuento", referencedColumnName = "id_tipo_descuento")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TipoDescuento idTipoDescuento;
     @Size(max = 155)
     @Column(name = "nombre")
     private String nombre;
@@ -76,11 +78,11 @@ public class Descuento implements Serializable {
         this.idDescuento = idDescuento;
     }
 
-    public UUID getIdTipoDescuento() {
+    public TipoDescuento getIdTipoDescuento() {
         return idTipoDescuento;
     }
 
-    public void setIdTipoDescuento(UUID idTipoDescuento) {
+    public void setIdTipoDescuento(TipoDescuento idTipoDescuento) {
         this.idTipoDescuento = idTipoDescuento;
     }
 

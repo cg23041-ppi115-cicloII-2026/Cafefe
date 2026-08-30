@@ -34,7 +34,6 @@ public class Rol implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id_rol")
     private UUID idRol;
     @Size(max = 155)
@@ -42,7 +41,6 @@ public class Rol implements Serializable {
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
-    @Size(max = 2147483647)
     @Column(name = "observaciones")
     private String observaciones;
     @OneToMany(mappedBy = "idRol", fetch = FetchType.LAZY)
