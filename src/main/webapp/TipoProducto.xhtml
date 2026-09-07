@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Gestión de Tipos de Producto</title>
+    </h:head>
+    <h:body>
+        <h2>Administración de Tipos de Producto</h2>
+
+        <!-- Formulario de Entrada/Edición -->
+        <h:form id="frmTipoProducto">
+            <h:inputHidden value="#{tipoProductoModel.registro.idTipoProducto}" />
+
+            <h:panelGrid columns="3" cellpadding="5">
+                <h:outputLabel for="nombre" value="Nombre del Tipo de Producto:" />
+                <h:inputText id="nombre" value="#{tipoProductoModel.registro.nombre}" required="true" />
+                <h:message for="nombre" style="color:red" />
+
+                <h:panelGroup>
+                    <h:commandButton value="Guardar" action="#{tipoProductoModel.guardar}" />
+                    <h:commandButton value="Nuevo / Limpiar" action="#{tipoProductoModel.limpiar}" immediate="true" />
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+
+        <hr/>
+
+        <!-- Tabla de Datos con Datos del Ingeniero y Acciones -->
+        <h3>Lista de Tipos de Producto</h3>
+        <h:form id="frmTablaProducto">
+            <h:dataTable value="#{tipoProductoModel.lista}" var="item" border="1" cellpadding="5">
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                    #{item.idTipoProducto}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Nombre</f:facet>
+                    #{item.nombre}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Acciones</f:facet>
+                    <h:commandButton value="Editar" action="#{tipoProductoModel.seleccionar(item)}" />
+                    &#160;
+                    <h:commandButton value="Eliminar" action="#{tipoProductoModel.eliminar(item)}" 
+                                     onclick="return confirm('¿Está seguro de eliminar este registro?');" />
+                </h:column>
+            </h:dataTable>
+        </h:form>
+    </h:body>
+</html>
