@@ -1,4 +1,4 @@
-package sv.edu.ues.ppi115.cafefe.boundary;
+package sv.edu.ues.ppi115.cafefe.boundary.jsf;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,18 +6,18 @@ import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.faces.view.ViewScoped;
-import sv.edu.ues.ppi115.cafefe.control.DAOInterface;
-import sv.edu.ues.ppi115.cafefe.entity.TipoProducto;
+import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoDAO;
+import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
 
-@Named("tipoProductoModel")
+@Named("tipoDescuentoModel")
 @ViewScoped
-public class TipoProductoModel implements Serializable {
+public class TipoDescuentoModel implements Serializable {
 
     @Inject
-    private DAOInterface<TipoProducto, Integer> dao;
+    private TipoDescuentoDAO dao;
 
-    private TipoProducto registro;
-    private List<TipoProducto> lista;
+    private TipoDescuento registro;
+    private List<TipoDescuento> lista;
 
     @PostConstruct
     public void init() {
@@ -33,7 +33,7 @@ public class TipoProductoModel implements Serializable {
 
     public void guardar() {
         if (this.registro != null && dao != null) {
-            if (this.registro.getIdTipoProducto() == null) {
+            if (this.registro.getIdTipoDescuento() == null) {
                 dao.crear(this.registro); // Crea nuevo registro
             } else {
                 dao.modificar(this.registro); // Actualiza si ya tiene ID
@@ -43,11 +43,11 @@ public class TipoProductoModel implements Serializable {
         }
     }
 
-    public void seleccionar(TipoProducto seleccionado) {
-        this.registro = seleccionado; // Carga el elemento en el formulario para editar
+    public void seleccionar(TipoDescuento seleccionado) {
+        this.registro = seleccionado; // Carga el registro en el formulario para editar
     }
 
-    public void eliminar(TipoProducto seleccionado) {
+    public void eliminar(TipoDescuento seleccionado) {
         if (seleccionado != null && dao != null) {
             dao.eliminar(seleccionado);
             this.limpiar();
@@ -56,10 +56,10 @@ public class TipoProductoModel implements Serializable {
     }
 
     public void limpiar() {
-        this.registro = new TipoProducto();
+        this.registro = new TipoDescuento();
     }
 
-    public TipoProducto getRegistro() { return registro; }
-    public void setRegistro(TipoProducto registro) { this.registro = registro; }
-    public List<TipoProducto> getLista() { return lista; }
+    public TipoDescuento getRegistro() { return registro; }
+    public void setRegistro(TipoDescuento registro) { this.registro = registro; }
+    public List<TipoDescuento> getLista() { return lista; }
 }

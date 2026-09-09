@@ -6,13 +6,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.List;
 
-/**
- * Clase genérica base que implementa las operaciones CRUD y Criteria API 
- * para no duplicar código en los DAOs de cada entidad.
- * 
- * @param <T> Clase del Entity
- * @param <ID> Tipo del identificador (llave primaria) del Entity
- */
 public abstract class DefaultDAO<T, ID> implements DAOInterface<T, ID> {
 
     private final Class<T> entityClass;
@@ -21,7 +14,6 @@ public abstract class DefaultDAO<T, ID> implements DAOInterface<T, ID> {
         this.entityClass = entityClass;
     }
 
-    // Método abstracto para que cada DAO hijo inyecte su propio EntityManager (@PersistenceContext)
     protected abstract EntityManager getEntityManager();
 
     @Override

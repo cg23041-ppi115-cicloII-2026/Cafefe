@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="pos-ppi115_2026">
+     <featureManager>
+        <feature>jakartaee-11.0</feature>
+    </featureManager>
+    
+   <webApplication id="cafefe" location="cafefe-1.0-SNAPSHOT.war" contextRoot="cafefe" />
+
+    <!-- Registro de usuarios básico para satisfacer la regla de ORB/EJB -->
+    <basicRegistry id="basic" realm="BasicRealm">
+        <user name="admin" password="adminPassword123" />
+    </basicRegistry>
+    
+    <httpEndpoint id="defaultHttpEndpoint" httpPort="9080" httpsPort="9443" />
+    
+    <include location="configDropins/overrides/postgres-driver.xml"/>
+
+    <dataSource id="postgresdatasource"
+                jndiName="jdbc/pgdb"
+                jdbcDriverRef="postgresDriver"
+                type="javax.sql.ConnectionPoolDataSource"
+                transactional="true">
+        <properties.postgresql serverName="localhost"
+                               portNumber="5433"
+                               databaseName="cafeteria"
+                               user="postgres"
+                               password="12345"/>
+    </dataSource>
+</server>
