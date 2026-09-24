@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Idioma global de la sesión -->
+    <f:view locale="#{sesionUsuario.locale}">
+        <!-- Bundle de traducciones definido en WEB-INF/faces-config.xml (var: msg) -->
+        <h:head>
+            <title>Cafefe - Localización</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+                .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+            </style>
+        </h:head>
+        <h:body>
+            <div class="card">
+                <!-- Título traducido -->
+                <h2><h:outputText value="#{msg['pagina.tipoProducto.titulo']}" /></h2>
+
+                <h:form id="frmIdioma">
+                    <h3><h:outputText value="#{msg['crud.lista']}" /></h3>
+
+                    <!-- Selector de idioma: cambia localidad y aplica el nuevo idioma -->
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <h:outputLabel for="cbxIdioma" value="#{msg['crud.idioma']}:" />
+                        <h:selectOneMenu id="cbxIdioma"
+                                         value="#{sesionUsuario.localidad}"
+                                         onchange="submit()"
+                                         valueChangeListener="#{sesionUsuario.localidadChanged}">
+                            <f:selectItems value="#{sesionUsuario.listaidiomas}" />
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+
+                    <!-- Textos traducidos: al cambiar el idioma deben cambiar -->
+                    <p>
+                        <h:outputText value="#{msg['crud.guardar']}" />
+                        &#160;
+                        <h:outputText value="#{msg['crud.editar']}" />
+                        &#160;
+                        <h:outputText value="#{msg['crud.eliminar']}" />
+                        &#160;
+                        <h:outputText value="#{msg['crud.cancelar']}" />
+                    </p>
+
+                    <p>
+                        <h:outputText value="#{msg['crud.confirmarEliminar']}" />
+                    </p>
+
+                    <p>
+                        <h:outputText value="#{msg['pagina.tipoProducto.lista']}" />
+                    </p>
+                </h:form>
+            </div>
+        </h:body>
+    </f:view>
+</html>
