@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -27,7 +28,7 @@ import java.util.UUID;
  * @author 659684
  */
 @Entity
-@Table(name = "descuento_producto")
+@Table(name = "descuento_producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "DescuentoProducto.findAll", query = "SELECT d FROM DescuentoProducto d"),
     @NamedQuery(name = "DescuentoProducto.findByFechaDesde", query = "SELECT d FROM DescuentoProducto d WHERE d.fechaDesde = :fechaDesde"),
@@ -40,8 +41,8 @@ public class DescuentoProducto implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    
-    @Column(name = "id_descuento_producto")
+    @Lob
+    @Column(name = "id_descuento_producto", nullable = false)
     private UUID idDescuentoProducto;
     @Column(name = "fecha_desde")
     @Temporal(TemporalType.TIMESTAMP)
@@ -52,7 +53,7 @@ public class DescuentoProducto implements Serializable {
     @Column(name = "valor")
     private Integer valor;
     @Size(max = 2147483647)
-    @Column(name = "observaciones")
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @JoinColumn(name = "id_descuento", referencedColumnName = "id_descuento")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -146,7 +147,7 @@ public class DescuentoProducto implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.DescuentoProducto[ idDescuentoProducto=" + idDescuentoProducto + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto[ idDescuentoProducto=" + idDescuentoProducto + " ]";
     }
     
 }

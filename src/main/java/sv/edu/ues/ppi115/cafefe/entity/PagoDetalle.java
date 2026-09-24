@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -19,12 +20,13 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "pago_detalle")
+@Table(name = "pago_detalle", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "PagoDetalle.findAll", query = "SELECT p FROM PagoDetalle p"),
     @NamedQuery(name = "PagoDetalle.findByMonto", query = "SELECT p FROM PagoDetalle p WHERE p.monto = :monto"),
@@ -36,17 +38,21 @@ public class PagoDetalle implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_pago_detalle")
+    @NotNull
+    @Lob
+    @Column(name = "id_pago_detalle", nullable = false)
     private UUID idPagoDetalle;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "monto")
+    @Column(name = "monto", precision = 8, scale = 2)
     private BigDecimal monto;
     @Size(max = 20)
-    @Column(name = "tipo_pago")
+    @Column(name = "tipo_pago", length = 20)
     private String tipoPago;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
-    @Column(name = "referencia_externa")
+    @Size(max = 2147483647)
+    @Column(name = "referencia_externa", length = 2147483647)
     private String referenciaExterna;
     @JoinColumn(name = "id_pago", referencedColumnName = "id_pago")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -129,7 +135,7 @@ public class PagoDetalle implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.PagoDetalle[ idPagoDetalle=" + idPagoDetalle + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.PagoDetalle[ idPagoDetalle=" + idPagoDetalle + " ]";
     }
     
 }

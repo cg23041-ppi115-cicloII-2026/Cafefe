@@ -10,21 +10,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "pago")
+@Table(name = "pago", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Pago.findAll", query = "SELECT p FROM Pago p"),
     @NamedQuery(name = "Pago.findByEstado", query = "SELECT p FROM Pago p WHERE p.estado = :estado"),
@@ -34,18 +37,21 @@ public class Pago implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_pago")
+    @NotNull
+    @Lob
+    @Column(name = "id_pago", nullable = false)
     private UUID idPago;
     @Size(max = 20)
-    @Column(name = "estado")
+    @Column(name = "estado", length = 20)
     private String estado;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @JoinColumn(name = "id_factura", referencedColumnName = "id_factura")
     @ManyToOne(fetch = FetchType.LAZY)
     private Factura idFactura;
     @OneToMany(mappedBy = "idPago", fetch = FetchType.LAZY)
-    private Collection<PagoDetalle> pagoDetalleCollection;
+    private List<PagoDetalle> pagoDetalleList;
 
     public Pago() {
     }
@@ -86,12 +92,12 @@ public class Pago implements Serializable {
         this.idFactura = idFactura;
     }
 
-    public Collection<PagoDetalle> getPagoDetalleCollection() {
-        return pagoDetalleCollection;
+    public List<PagoDetalle> getPagoDetalleList() {
+        return pagoDetalleList;
     }
 
-    public void setPagoDetalleCollection(Collection<PagoDetalle> pagoDetalleCollection) {
-        this.pagoDetalleCollection = pagoDetalleCollection;
+    public void setPagoDetalleList(List<PagoDetalle> pagoDetalleList) {
+        this.pagoDetalleList = pagoDetalleList;
     }
 
     @Override
@@ -116,7 +122,7 @@ public class Pago implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.Pago[ idPago=" + idPago + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.Pago[ idPago=" + idPago + " ]";
     }
     
 }

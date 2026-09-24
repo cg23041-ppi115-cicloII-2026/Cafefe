@@ -5,18 +5,20 @@
 package sv.edu.ues.ppi115.cafefe.entity;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,40 +26,54 @@ import java.util.UUID;
  * @author 659684
  */
 @Entity
-@Table(name = "producto")
+@Table(name = "producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Producto.findAll", query = "SELECT p FROM Producto p"),
     @NamedQuery(name = "Producto.findByNombre", query = "SELECT p FROM Producto p WHERE p.nombre = :nombre"),
     @NamedQuery(name = "Producto.findByActivo", query = "SELECT p FROM Producto p WHERE p.activo = :activo"),
-    @NamedQuery(name = "Producto.findByComentarios", query = "SELECT p FROM Producto p WHERE p.comentarios = :comentarios")})
+    @NamedQuery(name = "Producto.findByComentarios", query = "SELECT p FROM Producto p WHERE p.comentarios = :comentarios"),
+    @NamedQuery(name = "Producto.findByPrecioSugerido", query = "SELECT p FROM Producto p WHERE p.precioSugerido = :precioSugerido")})
 public class Producto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_producto")
+    @NotNull
+    @Lob
+    @Column(name = "id_producto", nullable = false)
     private UUID idProducto;
     @Size(max = 155)
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 155)
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
-    @Column(name = "comentarios")
+    @Size(max = 2147483647)
+    @Column(name = "comentarios", length = 2147483647)
     private String comentarios;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "precio_sugerido", nullable = false, precision = 8, scale = 2)
+    private BigDecimal precioSugerido;
     @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
-    private Collection<ProductoCaracteristica> productoCaracteristicaCollection;
+    private List<ProductoCaracteristica> productoCaracteristicaList;
     @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
-    private Collection<OrdenProducto> ordenProductoCollection;
+    private List<OrdenProducto> ordenProductoList;
     @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
-    private Collection<DescuentoProducto> descuentoProductoCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "producto", fetch = FetchType.LAZY)
-    private Collection<ProductoTipoProducto> productoTipoProductoCollection;
+    private List<DescuentoProducto> descuentoProductoList;
+    @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
+    private List<ProductoTipoProducto> productoTipoProductoList;
 
     public Producto() {
     }
 
     public Producto(UUID idProducto) {
         this.idProducto = idProducto;
+    }
+
+    public Producto(UUID idProducto, BigDecimal precioSugerido) {
+        this.idProducto = idProducto;
+        this.precioSugerido = precioSugerido;
     }
 
     public UUID getIdProducto() {
@@ -92,36 +108,44 @@ public class Producto implements Serializable {
         this.comentarios = comentarios;
     }
 
-    public Collection<ProductoCaracteristica> getProductoCaracteristicaCollection() {
-        return productoCaracteristicaCollection;
+    public BigDecimal getPrecioSugerido() {
+        return precioSugerido;
     }
 
-    public void setProductoCaracteristicaCollection(Collection<ProductoCaracteristica> productoCaracteristicaCollection) {
-        this.productoCaracteristicaCollection = productoCaracteristicaCollection;
+    public void setPrecioSugerido(BigDecimal precioSugerido) {
+        this.precioSugerido = precioSugerido;
     }
 
-    public Collection<OrdenProducto> getOrdenProductoCollection() {
-        return ordenProductoCollection;
+    public List<ProductoCaracteristica> getProductoCaracteristicaList() {
+        return productoCaracteristicaList;
     }
 
-    public void setOrdenProductoCollection(Collection<OrdenProducto> ordenProductoCollection) {
-        this.ordenProductoCollection = ordenProductoCollection;
+    public void setProductoCaracteristicaList(List<ProductoCaracteristica> productoCaracteristicaList) {
+        this.productoCaracteristicaList = productoCaracteristicaList;
     }
 
-    public Collection<DescuentoProducto> getDescuentoProductoCollection() {
-        return descuentoProductoCollection;
+    public List<OrdenProducto> getOrdenProductoList() {
+        return ordenProductoList;
     }
 
-    public void setDescuentoProductoCollection(Collection<DescuentoProducto> descuentoProductoCollection) {
-        this.descuentoProductoCollection = descuentoProductoCollection;
+    public void setOrdenProductoList(List<OrdenProducto> ordenProductoList) {
+        this.ordenProductoList = ordenProductoList;
     }
 
-    public Collection<ProductoTipoProducto> getProductoTipoProductoCollection() {
-        return productoTipoProductoCollection;
+    public List<DescuentoProducto> getDescuentoProductoList() {
+        return descuentoProductoList;
     }
 
-    public void setProductoTipoProductoCollection(Collection<ProductoTipoProducto> productoTipoProductoCollection) {
-        this.productoTipoProductoCollection = productoTipoProductoCollection;
+    public void setDescuentoProductoList(List<DescuentoProducto> descuentoProductoList) {
+        this.descuentoProductoList = descuentoProductoList;
+    }
+
+    public List<ProductoTipoProducto> getProductoTipoProductoList() {
+        return productoTipoProductoList;
+    }
+
+    public void setProductoTipoProductoList(List<ProductoTipoProducto> productoTipoProductoList) {
+        this.productoTipoProductoList = productoTipoProductoList;
     }
 
     @Override
@@ -146,7 +170,7 @@ public class Producto implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.Producto[ idProducto=" + idProducto + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.Producto[ idProducto=" + idProducto + " ]";
     }
-
+    
 }

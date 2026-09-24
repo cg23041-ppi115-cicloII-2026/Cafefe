@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -20,15 +21,16 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "descuento")
+@Table(name = "descuento", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Descuento.findAll", query = "SELECT d FROM Descuento d"),
     @NamedQuery(name = "Descuento.findByNombre", query = "SELECT d FROM Descuento d WHERE d.nombre = :nombre"),
@@ -41,15 +43,11 @@ public class Descuento implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    
-    @Column(name = "id_descuento")
+    @Lob
+    @Column(name = "id_descuento", nullable = false)
     private UUID idDescuento;
-    
-    @JoinColumn(name = "id_tipo_descuento", referencedColumnName = "id_tipo_descuento")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TipoDescuento idTipoDescuento;
     @Size(max = 155)
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 155)
     private String nombre;
     @Column(name = "fecha_desde")
     @Temporal(TemporalType.TIMESTAMP)
@@ -58,10 +56,13 @@ public class Descuento implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaHasta;
     @Size(max = 2147483647)
-    @Column(name = "observaciones")
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
+    @JoinColumn(name = "id_tipo_descuento", referencedColumnName = "id_tipo_descuento")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TipoDescuento idTipoDescuento;
     @OneToMany(mappedBy = "idDescuento", fetch = FetchType.LAZY)
-    private Collection<DescuentoProducto> descuentoProductoCollection;
+    private List<DescuentoProducto> descuentoProductoList;
 
     public Descuento() {
     }
@@ -76,14 +77,6 @@ public class Descuento implements Serializable {
 
     public void setIdDescuento(UUID idDescuento) {
         this.idDescuento = idDescuento;
-    }
-
-    public TipoDescuento getIdTipoDescuento() {
-        return idTipoDescuento;
-    }
-
-    public void setIdTipoDescuento(TipoDescuento idTipoDescuento) {
-        this.idTipoDescuento = idTipoDescuento;
     }
 
     public String getNombre() {
@@ -118,12 +111,20 @@ public class Descuento implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Collection<DescuentoProducto> getDescuentoProductoCollection() {
-        return descuentoProductoCollection;
+    public TipoDescuento getIdTipoDescuento() {
+        return idTipoDescuento;
     }
 
-    public void setDescuentoProductoCollection(Collection<DescuentoProducto> descuentoProductoCollection) {
-        this.descuentoProductoCollection = descuentoProductoCollection;
+    public void setIdTipoDescuento(TipoDescuento idTipoDescuento) {
+        this.idTipoDescuento = idTipoDescuento;
+    }
+
+    public List<DescuentoProducto> getDescuentoProductoList() {
+        return descuentoProductoList;
+    }
+
+    public void setDescuentoProductoList(List<DescuentoProducto> descuentoProductoList) {
+        this.descuentoProductoList = descuentoProductoList;
     }
 
     @Override
@@ -148,7 +149,7 @@ public class Descuento implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.Descuento[ idDescuento=" + idDescuento + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.Descuento[ idDescuento=" + idDescuento + " ]";
     }
     
 }

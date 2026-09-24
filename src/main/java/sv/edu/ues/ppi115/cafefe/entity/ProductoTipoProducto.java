@@ -4,27 +4,31 @@
  */
 package sv.edu.ues.ppi115.cafefe.entity;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "producto_tipo_producto")
+@Table(name = "producto_tipo_producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "ProductoTipoProducto.findAll", query = "SELECT p FROM ProductoTipoProducto p"),
     @NamedQuery(name = "ProductoTipoProducto.findByFechaCreacion", query = "SELECT p FROM ProductoTipoProducto p WHERE p.fechaCreacion = :fechaCreacion"),
@@ -32,16 +36,21 @@ import java.util.UUID;
 public class ProductoTipoProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected ProductoTipoProductoPK productoTipoProductoPK;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "id_producto_tipo_producto", nullable = false)
+    private UUID idProductoTipoProducto;
     @Column(name = "fecha_creacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
-    @JoinColumn(name = "id_producto", referencedColumnName = "id_producto", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Producto producto;
+    @JoinColumn(name = "id_producto", referencedColumnName = "id_producto")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Producto idProducto;
     @JoinColumn(name = "id_tipo_producto", referencedColumnName = "id_tipo_producto")
     @ManyToOne(fetch = FetchType.LAZY)
     private TipoProducto idTipoProducto;
@@ -49,20 +58,16 @@ public class ProductoTipoProducto implements Serializable {
     public ProductoTipoProducto() {
     }
 
-    public ProductoTipoProducto(ProductoTipoProductoPK productoTipoProductoPK) {
-        this.productoTipoProductoPK = productoTipoProductoPK;
+    public ProductoTipoProducto(UUID idProductoTipoProducto) {
+        this.idProductoTipoProducto = idProductoTipoProducto;
     }
 
-    public ProductoTipoProducto(UUID idProductoTipoProducto, UUID idProducto) {
-        this.productoTipoProductoPK = new ProductoTipoProductoPK(idProductoTipoProducto, idProducto);
+    public UUID getIdProductoTipoProducto() {
+        return idProductoTipoProducto;
     }
 
-    public ProductoTipoProductoPK getProductoTipoProductoPK() {
-        return productoTipoProductoPK;
-    }
-
-    public void setProductoTipoProductoPK(ProductoTipoProductoPK productoTipoProductoPK) {
-        this.productoTipoProductoPK = productoTipoProductoPK;
+    public void setIdProductoTipoProducto(UUID idProductoTipoProducto) {
+        this.idProductoTipoProducto = idProductoTipoProducto;
     }
 
     public Date getFechaCreacion() {
@@ -81,12 +86,12 @@ public class ProductoTipoProducto implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Producto getProducto() {
-        return producto;
+    public Producto getIdProducto() {
+        return idProducto;
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
+    public void setIdProducto(Producto idProducto) {
+        this.idProducto = idProducto;
     }
 
     public TipoProducto getIdTipoProducto() {
@@ -100,7 +105,7 @@ public class ProductoTipoProducto implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (productoTipoProductoPK != null ? productoTipoProductoPK.hashCode() : 0);
+        hash += (idProductoTipoProducto != null ? idProductoTipoProducto.hashCode() : 0);
         return hash;
     }
 
@@ -111,7 +116,7 @@ public class ProductoTipoProducto implements Serializable {
             return false;
         }
         ProductoTipoProducto other = (ProductoTipoProducto) object;
-        if ((this.productoTipoProductoPK == null && other.productoTipoProductoPK != null) || (this.productoTipoProductoPK != null && !this.productoTipoProductoPK.equals(other.productoTipoProductoPK))) {
+        if ((this.idProductoTipoProducto == null && other.idProductoTipoProducto != null) || (this.idProductoTipoProducto != null && !this.idProductoTipoProducto.equals(other.idProductoTipoProducto))) {
             return false;
         }
         return true;
@@ -119,7 +124,7 @@ public class ProductoTipoProducto implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.ProductoTipoProducto[ productoTipoProductoPK=" + productoTipoProductoPK + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.ProductoTipoProducto[ idProductoTipoProducto=" + idProductoTipoProducto + " ]";
     }
     
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -17,10 +18,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -28,7 +30,7 @@ import java.util.UUID;
  * @author 659684
  */
 @Entity
-@Table(name = "factura")
+@Table(name = "factura", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Factura.findAll", query = "SELECT f FROM Factura f"),
     @NamedQuery(name = "Factura.findByCliente", query = "SELECT f FROM Factura f WHERE f.cliente = :cliente"),
@@ -40,23 +42,26 @@ public class Factura implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_factura")
+    @NotNull
+    @Lob
+    @Column(name = "id_factura", nullable = false)
     private UUID idFactura;
     @Size(max = 155)
-    @Column(name = "cliente")
+    @Column(name = "cliente", length = 155)
     private String cliente;
     @Column(name = "fecha_facturacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFacturacion;
     @Size(max = 20)
-    @Column(name = "estado")
+    @Column(name = "estado", length = 20)
     private String estado;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @OneToMany(mappedBy = "idFactura", fetch = FetchType.LAZY)
-    private Collection<Pago> pagoCollection;
+    private List<Pago> pagoList;
     @OneToMany(mappedBy = "idFactura", fetch = FetchType.LAZY)
-    private Collection<FacturaOrdenProducto> facturaOrdenProductoCollection;
+    private List<FacturaOrdenProducto> facturaOrdenProductoList;
     @JoinColumn(name = "id_caja", referencedColumnName = "id_caja")
     @ManyToOne(fetch = FetchType.LAZY)
     private Caja idCaja;
@@ -111,20 +116,20 @@ public class Factura implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Collection<Pago> getPagoCollection() {
-        return pagoCollection;
+    public List<Pago> getPagoList() {
+        return pagoList;
     }
 
-    public void setPagoCollection(Collection<Pago> pagoCollection) {
-        this.pagoCollection = pagoCollection;
+    public void setPagoList(List<Pago> pagoList) {
+        this.pagoList = pagoList;
     }
 
-    public Collection<FacturaOrdenProducto> getFacturaOrdenProductoCollection() {
-        return facturaOrdenProductoCollection;
+    public List<FacturaOrdenProducto> getFacturaOrdenProductoList() {
+        return facturaOrdenProductoList;
     }
 
-    public void setFacturaOrdenProductoCollection(Collection<FacturaOrdenProducto> facturaOrdenProductoCollection) {
-        this.facturaOrdenProductoCollection = facturaOrdenProductoCollection;
+    public void setFacturaOrdenProductoList(List<FacturaOrdenProducto> facturaOrdenProductoList) {
+        this.facturaOrdenProductoList = facturaOrdenProductoList;
     }
 
     public Caja getIdCaja() {
@@ -165,7 +170,7 @@ public class Factura implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.Factura[ idFactura=" + idFactura + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.Factura[ idFactura=" + idFactura + " ]";
     }
-
+    
 }

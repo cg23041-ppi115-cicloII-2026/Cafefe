@@ -7,13 +7,17 @@ package sv.edu.ues.ppi115.cafefe.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,7 +25,7 @@ import java.util.UUID;
  * @author 659684
  */
 @Entity
-@Table(name = "tipo_descuento")
+@Table(name = "tipo_descuento", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "TipoDescuento.findAll", query = "SELECT t FROM TipoDescuento t"),
     @NamedQuery(name = "TipoDescuento.findByNombre", query = "SELECT t FROM TipoDescuento t WHERE t.nombre = :nombre"),
@@ -33,18 +37,22 @@ public class TipoDescuento implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_tipo_descuento")
-
+    @NotNull
+    @Lob
+    @Column(name = "id_tipo_descuento", nullable = false)
     private UUID idTipoDescuento;
-    @Column(name = "nombre")
-
+    @Size(max = 2147483647)
+    @Column(name = "nombre", length = 2147483647)
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
     @Column(name = "descuento_maximo")
     private Integer descuentoMaximo;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
+    @OneToMany(mappedBy = "idTipoDescuento", fetch = FetchType.LAZY)
+    private List<Descuento> descuentoList;
 
     public TipoDescuento() {
     }
@@ -93,6 +101,14 @@ public class TipoDescuento implements Serializable {
         this.observaciones = observaciones;
     }
 
+    public List<Descuento> getDescuentoList() {
+        return descuentoList;
+    }
+
+    public void setDescuentoList(List<Descuento> descuentoList) {
+        this.descuentoList = descuentoList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -115,7 +131,7 @@ public class TipoDescuento implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.TipoDescuento[ idTipoDescuento=" + idTipoDescuento + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.TipoDescuento[ idTipoDescuento=" + idTipoDescuento + " ]";
     }
-
+    
 }

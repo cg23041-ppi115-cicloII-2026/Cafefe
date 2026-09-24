@@ -10,19 +10,23 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "factura_orden_producto")
+@Table(name = "factura_orden_producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "FacturaOrdenProducto.findAll", query = "SELECT f FROM FacturaOrdenProducto f"),
     @NamedQuery(name = "FacturaOrdenProducto.findByPrecio", query = "SELECT f FROM FacturaOrdenProducto f WHERE f.precio = :precio"),
@@ -32,12 +36,15 @@ public class FacturaOrdenProducto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_factura_orden_producto")
+    @NotNull
+    @Lob
+    @Column(name = "id_factura_orden_producto", nullable = false)
     private UUID idFacturaOrdenProducto;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "precio")
+    @Column(name = "precio", precision = 8, scale = 2)
     private BigDecimal precio;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @JoinColumn(name = "id_factura", referencedColumnName = "id_factura")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -115,7 +122,7 @@ public class FacturaOrdenProducto implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.FacturaOrdenProducto[ idFacturaOrdenProducto=" + idFacturaOrdenProducto + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.FacturaOrdenProducto[ idFacturaOrdenProducto=" + idFacturaOrdenProducto + " ]";
     }
     
 }

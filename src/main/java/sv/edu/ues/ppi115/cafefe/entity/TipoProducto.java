@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -16,7 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,7 +25,7 @@ import java.util.UUID;
  * @author 659684
  */
 @Entity
-@Table(name = "tipo_producto")
+@Table(name = "tipo_producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "TipoProducto.findAll", query = "SELECT t FROM TipoProducto t"),
     @NamedQuery(name = "TipoProducto.findByNombre", query = "SELECT t FROM TipoProducto t WHERE t.nombre = :nombre"),
@@ -35,17 +36,20 @@ public class TipoProducto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_tipo_producto")
+    @NotNull
+    @Lob
+    @Column(name = "id_tipo_producto", nullable = false)
     private UUID idTipoProducto;
     @Size(max = 155)
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 155)
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @OneToMany(mappedBy = "idTipoProducto", fetch = FetchType.LAZY)
-    private Collection<ProductoTipoProducto> productoTipoProductoCollection;
+    private List<ProductoTipoProducto> productoTipoProductoList;
 
     public TipoProducto() {
     }
@@ -86,12 +90,12 @@ public class TipoProducto implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Collection<ProductoTipoProducto> getProductoTipoProductoCollection() {
-        return productoTipoProductoCollection;
+    public List<ProductoTipoProducto> getProductoTipoProductoList() {
+        return productoTipoProductoList;
     }
 
-    public void setProductoTipoProductoCollection(Collection<ProductoTipoProducto> productoTipoProductoCollection) {
-        this.productoTipoProductoCollection = productoTipoProductoCollection;
+    public void setProductoTipoProductoList(List<ProductoTipoProducto> productoTipoProductoList) {
+        this.productoTipoProductoList = productoTipoProductoList;
     }
 
     @Override
@@ -116,7 +120,7 @@ public class TipoProducto implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.TipoProducto[ idTipoProducto=" + idTipoProducto + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.TipoProducto[ idTipoProducto=" + idTipoProducto + " ]";
     }
-
+    
 }

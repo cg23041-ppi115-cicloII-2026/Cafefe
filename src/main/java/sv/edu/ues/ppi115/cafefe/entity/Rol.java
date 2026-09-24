@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -16,14 +17,15 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "rol")
+@Table(name = "rol", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Rol.findAll", query = "SELECT r FROM Rol r"),
     @NamedQuery(name = "Rol.findByNombre", query = "SELECT r FROM Rol r WHERE r.nombre = :nombre"),
@@ -34,17 +36,20 @@ public class Rol implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_rol")
+    @NotNull
+    @Lob
+    @Column(name = "id_rol", nullable = false)
     private UUID idRol;
     @Size(max = 155)
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 155)
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @OneToMany(mappedBy = "idRol", fetch = FetchType.LAZY)
-    private Collection<EmpleadoRol> empleadoRolCollection;
+    private List<EmpleadoRol> empleadoRolList;
 
     public Rol() {
     }
@@ -85,12 +90,12 @@ public class Rol implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Collection<EmpleadoRol> getEmpleadoRolCollection() {
-        return empleadoRolCollection;
+    public List<EmpleadoRol> getEmpleadoRolList() {
+        return empleadoRolList;
     }
 
-    public void setEmpleadoRolCollection(Collection<EmpleadoRol> empleadoRolCollection) {
-        this.empleadoRolCollection = empleadoRolCollection;
+    public void setEmpleadoRolList(List<EmpleadoRol> empleadoRolList) {
+        this.empleadoRolList = empleadoRolList;
     }
 
     @Override
@@ -115,7 +120,7 @@ public class Rol implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.Rol[ idRol=" + idRol + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.Rol[ idRol=" + idRol + " ]";
     }
     
 }

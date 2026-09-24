@@ -10,10 +10,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -22,7 +25,7 @@ import java.util.UUID;
  * @author 659684
  */
 @Entity
-@Table(name = "producto_caracteristica")
+@Table(name = "producto_caracteristica", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "ProductoCaracteristica.findAll", query = "SELECT p FROM ProductoCaracteristica p"),
     @NamedQuery(name = "ProductoCaracteristica.findByValor", query = "SELECT p FROM ProductoCaracteristica p WHERE p.valor = :valor")})
@@ -31,9 +34,12 @@ public class ProductoCaracteristica implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_producto_caracteristica")
+    @NotNull
+    @Lob
+    @Column(name = "id_producto_caracteristica", nullable = false)
     private UUID idProductoCaracteristica;
-    @Column(name = "valor")
+    @Size(max = 2147483647)
+    @Column(name = "valor", length = 2147483647)
     private String valor;
     @JoinColumn(name = "id_caracteristica", referencedColumnName = "id_caracteristica")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -103,7 +109,7 @@ public class ProductoCaracteristica implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.ProductoCaracteristica[ idProductoCaracteristica=" + idProductoCaracteristica + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.ProductoCaracteristica[ idProductoCaracteristica=" + idProductoCaracteristica + " ]";
     }
-
+    
 }

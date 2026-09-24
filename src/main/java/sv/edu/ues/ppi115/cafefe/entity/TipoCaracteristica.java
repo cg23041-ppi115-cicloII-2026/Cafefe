@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -16,14 +17,15 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "tipo_caracteristica")
+@Table(name = "tipo_caracteristica", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "TipoCaracteristica.findAll", query = "SELECT t FROM TipoCaracteristica t"),
     @NamedQuery(name = "TipoCaracteristica.findByNombre", query = "SELECT t FROM TipoCaracteristica t WHERE t.nombre = :nombre"),
@@ -35,19 +37,23 @@ public class TipoCaracteristica implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_tipo_caracteristica")
+    @NotNull
+    @Lob
+    @Column(name = "id_tipo_caracteristica", nullable = false)
     private UUID idTipoCaracteristica;
     @Size(max = 155)
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 155)
     private String nombre;
-    @Column(name = "expresion_regular")
+    @Size(max = 2147483647)
+    @Column(name = "expresion_regular", length = 2147483647)
     private String expresionRegular;
     @Column(name = "activo")
     private Boolean activo;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @OneToMany(mappedBy = "idTipoCaracteristica", fetch = FetchType.LAZY)
-    private Collection<Caracteristica> caracteristicaCollection;
+    private List<Caracteristica> caracteristicaList;
 
     public TipoCaracteristica() {
     }
@@ -96,12 +102,12 @@ public class TipoCaracteristica implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Collection<Caracteristica> getCaracteristicaCollection() {
-        return caracteristicaCollection;
+    public List<Caracteristica> getCaracteristicaList() {
+        return caracteristicaList;
     }
 
-    public void setCaracteristicaCollection(Collection<Caracteristica> caracteristicaCollection) {
-        this.caracteristicaCollection = caracteristicaCollection;
+    public void setCaracteristicaList(List<Caracteristica> caracteristicaList) {
+        this.caracteristicaList = caracteristicaList;
     }
 
     @Override
@@ -126,7 +132,7 @@ public class TipoCaracteristica implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.TipoCaracteristica[ idTipoCaracteristica=" + idTipoCaracteristica + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.TipoCaracteristica[ idTipoCaracteristica=" + idTipoCaracteristica + " ]";
     }
     
 }

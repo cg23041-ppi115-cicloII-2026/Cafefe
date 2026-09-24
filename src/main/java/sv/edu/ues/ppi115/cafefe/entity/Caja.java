@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -16,7 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,11 +25,10 @@ import java.util.UUID;
  * @author 659684
  */
 @Entity
-@Table(name = "caja")
+@Table(name = "caja", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Caja.findAll", query = "SELECT c FROM Caja c"),
     @NamedQuery(name = "Caja.findByNombre", query = "SELECT c FROM Caja c WHERE c.nombre = :nombre"),
-    @NamedQuery(name = "Caja.findByIdCaja", query = "SELECT c FROM Caja c WHERE c.idCaja = :idCaja"),
     @NamedQuery(name = "Caja.findByActivo", query = "SELECT c FROM Caja c WHERE c.activo = :activo"),
     @NamedQuery(name = "Caja.findByObservaciones", query = "SELECT c FROM Caja c WHERE c.observaciones = :observaciones")})
 public class Caja implements Serializable {
@@ -37,18 +37,19 @@ public class Caja implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "id_caja")
+    @Lob
+    @Column(name = "id_caja", nullable = false)
     private UUID idCaja;
     @Size(max = 155)
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 155)
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
     @Size(max = 2147483647)
-    @Column(name = "observaciones")
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @OneToMany(mappedBy = "idCaja", fetch = FetchType.LAZY)
-    private Collection<Factura> facturaCollection;
+    private List<Factura> facturaList;
 
     public Caja() {
     }
@@ -89,12 +90,12 @@ public class Caja implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Collection<Factura> getFacturaCollection() {
-        return facturaCollection;
+    public List<Factura> getFacturaList() {
+        return facturaList;
     }
 
-    public void setFacturaCollection(Collection<Factura> facturaCollection) {
-        this.facturaCollection = facturaCollection;
+    public void setFacturaList(List<Factura> facturaList) {
+        this.facturaList = facturaList;
     }
 
     @Override
@@ -119,7 +120,7 @@ public class Caja implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.Caja[ idCaja=" + idCaja + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.Caja[ idCaja=" + idCaja + " ]";
     }
     
 }

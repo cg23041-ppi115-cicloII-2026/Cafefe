@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -18,7 +19,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -26,11 +27,10 @@ import java.util.UUID;
  * @author 659684
  */
 @Entity
-@Table(name = "caracteristica")
+@Table(name = "caracteristica", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Caracteristica.findAll", query = "SELECT c FROM Caracteristica c"),
     @NamedQuery(name = "Caracteristica.findByNombre", query = "SELECT c FROM Caracteristica c WHERE c.nombre = :nombre"),
-    @NamedQuery(name = "Caracteristica.findByIdCaracteristica", query = "SELECT c FROM Caracteristica c WHERE c.idCaracteristica = :idCaracteristica"),
     @NamedQuery(name = "Caracteristica.findByActivo", query = "SELECT c FROM Caracteristica c WHERE c.activo = :activo"),
     @NamedQuery(name = "Caracteristica.findByObservaciones", query = "SELECT c FROM Caracteristica c WHERE c.observaciones = :observaciones")})
 public class Caracteristica implements Serializable {
@@ -39,21 +39,22 @@ public class Caracteristica implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "id_caracteristica")
+    @Lob
+    @Column(name = "id_caracteristica", nullable = false)
     private UUID idCaracteristica;
     @Size(max = 155)
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 155)
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
     @Size(max = 2147483647)
-    @Column(name = "observaciones")
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @JoinColumn(name = "id_tipo_caracteristica", referencedColumnName = "id_tipo_caracteristica")
     @ManyToOne(fetch = FetchType.LAZY)
     private TipoCaracteristica idTipoCaracteristica;
     @OneToMany(mappedBy = "idCaracteristica", fetch = FetchType.LAZY)
-    private Collection<ProductoCaracteristica> productoCaracteristicaCollection;
+    private List<ProductoCaracteristica> productoCaracteristicaList;
 
     public Caracteristica() {
     }
@@ -102,12 +103,12 @@ public class Caracteristica implements Serializable {
         this.idTipoCaracteristica = idTipoCaracteristica;
     }
 
-    public Collection<ProductoCaracteristica> getProductoCaracteristicaCollection() {
-        return productoCaracteristicaCollection;
+    public List<ProductoCaracteristica> getProductoCaracteristicaList() {
+        return productoCaracteristicaList;
     }
 
-    public void setProductoCaracteristicaCollection(Collection<ProductoCaracteristica> productoCaracteristicaCollection) {
-        this.productoCaracteristicaCollection = productoCaracteristicaCollection;
+    public void setProductoCaracteristicaList(List<ProductoCaracteristica> productoCaracteristicaList) {
+        this.productoCaracteristicaList = productoCaracteristicaList;
     }
 
     @Override
@@ -132,7 +133,7 @@ public class Caracteristica implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.Caracteristica[ idCaracteristica=" + idCaracteristica + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.Caracteristica[ idCaracteristica=" + idCaracteristica + " ]";
     }
     
 }

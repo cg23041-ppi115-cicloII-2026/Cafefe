@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -18,14 +19,15 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "empleado_rol")
+@Table(name = "empleado_rol", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "EmpleadoRol.findAll", query = "SELECT e FROM EmpleadoRol e"),
     @NamedQuery(name = "EmpleadoRol.findByActivo", query = "SELECT e FROM EmpleadoRol e WHERE e.activo = :activo"),
@@ -36,25 +38,24 @@ public class EmpleadoRol implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    
-    @Column(name = "id_empleado_rol")
+    @Lob
+    @Column(name = "id_empleado_rol", nullable = false)
     private UUID idEmpleadoRol;
-    
-    @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Empleado idEmpleado;
     @Column(name = "activo")
     private Boolean activo;
     @Size(max = 2147483647)
-    @Column(name = "observaciones")
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
+    @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Empleado idEmpleado;
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol")
     @ManyToOne(fetch = FetchType.LAZY)
     private Rol idRol;
     @OneToMany(mappedBy = "idEmpleadoRol", fetch = FetchType.LAZY)
-    private Collection<Factura> facturaCollection;
+    private List<Factura> facturaList;
     @OneToMany(mappedBy = "idEmpleadoRol", fetch = FetchType.LAZY)
-    private Collection<Orden> ordenCollection;
+    private List<Orden> ordenList;
 
     public EmpleadoRol() {
     }
@@ -69,14 +70,6 @@ public class EmpleadoRol implements Serializable {
 
     public void setIdEmpleadoRol(UUID idEmpleadoRol) {
         this.idEmpleadoRol = idEmpleadoRol;
-    }
-
-    public Empleado getIdEmpleado() {
-        return idEmpleado;
-    }
-
-    public void setIdEmpleado(Empleado idEmpleado) {
-        this.idEmpleado = idEmpleado;
     }
 
     public Boolean getActivo() {
@@ -95,6 +88,14 @@ public class EmpleadoRol implements Serializable {
         this.observaciones = observaciones;
     }
 
+    public Empleado getIdEmpleado() {
+        return idEmpleado;
+    }
+
+    public void setIdEmpleado(Empleado idEmpleado) {
+        this.idEmpleado = idEmpleado;
+    }
+
     public Rol getIdRol() {
         return idRol;
     }
@@ -103,20 +104,20 @@ public class EmpleadoRol implements Serializable {
         this.idRol = idRol;
     }
 
-    public Collection<Factura> getFacturaCollection() {
-        return facturaCollection;
+    public List<Factura> getFacturaList() {
+        return facturaList;
     }
 
-    public void setFacturaCollection(Collection<Factura> facturaCollection) {
-        this.facturaCollection = facturaCollection;
+    public void setFacturaList(List<Factura> facturaList) {
+        this.facturaList = facturaList;
     }
 
-    public Collection<Orden> getOrdenCollection() {
-        return ordenCollection;
+    public List<Orden> getOrdenList() {
+        return ordenList;
     }
 
-    public void setOrdenCollection(Collection<Orden> ordenCollection) {
-        this.ordenCollection = ordenCollection;
+    public void setOrdenList(List<Orden> ordenList) {
+        this.ordenList = ordenList;
     }
 
     @Override
@@ -141,7 +142,7 @@ public class EmpleadoRol implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.EmpleadoRol[ idEmpleadoRol=" + idEmpleadoRol + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.EmpleadoRol[ idEmpleadoRol=" + idEmpleadoRol + " ]";
     }
     
 }

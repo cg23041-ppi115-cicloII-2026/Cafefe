@@ -10,21 +10,25 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+
 /**
  *
  * @author 659684
  */
 @Entity
-@Table(name = "orden_producto")
+@Table(name = "orden_producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "OrdenProducto.findAll", query = "SELECT o FROM OrdenProducto o"),
     @NamedQuery(name = "OrdenProducto.findByPrecio", query = "SELECT o FROM OrdenProducto o WHERE o.precio = :precio"),
@@ -34,15 +38,18 @@ public class OrdenProducto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "id_orden_producto")
+    @NotNull
+    @Lob
+    @Column(name = "id_orden_producto", nullable = false)
     private UUID idOrdenProducto;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "precio")
+    @Column(name = "precio", precision = 8, scale = 2)
     private BigDecimal precio;
-    @Column(name = "observaciones")
+    @Size(max = 2147483647)
+    @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @OneToMany(mappedBy = "idOrdenProducto", fetch = FetchType.LAZY)
-    private Collection<FacturaOrdenProducto> facturaOrdenProductoCollection;
+    private List<FacturaOrdenProducto> facturaOrdenProductoList;
     @JoinColumn(name = "id_orden", referencedColumnName = "id_orden")
     @ManyToOne(fetch = FetchType.LAZY)
     private Orden idOrden;
@@ -81,12 +88,12 @@ public class OrdenProducto implements Serializable {
         this.observaciones = observaciones;
     }
 
-    public Collection<FacturaOrdenProducto> getFacturaOrdenProductoCollection() {
-        return facturaOrdenProductoCollection;
+    public List<FacturaOrdenProducto> getFacturaOrdenProductoList() {
+        return facturaOrdenProductoList;
     }
 
-    public void setFacturaOrdenProductoCollection(Collection<FacturaOrdenProducto> facturaOrdenProductoCollection) {
-        this.facturaOrdenProductoCollection = facturaOrdenProductoCollection;
+    public void setFacturaOrdenProductoList(List<FacturaOrdenProducto> facturaOrdenProductoList) {
+        this.facturaOrdenProductoList = facturaOrdenProductoList;
     }
 
     public Orden getIdOrden() {
@@ -127,7 +134,7 @@ public class OrdenProducto implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.edu.ues.ppi115.cafefe.OrdenProducto[ idOrdenProducto=" + idOrdenProducto + " ]";
+        return "sv.edu.ues.ppi115.cafefe.entity.OrdenProducto[ idOrdenProducto=" + idOrdenProducto + " ]";
     }
     
 }
