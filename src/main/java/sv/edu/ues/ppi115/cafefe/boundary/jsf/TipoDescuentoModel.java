@@ -1,65 +1,58 @@
 package sv.edu.ues.ppi115.cafefe.boundary.jsf;
 
-import java.io.Serializable;
-import java.util.List;
-import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.faces.view.ViewScoped;
-import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoDAO;
+import java.io.Serializable;
+import java.util.UUID;
+import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoRepository;
 import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
 
+/**
+ * reutiliza AbstractModel (CRUD generico con ESTADO_CRUD) y TipoDescuentoDAO.
+ */
 @Named("tipoDescuentoModel")
 @ViewScoped
-public class TipoDescuentoModel implements Serializable {
+public class TipoDescuentoModel extends AbstractModel<TipoDescuento, UUID> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Inject
-    private TipoDescuentoDAO dao;
+    private TipoDescuentoRepository tipoDescuentoDAO;
 
-    private TipoDescuento registro;
-    private List<TipoDescuento> lista;
-
-    @PostConstruct
-    public void init() {
-        this.limpiar();
-        this.cargarLista();
+    @Override
+    public DefaultDAO<TipoDescuento, UUID> getDao() {
+        return tipoDescuentoDAO;
     }
 
-    public void cargarLista() {
-        if (dao != null) {
-            this.lista = dao.findAll();
+    @Override
+    public TipoDescuento instanciarRegistro() {
+        // Siempre con id nuevo: el PK es NOT NULL en la base de datos
+        TipoDescuento r = new TipoDescuento(UUID.randomUUID());
+        r.setActivo(Boolean.TRUE);
+        r.setObservaciones("");
+        r.setDescuentoMaximo(0);
+        return r;
+    }
+
+    @Override
+    public TipoDescuento getRegistroById(Object id) {
+        if (id != null && this.registros != null && !this.registros.isEmpty()) {
+            UUID busca = (UUID) id;
+            return this.registros.stream()
+                    .filter(r -> r.getIdTipoDescuento().equals(busca))
+                    .findFirst()
+                    .orElse(null);
         }
+        return null;
     }
 
-    public void guardar() {
-        if (this.registro != null && dao != null) {
-            if (this.registro.getIdTipoDescuento() == null) {
-                dao.crear(this.registro); // Crea nuevo registro
-            } else {
-                dao.modificar(this.registro); // Actualiza si ya tiene ID
-            }
-            this.limpiar();
-            this.cargarLista();
+    @Override
+    public Object getIdByRegistro(TipoDescuento dato) {
+        if (dato != null) {
+            return dato.getIdTipoDescuento();
         }
+        return null;
     }
-
-    public void seleccionar(TipoDescuento seleccionado) {
-        this.registro = seleccionado; // Carga el registro en el formulario para editar
-    }
-
-    public void eliminar(TipoDescuento seleccionado) {
-        if (seleccionado != null && dao != null) {
-            dao.eliminar(seleccionado);
-            this.limpiar();
-            this.cargarLista();
-        }
-    }
-
-    public void limpiar() {
-        this.registro = new TipoDescuento();
-    }
-
-    public TipoDescuento getRegistro() { return registro; }
-    public void setRegistro(TipoDescuento registro) { this.registro = registro; }
-    public List<TipoDescuento> getLista() { return lista; }
 }

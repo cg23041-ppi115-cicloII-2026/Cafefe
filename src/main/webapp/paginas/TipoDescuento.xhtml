@@ -1,54 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-    <h:head>
-        <title>Gestión de Tipos de Descuento</title>
-    </h:head>
-    <h:body>
-        <h2>Administración de Tipos de Descuento</h2>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/plantillas/general.xhtml">
 
-        <!-- Formulario de Entrada / Edición -->
-        <h:form id="frmTipoDescuento">
-            <h:inputHidden value="#{tipoDescuentoModel.registro.idTipoDescuento}" />
+    <ui:define name="titulo">Gestión de Tipos de Descuento</ui:define>
 
-            <h:panelGrid columns="3" cellpadding="5">
-                <h:outputLabel for="nombre" value="Nombre del Descuento:" />
-                <h:inputText id="nombre" value="#{tipoDescuentoModel.registro.nombre}" required="true" />
-                <h:message for="nombre" style="color:red" />
+    <ui:define name="contenido">
+        <!-- Formulario 1: Entrada y Edición -->
+        <div class="card">
+            <h2>Administración de Tipos de Descuento</h2>
 
-                <h:panelGroup>
-                    <h:commandButton value="Guardar" action="#{tipoDescuentoModel.guardar}" />
-                    <h:commandButton value="Nuevo / Limpiar" action="#{tipoDescuentoModel.limpiar}" immediate="true" />
-                </h:panelGroup>
-            </h:panelGrid>
-        </h:form>
+            <h:form id="frmTipoDescuento">
+                <h:panelGrid columns="3" cellpadding="5">
+                    <h:outputLabel for="nombre" value="Nombre del Descuento:" />
+                    <p:inputText id="nombre" value="#{tipoDescuentoModel.registro.nombre}" required="true" />
+                    <p:messages for="nombre" />
 
-        <hr/>
+                    <h:outputLabel for="descuentoMaximo" value="Descuento Máximo (%):" />
+                    <p:inputText id="descuentoMaximo" value="#{tipoDescuentoModel.registro.descuentoMaximo}"
+                                 required="true" size="6" />
+                    <p:messages for="descuentoMaximo" />
 
-        <!-- Tabla de Datos con Acciones CRUD -->
-        <h3>Lista de Tipos de Descuento</h3>
-        <h:form id="frmTablaDescuento">
-            <h:dataTable value="#{tipoDescuentoModel.lista}" var="item" border="1" cellpadding="5">
-                <h:column>
-                    <f:facet name="header">ID</f:facet>
-                    #{item.idTipoDescuento}
-                </h:column>
+                    <h:outputLabel for="observaciones" value="Observaciones:" />
+                    <p:inputTextarea id="observaciones" value="#{tipoDescuentoModel.registro.observaciones}"
+                                     rows="3" cols="50" />
+                    <p:messages for="observaciones" />
 
-                <h:column>
-                    <f:facet name="header">Nombre</f:facet>
-                    #{item.nombre}
-                </h:column>
+                    <h:outputLabel for="activo" value="Estado:" />
+                    <p:selectBooleanCheckbox id="activo" value="#{tipoDescuentoModel.registro.activo}"
+                                             itemLabel="Activo" />
+                    <h:panelGroup />
+                </h:panelGrid>
 
-                <h:column>
-                    <f:facet name="header">Acciones</f:facet>
-                    <h:commandButton value="Editar" action="#{tipoDescuentoModel.seleccionar(item)}" />
+                <div style="margin-top: 10px;">
+                    <!-- AJAX: actualiza formulario y tabla sin recargar la página -->
+                    <p:commandButton value="Guardar" action="#{tipoDescuentoModel.btnGuardarHandler}"
+                                     update="frmTipoDescuento frmTablaDescuento" styleClass="btn btn-primary" />
                     &#160;
-                    <h:commandButton value="Eliminar" action="#{tipoDescuentoModel.eliminar(item)}" 
-                                     onclick="return confirm('¿Está seguro de eliminar este registro?');" />
-                </h:column>
-            </h:dataTable>
-        </h:form>
-    </h:body>
-</html>
+                    <p:commandButton value="Nuevo / Limpiar" action="#{tipoDescuentoModel.btnNuevoHandler}"
+                                     immediate="true" update="frmTipoDescuento" styleClass="btn" />
+                </div>
+            </h:form>
+        </div>
+
+        <!-- Formulario 2: Tabla con todos los campos de la entidad -->
+        <div class="card">
+            <h3>Lista de Tipos de Descuento</h3>
+            <h:form id="frmTablaDescuento">
+                <p:dataTable value="#{tipoDescuentoModel.registros}" var="item" styleClass="tabla"
+                             selectionMode="single" selection="#{tipoDescuentoModel.seleccion}"
+                             rowKey="#{item.idTipoDescuento}"
+                             paginator="true" rows="10" emptyMessage="No hay registros">
+                    <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
+                    <p:ajax event="rowSelect" update="botonera" />
+                    <p:ajax event="rowUnselect" update="botonera" />
+                    <p:column headerText="ID" style="font-size: 0.8em;">
+                        #{item.idTipoDescuento}
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        #{item.nombre}
+                    </p:column>
+                    <p:column headerText="Descuento Máximo">
+                        #{item.descuentoMaximo}
+                    </p:column>
+                    <p:column headerText="Estado">
+                        #{item.activo ? 'ACTIVO' : 'INACTIVO'}
+                    </p:column>
+                    <p:column headerText="Observaciones">
+                        #{item.observaciones}
+                    </p:column>
+                </p:dataTable>
+
+                <!-- Botones FUERA de la tabla, debajo -->
+                <h:panelGroup id="botonera" layout="block" style="margin-top: 12px;">
+                    <p:commandButton value="Editar" action="#{tipoDescuentoModel.btnEditarHandler}"
+                                     disabled="#{empty tipoDescuentoModel.seleccion}"
+                                     update="frmTipoDescuento" styleClass="btn btn-edit" />
+                    &#160;
+                    <p:commandButton value="Eliminar" action="#{tipoDescuentoModel.btnEliminarHandler}"
+                                     disabled="#{empty tipoDescuentoModel.seleccion}"
+                                     update="frmTablaDescuento frmTipoDescuento"
+                                     onclick="return confirm('¿Está seguro de eliminar este registro?');" styleClass="btn btn-danger">
+                        <f:setPropertyActionListener value="#{tipoDescuentoModel.seleccion}"
+                                                     target="#{tipoDescuentoModel.registro}" />
+                    </p:commandButton>
+                    &#160;
+                    <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                  rendered="#{empty tipoDescuentoModel.seleccion}"
+                                  style="color:#777; font-style: italic;" />
+                </h:panelGroup>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

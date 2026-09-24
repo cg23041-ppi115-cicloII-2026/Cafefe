@@ -7,12 +7,12 @@ import sv.edu.ues.ppi115.cafefe.entity.TipoProducto;
 import java.util.UUID;
 
 @Stateless
-public class TipoProductoDAO extends DefaultDAO<TipoProducto, UUID> {
+public class TipoProductoRepository extends DefaultDAO<TipoProducto, UUID> {
 
     @PersistenceContext(unitName = "cafefe-PU")
     private EntityManager em;
 
-    public TipoProductoDAO() {
+    public TipoProductoRepository() {
         super(TipoProducto.class);
     }
 
