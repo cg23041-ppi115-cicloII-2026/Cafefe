@@ -22,7 +22,7 @@ import java.util.Map;
  * Uso en la vista XHTML:
  * <pre>
  *   &lt;h:selectOneMenu value="#{sesionUsuario.localidad}" onchange="this.form.submit()"&gt;
- *       &lt;f:selectItems value="#{sesionUsuario.listaidiomas}" /&gt;
+ *       &lt;f:selectItems value="#{sesionUsuario.listaIdiomas}" /&gt;
  *       &lt;f:valueChangeListener type="..."/&gt;  (o p:ajax)
  *   &lt;/h:selectOneMenu&gt;
  * </pre>
@@ -41,12 +41,12 @@ public class SesionUsuario implements Serializable {
      * valor = objeto Locale correspondiente. Instanciado como LinkedHashMap
      * para conservar el orden de inserción.
      */
-    private static Map<String, Object> listaidiomas = new LinkedHashMap<>();
+    private static Map<String, Object> listaIdiomas = new LinkedHashMap<>();
     static {
-        listaidiomas.put("Español", Locale.forLanguageTag("es"));
-        listaidiomas.put("English", Locale.ENGLISH);
-        listaidiomas.put("Português", Locale.forLanguageTag("pt"));
-        listaidiomas.put("Français", Locale.FRENCH);
+        listaIdiomas.put("Español", Locale.forLanguageTag("es"));
+        listaIdiomas.put("English", Locale.ENGLISH);
+        listaIdiomas.put("Português", Locale.forLanguageTag("pt"));
+        listaIdiomas.put("Français", Locale.FRENCH);
     }
 
     /** Localidad actual escogida por el usuario (ej: "es", "en", "pt", "fr"). */
@@ -64,13 +64,13 @@ public class SesionUsuario implements Serializable {
         aplicarLocale(getLocale());
     }
 
-    public Map<String, Object> getListaidiomas() {
-        return listaidiomas;
+    public Map<String, Object> getListaIdiomas() {
+        return listaIdiomas;
     }
 
-    public void setListaidiomas(Map<String, Object> listaidiomas) {
-        if (listaidiomas != null) {
-            SesionUsuario.listaidiomas = listaidiomas;
+    public void setListaIdiomas(Map<String, Object> listaIdiomas) {
+        if (listaIdiomas != null) {
+            SesionUsuario.listaIdiomas = listaIdiomas;
         }
     }
 
@@ -92,7 +92,7 @@ public class SesionUsuario implements Serializable {
             return;
         }
         String nuevoValor = e.getNewValue().toString();
-        for (Map.Entry<String, Object> entry : listaidiomas.entrySet()) {
+        for (Map.Entry<String, Object> entry : listaIdiomas.entrySet()) {
             if (entry.getValue().toString().equals(nuevoValor)) {
                 this.localidad = validarLocalidad(nuevoValor);
                 aplicarLocale((Locale) entry.getValue());
@@ -130,12 +130,12 @@ public class SesionUsuario implements Serializable {
     }
 
     /**
-     * Solo acepta localidades presentes en listaidiomas;
+     * Solo acepta localidades presentes en listaIdiomas;
      * cualquier otro valor regresa al defecto.
      */
     private String validarLocalidad(String valor) {
         if (valor != null) {
-            for (Map.Entry<String, Object> entry : listaidiomas.entrySet()) {
+            for (Map.Entry<String, Object> entry : listaIdiomas.entrySet()) {
                 if (entry.getValue().toString().equals(valor) || entry.getKey().equals(valor)) {
                     return entry.getValue().toString();
                 }
