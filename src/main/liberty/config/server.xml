@@ -4,7 +4,14 @@
         <feature>jakartaee-11.0</feature>
     </featureManager>
     
-   <webApplication id="cafefe" location="cafefe-1.0-SNAPSHOT.war" contextRoot="cafefe" />
+   <webApplication id="cafefe" location="cafefe-1.0-SNAPSHOT.war" contextRoot="cafefe">
+        <classloader privateLibraryRef="primefacesLib"/>
+    </webApplication>
+
+    <!-- PrimeFaces como libreria del servidor (fuera del WAR para que pese menos) -->
+    <library id="primefacesLib">
+        <fileset dir="C:/Users/659684/.m2/repository/org/primefaces/primefaces/15.0.0" includes="primefaces-15.0.0-jakarta.jar"/>
+    </library>
 
     <!-- Registro de usuarios básico para satisfacer la regla de ORB/EJB -->
     <basicRegistry id="basic" realm="BasicRealm">

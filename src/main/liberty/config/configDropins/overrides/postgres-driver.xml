@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
     <library id="postgresLib">
-        <fileset dir="${user.home}/.m2/repository/org/postgresql/postgresql/42.7.3" includes="postgresql-42.7.3.jar"/>
+        <fileset dir="C:/Users/659684/.m2/repository/org/postgresql/postgresql/42.7.3" includes="postgresql-42.7.3.jar"/>
     </library>
 
     <jdbcDriver id="postgresDriver" libraryRef="postgresLib"/>
