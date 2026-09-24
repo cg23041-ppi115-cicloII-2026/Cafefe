@@ -1,15 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
--->
+<?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title><ui:insert name="titulo">Cafefe</ui:insert></title>
+        <h:outputStylesheet name="css/default.css"/>
+        <h:outputStylesheet name="css/cssLayout.css"/>
+    </h:head>
+
+    <h:body>
+
+        <!-- Encabezado: logo + titulo de la pagina -->
+        <div id="top">
+            <h:graphicImage library="imagenes" name="loguitoMientras.png"
+                            alt="Cafefe" styleClass="logo" />
+            <div class="titulo">
+                <h1><ui:insert name="titulo">NO PUSISTE LEYENDA</ui:insert></h1>
+            </div>
+        </div>
+
+        <!-- Menu de navegacion (cada pagina puede redefinirlo con ui:define name="menu") -->
+        <div id="menu">
+            <strong>Menu navegación:</strong>
+            <ui:insert name="menu">
+                <a href="#{request.contextPath}/paginas/TipoProducto.jsf">Tipos de Producto</a>
+                <a href="#{request.contextPath}/paginas/TipoDescuento.jsf">Tipos de Descuento</a>
+            </ui:insert>
+        </div>
+
+        <!-- Contenido principal de cada pagina -->
+        <div id="content">
+            <ui:insert name="contenido">Content</ui:insert>
+        </div>
+
+        <!-- Pie de pagina -->
+        <div id="bottom">
+            todos los derechos reservados 2026 - Cafefe
+            <ui:insert name="extras"/>
+        </div>
+
+    </h:body>
+
 </html>
