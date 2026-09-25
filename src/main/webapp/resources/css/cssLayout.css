@@ -1,8 +1,8 @@
 
 #top {
     position: relative;
-    background-color: #036fab;
-    color: white;
+    background-color: #FFF8F0;
+    color: #4A2C2A;
     padding: 5px;
     margin: 0px 0px 10px 0px;
 }
@@ -71,7 +71,7 @@
 }
 
 #top h1 {
-    color: white;
+    color: #4A2C2A;
     border-bottom: none;
     font-size: 22px;
 }
@@ -82,14 +82,32 @@
 }
 
 #menu {
-    background-color: #ece3a5;
+    background-color: #C08552;
     padding: 8px 10px;
     margin-bottom: 10px;
     border-radius: 6px;
 }
 
 #menu a {
-    margin-right: 18px;
+    display: inline-block;
+    margin-right: 10px;
+    padding: 6px 14px;
+    background-color: #C08552;
+    color: #FFF8F0;
+    text-decoration: none;
+    font-weight: bold;
+    /*border: 1px solid #4A2C2A;*/
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+#menu a:hover {
+    background-color: #4A2C2A;
+    color: #FFF8F0;
+}
+#menu strong{
+    color: #FFF8F0;
+    margin-right: 12px;
 }
 
 /* Columna derecha: barra de navegacion + contenido */
