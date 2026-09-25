@@ -12,7 +12,7 @@ import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
 /**
  * reutiliza AbstractModel (CRUD generico con ESTADO_CRUD) y TipoDescuentoDAO.
  */
-@Named("tipoDescuentoModel")
+@Named
 @ViewScoped
 public class TipoDescuentoModel extends AbstractModel<TipoDescuento, UUID> implements Serializable {
 
