@@ -85,16 +85,91 @@
     background-color: #ece3a5;
     padding: 8px 10px;
     margin-bottom: 10px;
+    border-radius: 6px;
 }
 
 #menu a {
     margin-right: 18px;
 }
 
+/* Columna derecha: barra de navegacion + contenido */
+#columna {
+    flex: 1;
+    min-width: 0;      /* evita que las tablas anchas desborden el contenedor */
+    display: flex;
+    flex-direction: column;
+}
+
 #content {
     background-color: #dddddd;
     padding: 10px;
     min-height: 250px;
+    flex: 1;           /* crece en vertical hasta llenar la columna */
+}
+
+/* ---------- Cuerpo: menu lateral izquierdo + contenido ---------- */
+
+#main {
+    display: flex;
+    align-items: stretch;   /* el menu lateral se estira a la altura del contenido */
+    gap: 10px;
+}
+
+#sidebar {
+    width: 240px;           /* mas ancho que el #left original (150px) */
+    box-sizing: border-box;
+    flex-shrink: 0;         /* nunca se encoge */
+    background-color: #036fab;
+    padding: 10px;
+    border-radius: 6px;
+    min-height: 250px;
+}
+
+.sidebar-titulo {
+    color: white;
+    font-weight: bold;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* ---- Contenedores/grupos del menu lateral ---- */
+
+.sidebar-grupo {
+    background-color: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.sidebar-grupo-titulo {
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.30);
+}
+
+#sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+#sidebar a:last-child {
+    margin-bottom: 0;
+}
+
+#sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+    text-decoration: none;
+    color: black;
 }
 
 /* ---------- Tarjetas, tablas y botones (compartido por todas las paginas) ---------- */

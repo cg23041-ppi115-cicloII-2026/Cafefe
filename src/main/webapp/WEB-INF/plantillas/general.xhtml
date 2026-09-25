@@ -22,18 +22,39 @@
             </div>
         </div>
 
-        <!-- Menu de navegacion (cada pagina puede redefinirlo con ui:define name="menu") -->
-        <div id="menu">
-            <strong>Menu navegación:</strong>
-            <ui:insert name="menu">
-                <a href="#{request.contextPath}/paginas/TipoProducto.jsf">Tipos de Producto</a>
-                <a href="#{request.contextPath}/paginas/TipoDescuento.jsf">Tipos de Descuento</a>
-            </ui:insert>
-        </div>
+        <!-- Cuerpo: menu lateral izquierdo -->
+        <div id="main">
 
-        <!-- Contenido principal de cada pagina -->
-        <div id="content">
-            <ui:insert name="contenido">Content</ui:insert>
+            <!-- Menu lateral: un solo cajon con los enlaces -->
+            <div id="sidebar">
+                <div class="sidebar-titulo">Navegación</div>
+                <ui:insert name="menuLateral">
+
+                    <div class="sidebar-grupo">
+                        <div class="sidebar-grupo-titulo">Menú</div>
+                        <a href="#{request.contextPath}/paginas/TipoProducto.jsf">Tipos de Producto</a>
+                        <a href="#{request.contextPath}/paginas/TipoDescuento.jsf">Tipos de Descuento</a>
+                    </div>
+
+                </ui:insert>
+            </div>
+
+            <!-- Columna derecha: barra de navegacion (mas corta) + contenido -->
+            <div id="columna">
+
+                <!-- Barra de navegacion superior: ahora solo cubre el contenido -->
+                <div id="menu">
+                    <ui:insert name="menu">
+                        <a href="#{request.contextPath}/paginas/TipoProducto.jsf">Tipos de Producto</a>
+                        <a href="#{request.contextPath}/paginas/TipoDescuento.jsf">Tipos de Descuento</a>
+                    </ui:insert>
+                </div>
+
+                <!-- Contenido principal de cada pagina -->
+                <div id="content">
+                    <ui:insert name="contenido">Content</ui:insert>
+                </div>
+            </div>
         </div>
 
         <!-- Pie de pagina -->
