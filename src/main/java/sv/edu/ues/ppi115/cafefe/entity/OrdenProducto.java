@@ -31,7 +31,9 @@ import java.util.UUID;
 @NamedQueries({
     @NamedQuery(name = "OrdenProducto.findAll", query = "SELECT o FROM OrdenProducto o"),
     @NamedQuery(name = "OrdenProducto.findByPrecio", query = "SELECT o FROM OrdenProducto o WHERE o.precio = :precio"),
-    @NamedQuery(name = "OrdenProducto.findByObservaciones", query = "SELECT o FROM OrdenProducto o WHERE o.observaciones = :observaciones")})
+    @NamedQuery(name = "OrdenProducto.findByObservaciones", query = "SELECT o FROM OrdenProducto o WHERE o.observaciones = :observaciones"),
+    @NamedQuery(name = "OrdenProducto.findByOrden", query = "SELECT o FROM OrdenProducto o WHERE o.idOrden.idOrden = :idOrden"),
+    @NamedQuery(name = "OrdenProducto.findByProducto", query = "SELECT o FROM OrdenProducto o WHERE o.idProducto.idProducto = :idProducto")})
 public class OrdenProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
