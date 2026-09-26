@@ -31,7 +31,8 @@ import java.util.UUID;
     @NamedQuery(name = "Caracteristica.findAll", query = "SELECT c FROM Caracteristica c"),
     @NamedQuery(name = "Caracteristica.findByNombre", query = "SELECT c FROM Caracteristica c WHERE c.nombre = :nombre"),
     @NamedQuery(name = "Caracteristica.findByActivo", query = "SELECT c FROM Caracteristica c WHERE c.activo = :activo"),
-    @NamedQuery(name = "Caracteristica.findByObservaciones", query = "SELECT c FROM Caracteristica c WHERE c.observaciones = :observaciones")})
+    @NamedQuery(name = "Caracteristica.findByObservaciones", query = "SELECT c FROM Caracteristica c WHERE c.observaciones = :observaciones"),
+    @NamedQuery(name = "Caracteristica.findByTipoCaracteristica", query = "SELECT c FROM Caracteristica c WHERE c.idTipoCaracteristica.idTipoCaracteristica = :idTipoCaracteristica")})
 public class Caracteristica implements Serializable {
 
     private static final long serialVersionUID = 1L;
