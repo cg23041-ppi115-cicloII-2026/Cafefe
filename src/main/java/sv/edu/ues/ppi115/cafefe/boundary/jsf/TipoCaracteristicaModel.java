@@ -20,11 +20,11 @@ public class TipoCaracteristicaModel extends AbstractModel<TipoCaracteristica, U
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private TipoCaracteristicaRepository tipoCaracteristicaDAO;
+    private TipoCaracteristicaRepository tipoCaracteristicaRepository;
 
     @Override
     public DefaultDAO<TipoCaracteristica, UUID> getDao() {
-        return tipoCaracteristicaDAO;
+        return tipoCaracteristicaRepository;
     }
 
     @Override

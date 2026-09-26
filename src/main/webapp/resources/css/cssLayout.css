@@ -137,7 +137,7 @@
     width: 240px;           /* mas ancho que el #left original (150px) */
     box-sizing: border-box;
     flex-shrink: 0;         /* nunca se encoge */
-    background-color: #036fab;
+    background-color: #4A2C2A;  /* cafe oscuro (paleta de Tania) */
     padding: 10px;
     border-radius: 6px;
     min-height: 250px;
