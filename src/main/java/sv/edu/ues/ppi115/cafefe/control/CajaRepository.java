@@ -11,7 +11,7 @@ import sv.edu.ues.ppi115.cafefe.entity.Caja;
 @LocalBean
 public class CajaRepository extends DefaultDAO<Caja, UUID> {
 
-    @PersistenceContext(unitName = "Cafefe-PU")
+    @PersistenceContext(unitName = "cafefe-PU")
     private EntityManager em;
 
     public CajaRepository() {

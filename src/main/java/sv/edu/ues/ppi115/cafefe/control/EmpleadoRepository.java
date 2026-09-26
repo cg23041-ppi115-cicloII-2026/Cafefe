@@ -11,7 +11,7 @@ import java.util.UUID;
 @LocalBean
 public class EmpleadoRepository extends DefaultDAO<Empleado, UUID> {
 
-    @PersistenceContext(unitName = "Cafefe-PU")
+    @PersistenceContext(unitName = "cafefe-PU")
     private EntityManager em;
     
     
