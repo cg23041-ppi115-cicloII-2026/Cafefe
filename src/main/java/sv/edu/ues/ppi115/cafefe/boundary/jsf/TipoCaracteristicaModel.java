@@ -49,10 +49,7 @@ public class TipoCaracteristicaModel extends AbstractModel<TipoCaracteristica, U
 
     @Override
     public Object getIdByRegistro(TipoCaracteristica dato) {
-        if (dato != null) {
-            return dato.getIdTipoCaracteristica();
-        }
-        return null;
+        return dato != null ? dato.getIdTipoCaracteristica() : null;
     }
 
 }

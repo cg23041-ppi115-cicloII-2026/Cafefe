@@ -33,7 +33,10 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
 
     @Override
     public OrdenProducto instanciarRegistro() {
-        return new OrdenProducto();
+        // Siempre con id nuevo: el PK es NOT NULL en la base de datos
+        OrdenProducto r = new OrdenProducto(UUID.randomUUID());
+        r.setObservaciones("");
+        return r;
     }
 
     @Override

@@ -16,11 +16,11 @@ public class TipoProductoModel extends AbstractModel<TipoProducto, UUID> impleme
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private TipoProductoRepository tipoProductoDAO;
+    private TipoProductoRepository tipoProductoRepository;
 
     @Override
     public DefaultDAO<TipoProducto, UUID> getDao() {
-        return tipoProductoDAO;
+        return tipoProductoRepository;
     }
 
     @Override
@@ -45,9 +45,6 @@ public class TipoProductoModel extends AbstractModel<TipoProducto, UUID> impleme
 
     @Override
     public Object getIdByRegistro(TipoProducto dato) {
-        if (dato != null) {
-            return dato.getIdTipoProducto();
-        }
-        return null;
+        return dato != null ? dato.getIdTipoProducto() : null;
     }
 }

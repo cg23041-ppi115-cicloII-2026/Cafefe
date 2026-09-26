@@ -10,7 +10,7 @@ import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoRepository;
 import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
 
 /**
- * reutiliza AbstractModel (CRUD generico con ESTADO_CRUD) y TipoDescuentoDAO.
+ * reutiliza AbstractModel (CRUD generico con ESTADO_CRUD) y TipoDescuentoRepository.
  */
 @Named
 @ViewScoped
@@ -19,11 +19,11 @@ public class TipoDescuentoModel extends AbstractModel<TipoDescuento, UUID> imple
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private TipoDescuentoRepository tipoDescuentoDAO;
+    private TipoDescuentoRepository tipoDescuentoRepository;
 
     @Override
     public DefaultDAO<TipoDescuento, UUID> getDao() {
-        return tipoDescuentoDAO;
+        return tipoDescuentoRepository;
     }
 
     @Override
@@ -50,9 +50,6 @@ public class TipoDescuentoModel extends AbstractModel<TipoDescuento, UUID> imple
 
     @Override
     public Object getIdByRegistro(TipoDescuento dato) {
-        if (dato != null) {
-            return dato.getIdTipoDescuento();
-        }
-        return null;
+        return dato != null ? dato.getIdTipoDescuento() : null;
     }
 }

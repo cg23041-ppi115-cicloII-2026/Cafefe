@@ -5,14 +5,20 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
+import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
 import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
 
+/**
+ * Producto: reutiliza AbstractModel (CRUD generico con ESTADO_CRUD) y
+ * agrega filtros opcionales (nombre, activos, rango de precios).
+ */
 @Named
 @ViewScoped
 public class ProductoModel extends AbstractModel<Producto, UUID> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Inject
     private ProductoRepository productoRepository;
@@ -22,17 +28,31 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
     private BigDecimal filtroPrecioMin;
     private BigDecimal filtroPrecioMax;
 
-    public ProductoModel() {
+    @Override
+    public DefaultDAO<Producto, UUID> getDao() {
+        return productoRepository;
     }
 
     @Override
     public Producto instanciarRegistro() {
-        return new Producto();
+        // Siempre con id nuevo: el PK es NOT NULL en la base de datos
+        Producto r = new Producto(UUID.randomUUID());
+        r.setActivo(Boolean.TRUE);
+        r.setComentarios("");
+        r.setPrecioSugerido(BigDecimal.ZERO); // NOT NULL en BD
+        return r;
     }
 
     @Override
     public Producto getRegistroById(Object id) {
-        return productoRepository.findById((UUID) id);
+        if (id != null && this.registros != null && !this.registros.isEmpty()) {
+            UUID busca = (UUID) id;
+            return this.registros.stream()
+                    .filter(r -> r.getIdProducto().equals(busca))
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
     }
 
     @Override
@@ -40,11 +60,7 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
         return dato != null ? dato.getIdProducto() : null;
     }
 
-    @Override
-    public ProductoRepository getDao() {
-        return productoRepository;
-    }
-
+    // ---- Filtros opcionales ----
     public void buscarPorNombre() {
         if (filtroNombre != null && !filtroNombre.isEmpty()) {
             this.registros = productoRepository.findByNombreLike(filtroNombre);
@@ -89,4 +105,3 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
         this.filtroPrecioMax = filtroPrecioMax;
     }
 }
-

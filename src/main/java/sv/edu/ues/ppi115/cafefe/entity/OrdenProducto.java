@@ -51,10 +51,10 @@ public class OrdenProducto implements Serializable {
     @OneToMany(mappedBy = "idOrdenProducto", fetch = FetchType.LAZY)
     private List<FacturaOrdenProducto> facturaOrdenProductoList;
     @JoinColumn(name = "id_orden", referencedColumnName = "id_orden")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Orden idOrden;
     @JoinColumn(name = "id_producto", referencedColumnName = "id_producto")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Producto idProducto;
 
     public OrdenProducto() {

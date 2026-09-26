@@ -7,7 +7,6 @@ package sv.edu.ues.ppi115.cafefe.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -49,10 +48,10 @@ public class ProductoTipoProducto implements Serializable {
     @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @JoinColumn(name = "id_producto", referencedColumnName = "id_producto")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Producto idProducto;
     @JoinColumn(name = "id_tipo_producto", referencedColumnName = "id_tipo_producto")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private TipoProducto idTipoProducto;
 
     public ProductoTipoProducto() {

@@ -18,10 +18,6 @@ public class EmpleadoModel extends AbstractModel<Empleado, UUID> implements Seri
     @Inject
     private EmpleadoRepository empleadoRepository;
 
-    public EmpleadoRepository getRepository() {
-        return empleadoRepository;
-    }
-
     @Override
     public Empleado instanciarRegistro() {
         Empleado r = new Empleado(UUID.randomUUID());
@@ -44,27 +40,12 @@ public class EmpleadoModel extends AbstractModel<Empleado, UUID> implements Seri
 
     @Override
     public Object getIdByRegistro(Empleado dato) {
-        if (dato != null) {
-            return dato.getIdEmpleado();
-        }
-        return null;
-    }
-
-    @Override
-    public void btnNuevoHandler() {
-        super.btnNuevoHandler();
-        this.seleccion = null;
-    }
-
-    @Override
-    public void btnGuardarHandler() {
-        super.btnGuardarHandler();
-        this.seleccion = null;
+        return dato != null ? dato.getIdEmpleado() : null;
     }
 
     @Override
     public DefaultDAO<Empleado, UUID> getDao() {
-       return empleadoRepository;// Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return empleadoRepository;
     }
 }
 

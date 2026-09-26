@@ -1,5 +1,7 @@
 package sv.edu.ues.ppi115.cafefe.boundary.jsf;
 
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.model.SelectItem;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -93,11 +95,16 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
     @Override
     public void btnGuardarHandler() {
         if (this.registro != null) {
+            // Validacion: la relacion necesita producto y tipo elegidos
+            if (this.productoSeleccionado == null || this.tipoSeleccionado == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "Debe elegir el producto y el tipo de producto", null));
+                return; // no se guarda hasta que ambos combos tengan valor
+            }
             // Convierte los UUID elegidos en las entidades reales
-            this.registro.setIdProducto(productoSeleccionado != null
-                    ? productoRepository.findById(productoSeleccionado) : null);
-            this.registro.setIdTipoProducto(tipoSeleccionado != null
-                    ? tipoProductoRepository.findById(tipoSeleccionado) : null);
+            this.registro.setIdProducto(productoRepository.findById(productoSeleccionado));
+            this.registro.setIdTipoProducto(tipoProductoRepository.findById(tipoSeleccionado));
         }
         super.btnGuardarHandler();
     }

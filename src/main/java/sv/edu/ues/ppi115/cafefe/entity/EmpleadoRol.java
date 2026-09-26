@@ -45,10 +45,10 @@ public class EmpleadoRol implements Serializable {
     @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Empleado idEmpleado;
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Rol idRol;
     @OneToMany(mappedBy = "idEmpleadoRol", fetch = FetchType.LAZY)
     private List<Factura> facturaList;
