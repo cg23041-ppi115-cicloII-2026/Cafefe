@@ -57,7 +57,7 @@ public class Descuento implements Serializable {
     @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @JoinColumn(name = "id_tipo_descuento", referencedColumnName = "id_tipo_descuento")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private TipoDescuento idTipoDescuento;
     @OneToMany(mappedBy = "idDescuento", fetch = FetchType.LAZY)
     private List<DescuentoProducto> descuentoProductoList;

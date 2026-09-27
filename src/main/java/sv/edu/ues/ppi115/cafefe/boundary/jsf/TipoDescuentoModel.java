@@ -1,5 +1,7 @@
 package sv.edu.ues.ppi115.cafefe.boundary.jsf;
 
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -51,5 +53,25 @@ public class TipoDescuentoModel extends AbstractModel<TipoDescuento, UUID> imple
     @Override
     public Object getIdByRegistro(TipoDescuento dato) {
         return dato != null ? dato.getIdTipoDescuento() : null;
+    }
+
+    /**
+     * Eliminar con manejo de error: la base de datos tiene claves foraneas
+     * ON DELETE RESTRICT desde descuento, por lo que capturamos la excepcion
+     * para mostrar un mensaje amigable en vez de fallar en silencio en el AJAX.
+     */
+    @Override
+    public void btnEliminarHandler() {
+        try {
+            super.btnEliminarHandler();
+        } catch (Exception e) {
+            // Estado limpio: no dejar el registro apuntando a la fila que no
+            // se pudo borrar (evita un INSERT duplicado en el siguiente Guardar)
+            this.limpiar();
+            this.formVisible = false;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "No se puede eliminar: existen descuentos de este tipo", null));
+        }
     }
 }

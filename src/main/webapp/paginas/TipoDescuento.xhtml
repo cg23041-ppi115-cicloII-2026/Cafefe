@@ -7,87 +7,313 @@
                 xmlns:comp="http://xmlns.jcp.org/jsf/composite/components"
                 template="/WEB-INF/plantillas/general.xhtml">
 
-    <ui:define name="titulo">Gestión de Tipos de Descuento</ui:define>
+    <ui:define name="titulo">Gestión de Descuentos</ui:define>
 
     <ui:define name="contenido">
-        <!-- Formulario 1: Entrada y Edición -->
-        <div class="card">
-            <h2>Administración de Tipos de Descuento</h2>
+        <h:form id="frmPagina">
+            <p:tabView id="tabs">
 
-            <h:form id="frmTipoDescuento">
-                <h:panelGrid columns="3" cellpadding="5">
-                    <h:outputLabel for="nombre" value="Nombre del Descuento:" />
-                    <p:inputText id="nombre" value="#{tipoDescuentoModel.registro.nombre}" required="true" />
-                    <p:messages for="nombre" />
+                <!-- ================= PESTAÑA 1: TIPO DE DESCUENTO ================= -->
+                <p:tab id="tabTipos" title="Tipo de Descuento">
 
-                    <h:outputLabel for="descuentoMaximo" value="Descuento Máximo (%):" />
-                    <p:inputText id="descuentoMaximo" value="#{tipoDescuentoModel.registro.descuentoMaximo}"
-                                 required="true" size="6" />
-                    <p:messages for="descuentoMaximo" />
+                    <p:messages id="msgsTipo" showDetail="false" styleClass="top-messages" />
 
-                    <h:outputLabel for="observaciones" value="Observaciones:" />
-                    <p:inputTextarea id="observaciones" value="#{tipoDescuentoModel.registro.observaciones}"
-                                     rows="3" cols="50" />
-                    <p:messages for="observaciones" />
+                    <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
+                    <div class="card">
+                        <div style="margin-bottom: 10px;">
+                            <p:commandButton value="Nuevo" action="#{tipoDescuentoModel.btnNuevoHandler}"
+                                             update="msgsTipo pnlFormTipo" styleClass="btn btn-primary"
+                                             oncomplete="var e=document.querySelector('[id$=pnlFormTipo]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
+                        </div>
+                        <h3>Lista de Tipos de Descuento</h3>
+                        <p:dataTable id="tblTipos" value="#{tipoDescuentoModel.lazyModel}" var="item" styleClass="tabla"
+                                     lazy="true"
+                                     selectionMode="single" selection="#{tipoDescuentoModel.seleccion}"
+                                     rowKey="#{item.idTipoDescuento}"
+                                     paginator="true" rows="5"
+                                     emptyMessage="No hay registros">
+                            <p:ajax event="rowSelect" update="botoneraTipo" />
+                            <p:ajax event="rowUnselect" update="botoneraTipo" />
+                            <p:column headerText="ID" style="font-size: 0.8em;">
+                                #{item.idTipoDescuento}
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                #{item.nombre}
+                            </p:column>
+                            <p:column headerText="Descuento Máximo">
+                                #{item.descuentoMaximo}
+                            </p:column>
+                            <p:column headerText="Estado">
+                                #{item.activo ? 'ACTIVO' : 'INACTIVO'}
+                            </p:column>
+                            <p:column headerText="Observaciones">
+                                #{item.observaciones}
+                            </p:column>
+                        </p:dataTable>
 
-                    <h:outputLabel for="activo" value="Estado:" />
-                    <p:selectBooleanCheckbox id="activo" value="#{tipoDescuentoModel.registro.activo}"
-                                             itemLabel="Activo" />
-                    <h:panelGroup />
-                </h:panelGrid>
+                        <!-- Botones: componente compuesto botonesTabla.xhtml -->
+                        <h:panelGroup id="botoneraTipo" layout="block" style="margin-top: 12px;">
+                            <comp:botonesTabla model="#{tipoDescuentoModel}"
+                                               editUpdate="msgsTipo pnlFormTipo"
+                                               deleteUpdate="msgsTipo tblTipos botoneraTipo pnlFormTipo" />
+                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                          rendered="#{empty tipoDescuentoModel.seleccion}"
+                                          style="color:#777; font-style: italic;" />
+                        </h:panelGroup>
+                    </div>
 
-                <div style="margin-top: 10px;">
-                    <!-- AJAX: actualiza formulario y tabla sin recargar la página -->
-                    <p:commandButton value="Guardar" action="#{tipoDescuentoModel.btnGuardarHandler}"
-                                     update="frmTipoDescuento frmTablaDescuento" styleClass="btn btn-primary" />
-                    &#160;
-                    <p:commandButton value="Nuevo / Limpiar" action="#{tipoDescuentoModel.btnNuevoHandler}"
-                                     immediate="true" update="frmTipoDescuento" styleClass="btn" />
-                </div>
-            </h:form>
-        </div>
+                    <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                    <h:panelGroup id="pnlFormTipo" layout="block">
+                        <h:panelGroup layout="block" rendered="#{tipoDescuentoModel.formVisible}">
+                            <div class="card">
+                                <h2>Administración de Tipos de Descuento</h2>
 
-        <!-- Formulario 2: Tabla con todos los campos de la entidad -->
-        <div class="card">
-            <h3>Lista de Tipos de Descuento</h3>
-            <h:form id="frmTablaDescuento">
-                <p:dataTable value="#{tipoDescuentoModel.lazyModel}" var="item" styleClass="tabla"
-                             lazy="true"
-                             selectionMode="single" selection="#{tipoDescuentoModel.seleccion}"
-                             rowKey="#{item.idTipoDescuento}"
-                             paginator="true" rows="5"
-                             emptyMessage="No hay registros">
-                    <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
-                    <p:ajax event="rowSelect" update="botonera" />
-                    <p:ajax event="rowUnselect" update="botonera" />
-                    <p:column headerText="ID" style="font-size: 0.8em;">
-                        #{item.idTipoDescuento}
-                    </p:column>
-                    <p:column headerText="Nombre">
-                        #{item.nombre}
-                    </p:column>
-                    <p:column headerText="Descuento Máximo">
-                        #{item.descuentoMaximo}
-                    </p:column>
-                    <p:column headerText="Estado">
-                        #{item.activo ? 'ACTIVO' : 'INACTIVO'}
-                    </p:column>
-                    <p:column headerText="Observaciones">
-                        #{item.observaciones}
-                    </p:column>
-                </p:dataTable>
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="nombre" value="Nombre del Descuento:" />
+                                    <p:inputText id="nombre" value="#{tipoDescuentoModel.registro.nombre}" required="true" />
+                                    <p:messages for="nombre" />
 
-                <!-- Botones FUERA de la tabla, debajo -->
-               <h:panelGroup id="botonera" layout="block" style="margin-top: 12px;">
-                    <comp:botonesTabla model="#{tipoDescuentoModel}"
-                                       editUpdate="frmTipoDescuento"
-                                       deleteUpdate="frmTablaDescuento frmTipoDescuento" />
-                    <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
-                                  rendered="#{empty tipoDescuentoModel.seleccion}"
-                                  style="color:#777; font-style: italic;" />
-                </h:panelGroup>
-            </h:form>
-        </div>
+                                    <h:outputLabel for="descuentoMaximo" value="Descuento Máximo (%):" />
+                                    <p:inputText id="descuentoMaximo" value="#{tipoDescuentoModel.registro.descuentoMaximo}"
+                                                 required="true" size="6" />
+                                    <p:messages for="descuentoMaximo" />
+
+                                    <h:outputLabel for="observaciones" value="Observaciones:" />
+                                    <p:inputTextarea id="observaciones" value="#{tipoDescuentoModel.registro.observaciones}"
+                                                     rows="3" cols="50" />
+                                    <p:messages for="observaciones" />
+
+                                    <h:outputLabel for="activo" value="Estado:" />
+                                    <p:selectBooleanCheckbox id="activo" value="#{tipoDescuentoModel.registro.activo}"
+                                                             itemLabel="Activo" />
+                                    <h:panelGroup />
+                                </h:panelGrid>
+
+                                <div style="margin-top: 10px;">
+                                    <p:commandButton value="Guardar" action="#{tipoDescuentoModel.btnGuardarHandler}"
+                                                     update="msgsTipo pnlFormTipo tblTipos botoneraTipo"
+                                                     styleClass="btn btn-primary" />
+                                    &#160;
+                                    <p:commandButton value="Cancelar" action="#{tipoDescuentoModel.btnCancelarHandler}"
+                                                     update="msgsTipo pnlFormTipo tblTipos botoneraTipo"
+                                                     styleClass="btn" />
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:tab>
+
+                <!-- ================= PESTAÑA 2: DESCUENTO ================= -->
+                <p:tab id="tabDescuentos" title="Descuento">
+
+                    <p:messages id="msgsDesc" showDetail="false" styleClass="top-messages" />
+
+                    <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
+                    <div class="card">
+                        <div style="margin-bottom: 10px;">
+                            <p:commandButton value="Nuevo" action="#{descuentoModel.btnNuevoHandler}"
+                                             update="msgsDesc pnlFormDesc" styleClass="btn btn-primary"
+                                             oncomplete="var e=document.querySelector('[id$=pnlFormDesc]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
+                        </div>
+                        <h3>Lista de Descuentos</h3>
+                        <p:dataTable id="tblDescuentos" value="#{descuentoModel.lazyModel}" var="item" styleClass="tabla"
+                                     lazy="true"
+                                     selectionMode="single" selection="#{descuentoModel.seleccion}"
+                                     rowKey="#{item.idDescuento}"
+                                     paginator="true" rows="5"
+                                     emptyMessage="No hay registros">
+                            <p:ajax event="rowSelect" update="botoneraDesc" />
+                            <p:ajax event="rowUnselect" update="botoneraDesc" />
+                            <p:column headerText="ID" style="font-size: 0.8em;">
+                                #{item.idDescuento}
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                #{item.nombre}
+                            </p:column>
+                            <p:column headerText="Tipo">
+                                #{item.idTipoDescuento.nombre}
+                            </p:column>
+                            <p:column headerText="Vigente desde">
+                                <h:outputText value="#{item.fechaDesde}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Vigente hasta">
+                                <h:outputText value="#{item.fechaHasta}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Observaciones">
+                                #{item.observaciones}
+                            </p:column>
+                        </p:dataTable>
+
+                        <!-- Botones: componente compuesto botonesTabla.xhtml -->
+                        <h:panelGroup id="botoneraDesc" layout="block" style="margin-top: 12px;">
+                            <comp:botonesTabla model="#{descuentoModel}"
+                                               editUpdate="msgsDesc pnlFormDesc"
+                                               deleteUpdate="msgsDesc tblDescuentos botoneraDesc pnlFormDesc" />
+                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                          rendered="#{empty descuentoModel.seleccion}"
+                                          style="color:#777; font-style: italic;" />
+                        </h:panelGroup>
+                    </div>
+
+                    <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                    <h:panelGroup id="pnlFormDesc" layout="block">
+                        <h:panelGroup layout="block" rendered="#{descuentoModel.formVisible}">
+                            <div class="card">
+                                <h2>Administración de Descuentos</h2>
+
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="nombreDesc" value="Nombre:" />
+                                    <p:inputText id="nombreDesc" value="#{descuentoModel.registro.nombre}" required="true" />
+                                    <p:messages for="nombreDesc" />
+
+                                    <h:outputLabel for="cboTipo" value="Tipo de Descuento:" />
+                                    <p:selectOneMenu id="cboTipo" value="#{descuentoModel.tipoSeleccionado}">
+                                        <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
+                                        <f:selectItems value="#{descuentoModel.listaTipos}" />
+                                    </p:selectOneMenu>
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="fechaDesde" value="Vigente desde:" />
+                                    <p:datePicker id="fechaDesde" value="#{descuentoModel.registro.fechaDesde}"
+                                                  pattern="dd/MM/yyyy" showIcon="true" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="fechaHasta" value="Vigente hasta:" />
+                                    <p:datePicker id="fechaHasta" value="#{descuentoModel.registro.fechaHasta}"
+                                                  pattern="dd/MM/yyyy" showIcon="true" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="observacionesDesc" value="Observaciones:" />
+                                    <p:inputTextarea id="observacionesDesc" value="#{descuentoModel.registro.observaciones}"
+                                                     rows="3" cols="50" />
+                                    <p:messages for="observacionesDesc" />
+                                </h:panelGrid>
+
+                                <div style="margin-top: 10px;">
+                                    <p:commandButton value="Guardar" action="#{descuentoModel.btnGuardarHandler}"
+                                                     update="msgsDesc pnlFormDesc tblDescuentos botoneraDesc"
+                                                     styleClass="btn btn-primary" />
+                                    &#160;
+                                    <p:commandButton value="Cancelar" action="#{descuentoModel.btnCancelarHandler}"
+                                                     update="msgsDesc pnlFormDesc tblDescuentos botoneraDesc"
+                                                     styleClass="btn" />
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:tab>
+
+                <!-- ================= PESTAÑA 3: DESCUENTO - PRODUCTO ================= -->
+                <p:tab id="tabDescProd" title="Descuento - Producto">
+
+                    <p:messages id="msgsDescProd" showDetail="false" styleClass="top-messages" />
+
+                    <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
+                    <div class="card">
+                        <div style="margin-bottom: 10px;">
+                            <p:commandButton value="Nuevo" action="#{descuentoProductoModel.btnNuevoHandler}"
+                                             update="msgsDescProd pnlFormDescProd" styleClass="btn btn-primary"
+                                             oncomplete="var e=document.querySelector('[id$=pnlFormDescProd]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
+                        </div>
+                        <h3>Descuentos por Producto</h3>
+                        <p:dataTable id="tblDescProd" value="#{descuentoProductoModel.lazyModel}" var="item" styleClass="tabla"
+                                     lazy="true"
+                                     selectionMode="single" selection="#{descuentoProductoModel.seleccion}"
+                                     rowKey="#{item.idDescuentoProducto}"
+                                     paginator="true" rows="5"
+                                     emptyMessage="No hay registros">
+                            <p:ajax event="rowSelect" update="botoneraDescProd" />
+                            <p:ajax event="rowUnselect" update="botoneraDescProd" />
+                            <p:column headerText="ID" style="font-size: 0.8em;">
+                                #{item.idDescuentoProducto}
+                            </p:column>
+                            <p:column headerText="Descuento">
+                                #{item.idDescuento.nombre}
+                            </p:column>
+                            <p:column headerText="Producto">
+                                #{item.idProducto.nombre}
+                            </p:column>
+                            <p:column headerText="Valor">
+                                #{item.valor}
+                            </p:column>
+                            <p:column headerText="Observaciones">
+                                #{item.observaciones}
+                            </p:column>
+                        </p:dataTable>
+
+                        <!-- Botones: componente compuesto botonesTabla.xhtml -->
+                        <h:panelGroup id="botoneraDescProd" layout="block" style="margin-top: 12px;">
+                            <comp:botonesTabla model="#{descuentoProductoModel}"
+                                               editUpdate="msgsDescProd pnlFormDescProd"
+                                               deleteUpdate="msgsDescProd tblDescProd botoneraDescProd pnlFormDescProd" />
+                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                          rendered="#{empty descuentoProductoModel.seleccion}"
+                                          style="color:#777; font-style: italic;" />
+                        </h:panelGroup>
+                    </div>
+
+                    <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                    <h:panelGroup id="pnlFormDescProd" layout="block">
+                        <h:panelGroup layout="block" rendered="#{descuentoProductoModel.formVisible}">
+                            <div class="card">
+                                <h2>Administración de Descuentos por Producto</h2>
+
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="cboDescuento" value="Descuento:" />
+                                    <p:selectOneMenu id="cboDescuento" value="#{descuentoProductoModel.descuentoSeleccionado}">
+                                        <f:selectItem itemLabel="-- Elija un descuento --" itemValue="#{null}" />
+                                        <f:selectItems value="#{descuentoProductoModel.listaDescuentos}" />
+                                    </p:selectOneMenu>
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="cboProducto" value="Producto:" />
+                                    <p:selectOneMenu id="cboProducto" value="#{descuentoProductoModel.productoSeleccionado}">
+                                        <f:selectItem itemLabel="-- Elija un producto --" itemValue="#{null}" />
+                                        <f:selectItems value="#{descuentoProductoModel.listaProductos}" />
+                                    </p:selectOneMenu>
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="valor" value="Valor:" />
+                                    <p:inputText id="valor" value="#{descuentoProductoModel.registro.valor}"
+                                                 required="true" size="6" />
+                                    <p:messages for="valor" />
+
+                                    <h:outputLabel for="fechaDesdeProd" value="Vigente desde:" />
+                                    <p:datePicker id="fechaDesdeProd" value="#{descuentoProductoModel.registro.fechaDesde}"
+                                                  pattern="dd/MM/yyyy" showIcon="true" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="fechaHastaProd" value="Vigente hasta:" />
+                                    <p:datePicker id="fechaHastaProd" value="#{descuentoProductoModel.registro.fechaHasta}"
+                                                  pattern="dd/MM/yyyy" showIcon="true" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="observacionesProd" value="Observaciones:" />
+                                    <p:inputTextarea id="observacionesProd" value="#{descuentoProductoModel.registro.observaciones}"
+                                                     rows="3" cols="50" />
+                                    <p:messages for="observacionesProd" />
+                                </h:panelGrid>
+
+                                <div style="margin-top: 10px;">
+                                    <p:commandButton value="Guardar" action="#{descuentoProductoModel.btnGuardarHandler}"
+                                                     update="msgsDescProd pnlFormDescProd tblDescProd botoneraDescProd"
+                                                     styleClass="btn btn-primary" />
+                                    &#160;
+                                    <p:commandButton value="Cancelar" action="#{descuentoProductoModel.btnCancelarHandler}"
+                                                     update="msgsDescProd pnlFormDescProd tblDescProd botoneraDescProd"
+                                                     styleClass="btn" />
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:tab>
+
+            </p:tabView>
+        </h:form>
     </ui:define>
 
 </ui:composition>
