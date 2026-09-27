@@ -20,6 +20,9 @@ public abstract class AbstractModel<T, ID> implements Serializable {
     protected T registro;
     protected T seleccion; // fila seleccionada en la tabla (row select con AJAX)
     protected ESTADO_CRUD estado = ESTADO_CRUD.NINGUNO;
+    // ¿Debe mostrarse el panel del formulario? La vista inicia SOLO con la
+    // tabla y el form aparece cuando el usuario pulsa Nuevo o Editar.
+    protected boolean formVisible = false;
 
     // Métodos abstractos que implementa cada modelo hijo
     public abstract T instanciarRegistro();
@@ -69,6 +72,7 @@ public abstract class AbstractModel<T, ID> implements Serializable {
 
     public void btnNuevoHandler() {
         this.limpiar();
+        this.formVisible = true; // muestra el panel del formulario
     }
 
     /**
@@ -78,6 +82,7 @@ public abstract class AbstractModel<T, ID> implements Serializable {
     public void btnEditarHandler() {
         if (this.seleccion != null) {
             this.seleccionarRegistro(this.seleccion);
+            this.formVisible = true; // muestra el panel del formulario
         }
     }
 
@@ -94,6 +99,7 @@ public abstract class AbstractModel<T, ID> implements Serializable {
         }
         this.cargarRegistros();
         this.limpiar();
+        this.formVisible = false; // guardado: se vuelve a la vista de solo tabla
     }
 
     public void btnModificarHandler() {
@@ -101,6 +107,7 @@ public abstract class AbstractModel<T, ID> implements Serializable {
             getDao().modificar(this.registro);
             this.cargarRegistros();
             this.limpiar();
+            this.formVisible = false;
         }
     }
 
@@ -109,7 +116,16 @@ public abstract class AbstractModel<T, ID> implements Serializable {
             getDao().eliminar(this.registro);
             this.cargarRegistros();
             this.limpiar();
+            this.formVisible = false;
         }
+    }
+
+    /**
+     * Botón "Cancelar" del formulario: limpia y regresa a la vista de solo tabla.
+     */
+    public void btnCancelarHandler() {
+        this.limpiar();
+        this.formVisible = false;
     }
 
     public void seleccionarRegistro(T r) {
@@ -148,5 +164,13 @@ public abstract class AbstractModel<T, ID> implements Serializable {
 
     public void setEstado(ESTADO_CRUD estado) {
         this.estado = estado;
+    }
+
+    public boolean isFormVisible() {
+        return formVisible;
+    }
+
+    public void setFormVisible(boolean formVisible) {
+        this.formVisible = formVisible;
     }
 }

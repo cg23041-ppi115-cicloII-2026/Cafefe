@@ -47,6 +47,27 @@ public class EmpleadoModel extends AbstractModel<Empleado, UUID> implements Seri
     public DefaultDAO<Empleado, UUID> getDao() {
         return empleadoRepository;
     }
+
+    /**
+     * Eliminar con manejo de error: la base de datos tiene claves foraneas
+     * ON DELETE RESTRICT (empleado_rol puede referenciar al empleado), por lo
+     * que capturamos la excepcion para mostrar un mensaje amigable.
+     */
+    @Override
+    public void btnEliminarHandler() {
+        try {
+            super.btnEliminarHandler();
+        } catch (Exception e) {
+            // Estado limpio: no dejar el registro apuntando a la fila que no
+            // se pudo borrar (evita un INSERT duplicado en el siguiente Guardar)
+            this.limpiar();
+            this.formVisible = false;
+            jakarta.faces.context.FacesContext.getCurrentInstance().addMessage(null,
+                    new jakarta.faces.application.FacesMessage(
+                            jakarta.faces.application.FacesMessage.SEVERITY_WARN,
+                            "No se puede eliminar: el empleado tiene asignaciones en otras tablas", null));
+        }
+    }
 }
 
 

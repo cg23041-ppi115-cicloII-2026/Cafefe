@@ -10,83 +10,193 @@
     <ui:define name="titulo">Gestión de Empleados</ui:define>
 
     <ui:define name="contenido">
-        <!-- Formulario 1: Entrada y Edición -->
-        <div class="card">
-            <h2>Administración de Empleados</h2>
+        <h:form id="frmPagina">
+            <p:tabView id="tabs">
 
-            <h:form id="frmEmpleado">
-                <h:panelGrid columns="3" cellpadding="5">
-                    <h:outputLabel for="nombre" value="Nombre:" />
-                    <p:inputText id="nombre" value="#{empleadoModel.registro.nombre}" required="true" />
-                    <p:messages for="nombre" />
+                <!-- ================= PESTAÑA 1: EMPLEADO ================= -->
+                <p:tab id="tabEmpleado" title="Empleado">
 
-                    <h:outputLabel for="apellido" value="Apellido:" />
-                    <p:inputText id="apellido" value="#{empleadoModel.registro.apellido}" required="true" />
-                    <p:messages for="apellido" />
+                    <p:messages id="msgsEmpleado" showDetail="false" styleClass="top-messages" />
 
-                    <h:outputLabel for="activo" value="Estado:" />
-                    <p:selectBooleanCheckbox id="activo" value="#{empleadoModel.registro.activo}"
-                                             itemLabel="Activo" />
-                    <h:panelGroup />
+                    <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
+                    <div class="card">
+                        <div style="margin-bottom: 10px;">
+                            <p:commandButton value="Nuevo" action="#{empleadoModel.btnNuevoHandler}"
+                                             update="msgsEmpleado pnlFormEmpleado" styleClass="btn btn-primary"
+                                             oncomplete="var e=document.querySelector('[id$=pnlFormEmpleado]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
+                        </div>
+                        <h3>Lista de Empleados</h3>
+                        <p:dataTable id="tblEmpleados" value="#{empleadoModel.lazyModel}" var="item" styleClass="tabla"
+                                     lazy="true"
+                                     selectionMode="single" selection="#{empleadoModel.seleccion}"
+                                     rowKey="#{item.idEmpleado}"
+                                     paginator="true" rows="5"
+                                     emptyMessage="No hay registros">
+                            <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
+                            <p:ajax event="rowSelect" update="botonera" />
+                            <p:ajax event="rowUnselect" update="botonera" />
+                            <p:column headerText="ID" style="font-size: 0.8em;">
+                                #{item.idEmpleado}
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                #{item.nombre}
+                            </p:column>
+                            <p:column headerText="Apellido">
+                                #{item.apellido}
+                            </p:column>
+                            <p:column headerText="Estado">
+                                #{item.activo ? 'ACTIVO' : 'INACTIVO'}
+                            </p:column>
+                            <p:column headerText="Comentarios">
+                                #{item.comentarios}
+                            </p:column>
+                        </p:dataTable>
 
-                    <h:outputLabel for="comentarios" value="Comentarios:" />
-                    <p:inputTextarea id="comentarios" value="#{empleadoModel.registro.comentarios}"
-                                     rows="3" cols="50" />
-                    <p:messages for="comentarios" />
-                </h:panelGrid>
+                        <!-- Botones: componente compuesto botonesTabla.xhtml -->
+                        <h:panelGroup id="botonera" layout="block" style="margin-top: 12px;">
+                            <comp:botonesTabla model="#{empleadoModel}"
+                                               editUpdate="msgsEmpleado pnlFormEmpleado"
+                                               deleteUpdate="msgsEmpleado tblEmpleados botonera pnlFormEmpleado" />
+                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                          rendered="#{empty empleadoModel.seleccion}"
+                                          style="color:#777; font-style: italic;" />
+                        </h:panelGroup>
+                    </div>
 
-                <div style="margin-top: 10px;">
-                    <!-- AJAX: actualiza formulario y tabla sin recargar la página -->
-                    <p:commandButton value="Guardar" action="#{empleadoModel.btnGuardarHandler}"
-                                     update="frmEmpleado frmTablaEmpleado" styleClass="btn btn-primary" />
-                    &#160;
-                    <p:commandButton value="Nuevo / Limpiar" action="#{empleadoModel.btnNuevoHandler}"
-                                     immediate="true" update="frmEmpleado" styleClass="btn" />
-                </div>
-            </h:form>
-        </div>
+                    <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                    <h:panelGroup id="pnlFormEmpleado" layout="block">
+                        <h:panelGroup layout="block" rendered="#{empleadoModel.formVisible}">
+                            <div class="card">
+                                <h2>Administración de Empleados</h2>
 
-        <!-- Formulario 2: Tabla con todos los campos de la entidad -->
-        <div class="card">
-            <h3>Lista de Empleados</h3>
-            <h:form id="frmTablaEmpleado">
-                <p:dataTable value="#{empleadoModel.lazyModel}" var="item" styleClass="tabla"
-                             lazy="true"
-                             selectionMode="single" selection="#{empleadoModel.seleccion}"
-                             rowKey="#{item.idEmpleado}"
-                             paginator="true" rows="10" rowsPerPageTemplate="5,10,20"
-                             emptyMessage="No hay registros">
-                    <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
-                    <p:ajax event="rowSelect" update="botonera" />
-                    <p:ajax event="rowUnselect" update="botonera" />
-                    <p:column headerText="ID" style="font-size: 0.8em;">
-                        #{item.idEmpleado}
-                    </p:column>
-                    <p:column headerText="Nombre">
-                        #{item.nombre}
-                    </p:column>
-                    <p:column headerText="Apellido">
-                        #{item.apellido}
-                    </p:column>
-                    <p:column headerText="Estado">
-                        #{item.activo ? 'ACTIVO' : 'INACTIVO'}
-                    </p:column>
-                    <p:column headerText="Comentarios">
-                        #{item.comentarios}
-                    </p:column>
-                </p:dataTable>
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="nombre" value="Nombre:" />
+                                    <p:inputText id="nombre" value="#{empleadoModel.registro.nombre}" required="true" />
+                                    <p:messages for="nombre" />
 
-                <!-- Botones abajo: componente compuesto botonesTabla.xhtml -->
-                <h:panelGroup id="botonera" layout="block" style="margin-top: 12px;">
-                    <comp:botonesTabla model="#{empleadoModel}"
-                                       editUpdate="frmEmpleado"
-                                       deleteUpdate="frmTablaEmpleado frmEmpleado" />
-                    <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
-                                  rendered="#{empty empleadoModel.seleccion}"
-                                  style="color:#777; font-style: italic;" />
-                </h:panelGroup>
-            </h:form>
-        </div>
+                                    <h:outputLabel for="apellido" value="Apellido:" />
+                                    <p:inputText id="apellido" value="#{empleadoModel.registro.apellido}" required="true" />
+                                    <p:messages for="apellido" />
+
+                                    <h:outputLabel for="activo" value="Estado:" />
+                                    <p:selectBooleanCheckbox id="activo" value="#{empleadoModel.registro.activo}"
+                                                             itemLabel="Activo" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="comentarios" value="Comentarios:" />
+                                    <p:inputTextarea id="comentarios" value="#{empleadoModel.registro.comentarios}"
+                                                     rows="3" cols="50" />
+                                    <p:messages for="comentarios" />
+                                </h:panelGrid>
+
+                                <div style="margin-top: 10px;">
+                                    <p:commandButton value="Guardar" action="#{empleadoModel.btnGuardarHandler}"
+                                                     update="msgsEmpleado pnlFormEmpleado tblEmpleados botonera"
+                                                     styleClass="btn btn-primary" />
+                                    &#160;
+                                    <p:commandButton value="Cancelar" action="#{empleadoModel.btnCancelarHandler}"
+                                                     update="msgsEmpleado pnlFormEmpleado tblEmpleados botonera"
+                                                     styleClass="btn" />
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:tab>
+
+                <!-- ================= PESTAÑA 2: EMPLEADO_ROL ================= -->
+                <p:tab id="tabEmpleadoRol" title="Empleado_Rol">
+
+                    <p:messages id="msgsAsig" showDetail="false" styleClass="top-messages" />
+
+                    <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
+                    <div class="card">
+                        <div style="margin-bottom: 10px;">
+                            <p:commandButton value="Nuevo" action="#{empleadoRolModel.btnNuevoHandler}"
+                                             update="msgsAsig pnlFormRol" styleClass="btn btn-primary"
+                                             oncomplete="var e=document.querySelector('[id$=pnlFormRol]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
+                        </div>
+                        <h3>Asignaciones Empleado - Rol</h3>
+                        <p:dataTable id="tblAsignaciones" value="#{empleadoRolModel.lazyModel}" var="item" styleClass="tabla"
+                                     lazy="true"
+                                     selectionMode="single" selection="#{empleadoRolModel.seleccion}"
+                                     rowKey="#{item.idEmpleadoRol}"
+                                     paginator="true" rows="5"
+                                     emptyMessage="No hay registros">
+                            <p:ajax event="rowSelect" update="botoneraRol" />
+                            <p:ajax event="rowUnselect" update="botoneraRol" />
+                            <p:column headerText="Empleado">
+                                #{item.idEmpleado.nombre} #{item.idEmpleado.apellido}
+                            </p:column>
+                            <p:column headerText="Rol">
+                                #{item.idRol.nombre}
+                            </p:column>
+                            <p:column headerText="Estado">
+                                #{item.activo ? 'ACTIVO' : 'INACTIVO'}
+                            </p:column>
+                            <p:column headerText="Observaciones">
+                                #{item.observaciones}
+                            </p:column>
+                        </p:dataTable>
+
+                        <!-- Botones: componente compuesto botonesTabla.xhtml -->
+                        <h:panelGroup id="botoneraRol" layout="block" style="margin-top: 12px;">
+                            <comp:botonesTabla model="#{empleadoRolModel}"
+                                               editUpdate="msgsAsig pnlFormRol"
+                                               deleteUpdate="msgsAsig tblAsignaciones botoneraRol pnlFormRol" />
+                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                          rendered="#{empty empleadoRolModel.seleccion}"
+                                          style="color:#777; font-style: italic;" />
+                        </h:panelGroup>
+                    </div>
+
+                    <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                    <h:panelGroup id="pnlFormRol" layout="block">
+                        <h:panelGroup layout="block" rendered="#{empleadoRolModel.formVisible}">
+                            <div class="card">
+                                <h2>Asignación Empleado - Rol</h2>
+
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="cboEmpleado" value="Empleado:" />
+                                    <p:selectOneMenu id="cboEmpleado" value="#{empleadoRolModel.empleadoSeleccionado}">
+                                        <f:selectItem itemLabel="-- Elija un empleado --" itemValue="#{null}" />
+                                        <f:selectItems value="#{empleadoRolModel.listaEmpleados}" />
+                                    </p:selectOneMenu>
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="cboRol" value="Rol:" />
+                                    <p:selectOneMenu id="cboRol" value="#{empleadoRolModel.rolSeleccionado}">
+                                        <f:selectItem itemLabel="-- Elija un rol --" itemValue="#{null}" />
+                                        <f:selectItems value="#{empleadoRolModel.listaRoles}" />
+                                    </p:selectOneMenu>
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="activoAsig" value="Estado:" />
+                                    <p:selectBooleanCheckbox id="activoAsig" value="#{empleadoRolModel.registro.activo}"
+                                                             itemLabel="Activo" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="obsAsig" value="Observaciones:" />
+                                    <p:inputTextarea id="obsAsig" value="#{empleadoRolModel.registro.observaciones}"
+                                                     rows="3" cols="50" />
+                                    <h:panelGroup />
+                                </h:panelGrid>
+
+                                <div style="margin-top: 10px;">
+                                    <p:commandButton value="Guardar" action="#{empleadoRolModel.btnGuardarHandler}"
+                                                     update="msgsAsig pnlFormRol tblAsignaciones botoneraRol"
+                                                     styleClass="btn btn-primary" />
+                                    &#160;
+                                    <p:commandButton value="Cancelar" action="#{empleadoRolModel.btnCancelarHandler}"
+                                                     update="msgsAsig pnlFormRol tblAsignaciones botoneraRol"
+                                                     styleClass="btn" />
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:tab>
+
+            </p:tabView>
+        </h:form>
     </ui:define>
 
 </ui:composition>
