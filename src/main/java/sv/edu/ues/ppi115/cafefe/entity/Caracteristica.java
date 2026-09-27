@@ -50,7 +50,7 @@ public class Caracteristica implements Serializable {
     @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
     @JoinColumn(name = "id_tipo_caracteristica", referencedColumnName = "id_tipo_caracteristica")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private TipoCaracteristica idTipoCaracteristica;
     @OneToMany(mappedBy = "idCaracteristica", fetch = FetchType.LAZY)
     private List<ProductoCaracteristica> productoCaracteristicaList;

@@ -7,7 +7,6 @@ package sv.edu.ues.ppi115.cafefe.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -27,7 +26,9 @@ import java.util.UUID;
 @Table(name = "producto_caracteristica", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "ProductoCaracteristica.findAll", query = "SELECT p FROM ProductoCaracteristica p"),
-    @NamedQuery(name = "ProductoCaracteristica.findByValor", query = "SELECT p FROM ProductoCaracteristica p WHERE p.valor = :valor")})
+    @NamedQuery(name = "ProductoCaracteristica.findByValor", query = "SELECT p FROM ProductoCaracteristica p WHERE p.valor = :valor"),
+    @NamedQuery(name = "ProductoCaracteristica.findByProducto", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idProducto = :idProducto"),
+    @NamedQuery(name = "ProductoCaracteristica.findByCaracteristica", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idCaracteristica = :idCaracteristica")})
 public class ProductoCaracteristica implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,10 +41,10 @@ public class ProductoCaracteristica implements Serializable {
     @Column(name = "valor", length = 2147483647)
     private String valor;
     @JoinColumn(name = "id_caracteristica", referencedColumnName = "id_caracteristica")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Caracteristica idCaracteristica;
     @JoinColumn(name = "id_producto", referencedColumnName = "id_producto")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Producto idProducto;
 
     public ProductoCaracteristica() {

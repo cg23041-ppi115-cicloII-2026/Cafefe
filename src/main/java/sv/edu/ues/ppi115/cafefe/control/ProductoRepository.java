@@ -46,6 +46,32 @@ public class ProductoRepository extends DefaultDAO<Producto, UUID> {
                 .setParameter("max", max)
                 .getResultList();
     }
+
+    /**
+     * Eliminar un producto: primero quita las relaciones que crea la propia
+     * vista (producto_tipo_producto del desplegable de tipo y
+     * producto_caracteristica de la pestana de asignaciones) y luego el
+     * producto. Todo ocurre en UNA sola transaccion: si el producto tuviera
+     * ordenes o descuentos (claves foraneas que si deben bloquear el
+     * borrado), la transaccion completa se revierte y no se pierde ninguna
+     * relacion.
+     */
+    @Override
+    public void eliminar(Producto entity) {
+        if (entity == null || entity.getIdProducto() == null) {
+            return;
+        }
+        UUID id = entity.getIdProducto();
+        getEntityManager().createQuery(
+                "DELETE FROM ProductoTipoProducto p WHERE p.idProducto.idProducto = :id")
+                .setParameter("id", id)
+                .executeUpdate();
+        getEntityManager().createQuery(
+                "DELETE FROM ProductoCaracteristica p WHERE p.idProducto.idProducto = :id")
+                .setParameter("id", id)
+                .executeUpdate();
+        super.eliminar(entity);
+    }
 }
 
 

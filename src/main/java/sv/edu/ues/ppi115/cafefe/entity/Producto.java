@@ -52,8 +52,9 @@ public class Producto implements Serializable {
     @Column(name = "comentarios", length = 2147483647)
     private String comentarios;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    // Sin @NotNull en JSF: bloqueaba Editar/Filtrar con el formulario vacio (el modelo valida con
+    // mensaje amigable y la BD conserva NOT NULL via @Column(nullable = false)).
     @Basic(optional = false)
-    @NotNull
     @Column(name = "precio_sugerido", nullable = false, precision = 8, scale = 2)
     private BigDecimal precioSugerido;
     @OneToMany(mappedBy = "idProducto", fetch = FetchType.LAZY)
