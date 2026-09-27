@@ -7,10 +7,6 @@ import jakarta.persistence.PersistenceContext;
 import java.util.UUID;
 import sv.edu.ues.ppi115.cafefe.entity.Orden;
 
-/**
- *
- * @author mil
- */
 @Stateless
 @LocalBean
 public class OrdenRepository extends DefaultDAO<Orden, UUID> {

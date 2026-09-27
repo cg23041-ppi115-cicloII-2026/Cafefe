@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:comp="http://xmlns.jcp.org/jsf/composite/components"
+                template="/WEB-INF/plantillas/general.xhtml">
+
+    <ui:define name="titulo">Gestión de Empleados</ui:define>
+
+    <ui:define name="contenido">
+        <!-- Formulario 1: Entrada y Edición -->
+        <div class="card">
+            <h2>Administración de Empleados</h2>
+
+            <h:form id="frmEmpleado">
+                <h:panelGrid columns="3" cellpadding="5">
+                    <h:outputLabel for="nombre" value="Nombre:" />
+                    <p:inputText id="nombre" value="#{empleadoModel.registro.nombre}" required="true" />
+                    <p:messages for="nombre" />
+
+                    <h:outputLabel for="apellido" value="Apellido:" />
+                    <p:inputText id="apellido" value="#{empleadoModel.registro.apellido}" required="true" />
+                    <p:messages for="apellido" />
+
+                    <h:outputLabel for="activo" value="Estado:" />
+                    <p:selectBooleanCheckbox id="activo" value="#{empleadoModel.registro.activo}"
+                                             itemLabel="Activo" />
+                    <h:panelGroup />
+
+                    <h:outputLabel for="comentarios" value="Comentarios:" />
+                    <p:inputTextarea id="comentarios" value="#{empleadoModel.registro.comentarios}"
+                                     rows="3" cols="50" />
+                    <p:messages for="comentarios" />
+                </h:panelGrid>
+
+                <div style="margin-top: 10px;">
+                    <!-- AJAX: actualiza formulario y tabla sin recargar la página -->
+                    <p:commandButton value="Guardar" action="#{empleadoModel.btnGuardarHandler}"
+                                     update="frmEmpleado frmTablaEmpleado" styleClass="btn btn-primary" />
+                    &#160;
+                    <p:commandButton value="Nuevo / Limpiar" action="#{empleadoModel.btnNuevoHandler}"
+                                     immediate="true" update="frmEmpleado" styleClass="btn" />
+                </div>
+            </h:form>
+        </div>
+
+        <!-- Formulario 2: Tabla con todos los campos de la entidad -->
+        <div class="card">
+            <h3>Lista de Empleados</h3>
+            <h:form id="frmTablaEmpleado">
+                <p:dataTable value="#{empleadoModel.lazyModel}" var="item" styleClass="tabla"
+                             lazy="true"
+                             selectionMode="single" selection="#{empleadoModel.seleccion}"
+                             rowKey="#{item.idEmpleado}"
+                             paginator="true" rows="10" rowsPerPageTemplate="5,10,20"
+                             emptyMessage="No hay registros">
+                    <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
+                    <p:ajax event="rowSelect" update="botonera" />
+                    <p:ajax event="rowUnselect" update="botonera" />
+                    <p:column headerText="ID" style="font-size: 0.8em;">
+                        #{item.idEmpleado}
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        #{item.nombre}
+                    </p:column>
+                    <p:column headerText="Apellido">
+                        #{item.apellido}
+                    </p:column>
+                    <p:column headerText="Estado">
+                        #{item.activo ? 'ACTIVO' : 'INACTIVO'}
+                    </p:column>
+                    <p:column headerText="Comentarios">
+                        #{item.comentarios}
+                    </p:column>
+                </p:dataTable>
+
+                <!-- Botones abajo: componente compuesto botonesTabla.xhtml -->
+                <h:panelGroup id="botonera" layout="block" style="margin-top: 12px;">
+                    <comp:botonesTabla model="#{empleadoModel}"
+                                       editUpdate="frmEmpleado"
+                                       deleteUpdate="frmTablaEmpleado frmEmpleado" />
+                    <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                  rendered="#{empty empleadoModel.seleccion}"
+                                  style="color:#777; font-style: italic;" />
+                </h:panelGroup>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

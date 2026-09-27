@@ -4,6 +4,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:comp="http://xmlns.jcp.org/jsf/composite/components"
                 template="/WEB-INF/plantillas/general.xhtml">
 
     <ui:define name="titulo">Gestión de Tipos de Descuento</ui:define>
@@ -50,10 +51,12 @@
         <div class="card">
             <h3>Lista de Tipos de Descuento</h3>
             <h:form id="frmTablaDescuento">
-                <p:dataTable value="#{tipoDescuentoModel.registros}" var="item" styleClass="tabla"
+                <p:dataTable value="#{tipoDescuentoModel.lazyModel}" var="item" styleClass="tabla"
+                             lazy="true"
                              selectionMode="single" selection="#{tipoDescuentoModel.seleccion}"
                              rowKey="#{item.idTipoDescuento}"
-                             paginator="true" rows="10" emptyMessage="No hay registros">
+                             paginator="true" rows="10" rowsPerPageTemplate="5,10,20"
+                             emptyMessage="No hay registros">
                     <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
                     <p:ajax event="rowSelect" update="botonera" />
                     <p:ajax event="rowUnselect" update="botonera" />
@@ -75,19 +78,10 @@
                 </p:dataTable>
 
                 <!-- Botones FUERA de la tabla, debajo -->
-                <h:panelGroup id="botonera" layout="block" style="margin-top: 12px;">
-                    <p:commandButton value="Editar" action="#{tipoDescuentoModel.btnEditarHandler}"
-                                     disabled="#{empty tipoDescuentoModel.seleccion}"
-                                     update="frmTipoDescuento" styleClass="btn btn-edit" />
-                    &#160;
-                    <p:commandButton value="Eliminar" action="#{tipoDescuentoModel.btnEliminarHandler}"
-                                     disabled="#{empty tipoDescuentoModel.seleccion}"
-                                     update="frmTablaDescuento frmTipoDescuento"
-                                     onclick="return confirm('¿Está seguro de eliminar este registro?');" styleClass="btn btn-danger">
-                        <f:setPropertyActionListener value="#{tipoDescuentoModel.seleccion}"
-                                                     target="#{tipoDescuentoModel.registro}" />
-                    </p:commandButton>
-                    &#160;
+               <h:panelGroup id="botonera" layout="block" style="margin-top: 12px;">
+                    <comp:botonesTabla model="#{tipoDescuentoModel}"
+                                       editUpdate="frmTipoDescuento"
+                                       deleteUpdate="frmTablaDescuento frmTipoDescuento" />
                     <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
                                   rendered="#{empty tipoDescuentoModel.seleccion}"
                                   style="color:#777; font-style: italic;" />

@@ -29,6 +29,24 @@ public abstract class AbstractModel<T, ID> implements Serializable {
     // Conexión genérica con tu DefaultDAO
     public abstract DefaultDAO<T, ID> getDao();
 
+    // ---------------------------------------------------------------
+    // Paginador lazy: contar() + cargar() para p:dataTable lazy="true"
+    // ---------------------------------------------------------------
+    private LazyModel<T> lazyModel;
+
+    /**
+     * Modelo lazy para la tabla: PrimeFaces pagina contra la BD
+     * (DefaultDAO.findRange) y cuenta las filas (DefaultDAO.count),
+     * en vez de cargar todos los registros en memoria.
+     * Uso en la vista: value="#{xModel.lazyModel}" lazy="true" paginator="true"
+     */
+    public LazyModel<T> getLazyModel() {
+        if (this.lazyModel == null) {
+            this.lazyModel = new LazyModel<>(getDao(), this::getIdByRegistro);
+        }
+        return this.lazyModel;
+    }
+
     @PostConstruct
     public void init() {
         this.cargarRegistros();

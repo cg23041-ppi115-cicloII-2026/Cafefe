@@ -45,10 +45,12 @@
         <div class="card">
             <h3>Lista de Tipos de Producto</h3>
             <h:form id="frmTablaProducto">
-                <p:dataTable value="#{tipoProductoModel.registros}" var="item" styleClass="tabla"
+                <p:dataTable value="#{tipoProductoModel.lazyModel}" var="item" styleClass="tabla"
+                             lazy="true"
                              selectionMode="single" selection="#{tipoProductoModel.seleccion}"
                              rowKey="#{item.idTipoProducto}"
-                             paginator="true" rows="10" emptyMessage="No hay registros">
+                             paginator="true" rows="10" rowsPerPageTemplate="5,10,20"
+                             emptyMessage="No hay registros">
                     <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
                     <p:ajax event="rowSelect" update="botonera" />
                     <p:ajax event="rowUnselect" update="botonera" />
