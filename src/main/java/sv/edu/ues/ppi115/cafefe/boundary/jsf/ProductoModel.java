@@ -193,9 +193,10 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
             // Estado limpio: no dejar el registro apuntando a la fila que no
             // se pudo borrar (evita un INSERT duplicado en el siguiente Guardar)
             this.limpiar();
+            this.formVisible = false;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_WARN,
-                    "No se puede eliminar: el registro tiene datos relacionados en otras tablas",
+                    "No se puede eliminar: existen datos relacionados con este producto",
                     null));
         }
     }

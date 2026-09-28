@@ -1,15 +1,213 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
-</html>
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:comp="http://xmlns.jcp.org/jsf/composite/components"
+                template="/WEB-INF/plantillas/general.xhtml">
+
+    <ui:define name="titulo">Gestión de Características</ui:define>
+
+    <ui:define name="contenido">
+        <h:form id="pagina">
+            <p:tabView id="tabs">
+                <!-- Al cambiar de pestaña se vacía el desplegable de tipos
+                     para que muestre el tipo recién creado en la pestaña 1 -->
+                <p:ajax event="tabChange"
+                        listener="#{caracteristicaModel.onTabChange}"
+                        update="msgsTc tabCarac" />
+
+                <!-- ========= PESTAÑA 1: TIPO CARACTERISTICA ========= -->
+                <p:tab id="tabTc" title="TipoCaracteristica">
+
+                    <p:messages id="msgsTc" showDetail="false" styleClass="top-messages" />
+
+                    <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
+                    <div class="card">
+                        <div style="margin-bottom: 10px;">
+                            <p:commandButton value="Nuevo" action="#{tipoCaracteristicaModel.btnNuevoHandler}"
+                                             update="msgsTc pnlFormTc" styleClass="btn btn-primary"
+                                             oncomplete="var e=document.querySelector('[id$=pnlFormTc]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
+                        </div>
+                        <h3>Lista de Tipos de Característica</h3>
+                        <p:dataTable id="tblTc" value="#{tipoCaracteristicaModel.lazyModel}" var="item" styleClass="tabla"
+                                     lazy="true"
+                                     selectionMode="single" selection="#{tipoCaracteristicaModel.seleccion}"
+                                     rowKey="#{item.idTipoCaracteristica}"
+                                     paginator="true" rows="5"
+                                     emptyMessage="No hay registros">
+                            <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
+                            <p:ajax event="rowSelect" update="botoneraTc" />
+                            <p:ajax event="rowUnselect" update="botoneraTc" />
+                            <p:column headerText="ID" style="font-size: 0.8em;">
+                                #{item.idTipoCaracteristica}
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                #{item.nombre}
+                            </p:column>
+                            <p:column headerText="Expresión regular">
+                                #{item.expresionRegular}
+                            </p:column>
+                            <p:column headerText="Estado">
+                                #{item.activo ? 'ACTIVO' : 'INACTIVO'}
+                            </p:column>
+                            <p:column headerText="Observaciones">
+                                #{item.observaciones}
+                            </p:column>
+                        </p:dataTable>
+
+                        <!-- Botones: componente compuesto botonesTabla.xhtml -->
+                        <h:panelGroup id="botoneraTc" layout="block" style="margin-top: 12px;">
+                            <comp:botonesTabla model="#{tipoCaracteristicaModel}"
+                                               editUpdate="msgsTc pnlFormTc"
+                                               deleteUpdate="msgsTc tblTc botoneraTc pnlFormTc" />
+                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                          rendered="#{empty tipoCaracteristicaModel.seleccion}"
+                                          style="color:#777; font-style: italic;" />
+                        </h:panelGroup>
+                    </div>
+
+                    <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                    <h:panelGroup id="pnlFormTc" layout="block">
+                        <h:panelGroup layout="block" rendered="#{tipoCaracteristicaModel.formVisible}">
+                            <div class="card">
+                                <h2>Administración de Tipos de Característica</h2>
+
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="nombre" value="Nombre:" />
+                                    <p:inputText id="nombre" value="#{tipoCaracteristicaModel.registro.nombre}" />
+                                    <p:messages for="nombre" />
+
+                                    <h:outputLabel for="expresion" value="Expresión regular:" />
+                                    <p:inputText id="expresion"
+                                                 value="#{tipoCaracteristicaModel.registro.expresionRegular}" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="activo" value="Estado:" />
+                                    <p:selectBooleanCheckbox id="activo"
+                                                             value="#{tipoCaracteristicaModel.registro.activo}"
+                                                             itemLabel="Activo" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="observaciones" value="Observaciones:" />
+                                    <p:inputTextarea id="observaciones"
+                                                     value="#{tipoCaracteristicaModel.registro.observaciones}"
+                                                     rows="3" cols="50" />
+                                    <h:panelGroup />
+                                </h:panelGrid>
+
+                                <div style="margin-top: 10px;">
+                                    <!-- AJAX: actualiza mensajes, formulario y tabla sin recargar la página -->
+                                    <p:commandButton value="Guardar" action="#{tipoCaracteristicaModel.btnGuardarHandler}"
+                                                     update="msgsTc pnlFormTc tblTc botoneraTc" styleClass="btn btn-primary" />
+                                    &#160;
+                                    <p:commandButton value="Cancelar" action="#{tipoCaracteristicaModel.btnCancelarHandler}"
+                                                     update="msgsTc pnlFormTc tblTc botoneraTc" styleClass="btn" />
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:tab>
+
+                <!-- ========== PESTAÑA 2: CARACTERISTICA ========== -->
+                <p:tab id="tabCr" title="Caracteristica">
+                    <h:panelGroup id="tabCarac" layout="block">
+
+                        <p:messages id="msgsCr" showDetail="false" styleClass="top-messages" />
+
+                        <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
+                        <div class="card">
+                            <div style="margin-bottom: 10px;">
+                                <p:commandButton value="Nuevo" action="#{caracteristicaModel.btnNuevoHandler}"
+                                                 update="msgsCr pnlFormCr" styleClass="btn btn-primary"
+                                                 oncomplete="var e=document.querySelector('[id$=pnlFormCr]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
+                            </div>
+                            <h3>Lista de Características</h3>
+                            <p:dataTable id="tblCr" value="#{caracteristicaModel.lazyModel}" var="item" styleClass="tabla"
+                                         lazy="true"
+                                         selectionMode="single" selection="#{caracteristicaModel.seleccion}"
+                                         rowKey="#{item.idCaracteristica}"
+                                         paginator="true" rows="5"
+                                         emptyMessage="No hay registros">
+                                <!-- AJAX: al hacer clic en una fila se selecciona (row select) -->
+                                <p:ajax event="rowSelect" update="botoneraCr" />
+                                <p:ajax event="rowUnselect" update="botoneraCr" />
+                                <p:column headerText="ID" style="font-size: 0.8em;">
+                                    #{item.idCaracteristica}
+                                </p:column>
+                                <p:column headerText="Tipo">
+                                    #{item.idTipoCaracteristica.nombre}
+                                </p:column>
+                                <p:column headerText="Nombre">
+                                    #{item.nombre}
+                                </p:column>
+                                <p:column headerText="Estado">
+                                    #{item.activo ? 'ACTIVO' : 'INACTIVO'}
+                                </p:column>
+                                <p:column headerText="Observaciones">
+                                    #{item.observaciones}
+                                </p:column>
+                            </p:dataTable>
+
+                            <!-- Botones: componente compuesto botonesTabla.xhtml -->
+                            <h:panelGroup id="botoneraCr" layout="block" style="margin-top: 12px;">
+                                <comp:botonesTabla model="#{caracteristicaModel}"
+                                                   editUpdate="msgsCr pnlFormCr"
+                                                   deleteUpdate="msgsCr tblCr botoneraCr pnlFormCr" />
+                                <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                              rendered="#{empty caracteristicaModel.seleccion}"
+                                              style="color:#777; font-style: italic;" />
+                            </h:panelGroup>
+                        </div>
+
+                        <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                        <h:panelGroup id="pnlFormCr" layout="block">
+                            <h:panelGroup layout="block" rendered="#{caracteristicaModel.formVisible}">
+                                <div class="card">
+                                    <h2>Administración de Características</h2>
+
+                                    <h:panelGrid columns="3" cellpadding="5">
+                                        <h:outputLabel for="tipo" value="Tipo de característica:" />
+                                        <p:selectOneMenu id="tipo"
+                                                         value="#{caracteristicaModel.tipoSeleccionado}">
+                                            <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
+                                            <f:selectItems value="#{caracteristicaModel.listaTipos}" />
+                                        </p:selectOneMenu>
+                                        <h:panelGroup />
+
+                                        <h:outputLabel for="cNombre" value="Nombre:" />
+                                        <p:inputText id="cNombre" value="#{caracteristicaModel.registro.nombre}"                                                     />
+                                        <p:messages for="cNombre" />
+
+                                        <h:outputLabel for="cActivo" value="Estado:" />
+                                        <p:selectBooleanCheckbox id="cActivo"
+                                                                 value="#{caracteristicaModel.registro.activo}"
+                                                                 itemLabel="Activo" />
+                                        <h:panelGroup />
+
+                                        <h:outputLabel for="cObservaciones" value="Observaciones:" />
+                                        <p:inputTextarea id="cObservaciones"
+                                                         value="#{caracteristicaModel.registro.observaciones}"
+                                                         rows="3" cols="50" />
+                                        <h:panelGroup />
+                                    </h:panelGrid>
+
+                                    <div style="margin-top: 10px;">
+                                        <!-- AJAX: actualiza mensajes, formulario y tabla sin recargar la página -->
+                                        <p:commandButton value="Guardar" action="#{caracteristicaModel.btnGuardarHandler}"
+                                                         update="msgsCr pnlFormCr tblCr botoneraCr" styleClass="btn btn-primary" />
+                                        &#160;
+                                        <p:commandButton value="Cancelar" action="#{caracteristicaModel.btnCancelarHandler}"
+                                                         update="msgsCr pnlFormCr tblCr botoneraCr" styleClass="btn" />
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

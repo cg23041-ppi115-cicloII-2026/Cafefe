@@ -22,175 +22,186 @@
 
                 <!-- ================= PESTAÑA 1: PRODUCTO ================= -->
                 <p:tab id="tabProd" title="Producto">
+                    <p:messages id="msgsProd" showDetail="false" styleClass="top-messages" />
+
+                    <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                     <div class="card">
-                        <h2>Administración de Productos</h2>
-                        <p:messages id="msgsProd" showDetail="false" />
-
-                        <h:panelGrid id="prodForm" columns="3" cellpadding="5">
-                            <h:outputLabel for="nombre" value="Nombre:" />
-                            <p:inputText id="nombre" value="#{productoModel.registro.nombre}" />
-                            <h:panelGroup />
-
-                            <h:outputLabel for="precio" value="Precio sugerido:" />
-                            <p:inputText id="precio" value="#{productoModel.registro.precioSugerido}" />
-                            <h:panelGroup />
-
-                            <h:outputLabel for="tipo" value="Tipo de producto:" />
-                            <p:selectOneMenu id="tipo" value="#{productoModel.tipoSeleccionado}">
-                                <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
-                                <f:selectItems value="#{productoModel.listaTipos}" />
-                            </p:selectOneMenu>
-                            <h:panelGroup />
-
-                            <h:outputLabel for="activo" value="Estado:" />
-                            <p:selectBooleanCheckbox id="activo"
-                                                     value="#{productoModel.registro.activo}"
-                                                     itemLabel="Activo" />
-                            <h:panelGroup />
-
-                            <h:outputLabel for="comentarios" value="Comentarios:" />
-                            <p:inputTextarea id="comentarios"
-                                             value="#{productoModel.registro.comentarios}"
-                                             rows="3" cols="50" />
-                            <h:panelGroup />
-                        </h:panelGrid>
-
-                        <div style="margin-top: 10px;">
-                            <p:commandButton value="Guardar" action="#{productoModel.btnGuardarHandler}"
-                                             update="msgsProd prodForm prodTabla" styleClass="btn btn-primary" />
-                            &#160;
-                            <p:commandButton value="Nuevo / Limpiar" action="#{productoModel.btnNuevoHandler}"
-                                             immediate="true" update="msgsProd prodForm" styleClass="btn" />
+                        <div style="margin-bottom: 10px;">
+                            <p:commandButton value="Nuevo" action="#{productoModel.btnNuevoHandler}"
+                                             update="msgsProd pnlFormProd" styleClass="btn btn-primary"
+                                             oncomplete="var e=document.querySelector('[id$=pnlFormProd]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                         </div>
-                    </div>
-
-                    <div class="card">
                         <h3>Lista de Productos</h3>
+                        <p:dataTable id="prodTabla" value="#{productoModel.lazyModel}" var="item" styleClass="tabla"
+                                     lazy="true"
+                                     selectionMode="single" selection="#{productoModel.seleccion}"
+                                     rowKey="#{item.idProducto}"
+                                     paginator="true" rows="5"
+                                     emptyMessage="No hay registros">
+                            <p:ajax event="rowSelect" update="btnProd" />
+                            <p:ajax event="rowUnselect" update="btnProd" />
+                            <p:column headerText="ID" style="font-size: 0.8em;">
+                                #{item.idProducto}
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                #{item.nombre}
+                            </p:column>
+                            <p:column headerText="Precio">
+                                #{item.precioSugerido}
+                            </p:column>
+                            <p:column headerText="Estado">
+                                #{item.activo ? 'ACTIVO' : 'INACTIVO'}
+                            </p:column>
+                            <p:column headerText="Comentarios">
+                                #{item.comentarios}
+                            </p:column>
+                        </p:dataTable>
 
-                        <!-- Filtro por nombre -->
-                        <h:panelGroup layout="block" style="margin-bottom: 8px;">
-                            <h:outputLabel for="filtroNombre" value="Buscar por nombre: " />
-                            <p:inputText id="filtroNombre" value="#{productoModel.filtroNombre}" />
-                            &#160;
-                            <p:commandButton value="Mostrar" action="#{productoModel.buscarPorNombre}"
-                                             update="msgsProd prodTabla" styleClass="btn" />
-                        </h:panelGroup>
-
-                        <h:panelGroup id="prodTabla" layout="block">
-                            <p:dataTable value="#{productoModel.registros}" var="item" styleClass="tabla"
-                                         selectionMode="single" selection="#{productoModel.seleccion}"
-                                         rowKey="#{item.idProducto}"
-                                         paginator="true" rows="5" emptyMessage="No hay registros">
-                                <p:ajax event="rowSelect" update="btnProd" />
-                                <p:ajax event="rowUnselect" update="btnProd" />
-                                <p:column headerText="ID" style="font-size: 0.8em;">
-                                    #{item.idProducto}
-                                </p:column>
-                                <p:column headerText="Nombre">
-                                    #{item.nombre}
-                                </p:column>
-                                <p:column headerText="Precio">
-                                    #{item.precioSugerido}
-                                </p:column>
-                                <p:column headerText="Estado">
-                                    #{item.activo ? 'ACTIVO' : 'INACTIVO'}
-                                </p:column>
-                                <p:column headerText="Comentarios">
-                                    #{item.comentarios}
-                                </p:column>
-                            </p:dataTable>
-
-                            <!-- Botones Editar/Eliminar: componente reutilizable -->
-                            <h:panelGroup id="btnProd" layout="block" style="margin-top: 12px;">
-                                <comp:botonesTabla model="#{productoModel}"
-                                                   editUpdate="msgsProd prodForm"
-                                                   deleteUpdate="msgsProd prodForm prodTabla btnProd" />
-                                &#160;
-                                <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
-                                              rendered="#{empty productoModel.seleccion}"
-                                              style="color:#777; font-style: italic;" />
-                            </h:panelGroup>
+                        <!-- Botones Editar/Eliminar: componente reutilizable -->
+                        <h:panelGroup id="btnProd" layout="block" style="margin-top: 12px;">
+                            <comp:botonesTabla model="#{productoModel}"
+                                               editUpdate="msgsProd pnlFormProd"
+                                               deleteUpdate="msgsProd prodTabla btnProd pnlFormProd" />
+                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                          rendered="#{empty productoModel.seleccion}"
+                                          style="color:#777; font-style: italic;" />
                         </h:panelGroup>
                     </div>
+
+                    <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                    <h:panelGroup id="pnlFormProd" layout="block">
+                        <h:panelGroup layout="block" rendered="#{productoModel.formVisible}">
+                            <div class="card">
+                                <h2>Administración de Productos</h2>
+
+                                <h:panelGrid id="prodForm" columns="3" cellpadding="5">
+                                    <h:outputLabel for="nombre" value="Nombre:" />
+                                    <p:inputText id="nombre" value="#{productoModel.registro.nombre}" />
+                                    <p:messages for="nombre" />
+
+                                    <h:outputLabel for="precio" value="Precio sugerido:" />
+                                    <p:inputText id="precio" value="#{productoModel.registro.precioSugerido}" />
+                                    <p:messages for="precio" />
+
+                                    <h:outputLabel for="tipo" value="Tipo de producto:" />
+                                    <p:selectOneMenu id="tipo" value="#{productoModel.tipoSeleccionado}">
+                                        <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
+                                        <f:selectItems value="#{productoModel.listaTipos}" />
+                                    </p:selectOneMenu>
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="activo" value="Estado:" />
+                                    <p:selectBooleanCheckbox id="activo"
+                                                             value="#{productoModel.registro.activo}"
+                                                             itemLabel="Activo" />
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="comentarios" value="Comentarios:" />
+                                    <p:inputTextarea id="comentarios"
+                                                     value="#{productoModel.registro.comentarios}"
+                                                     rows="3" cols="50" />
+                                    <p:messages for="comentarios" />
+                                </h:panelGrid>
+
+                                <div style="margin-top: 10px;">
+                                    <p:commandButton value="Guardar" action="#{productoModel.btnGuardarHandler}"
+                                                     update="msgsProd pnlFormProd prodTabla btnProd" styleClass="btn btn-primary" />
+                                    &#160;
+                                    <p:commandButton value="Cancelar" action="#{productoModel.btnCancelarHandler}"
+                                                     update="msgsProd pnlFormProd prodTabla btnProd" styleClass="btn" />
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
                 </p:tab>
 
                 <!-- ========= PESTAÑA 2: PRODUCTO CARACTERISTICA ========= -->
                 <p:tab id="tabPC" title="ProductoCaracteristica">
                     <h:panelGroup id="tabCarac" layout="block">
+                        <p:messages id="msgsPc" showDetail="false" styleClass="top-messages" />
+
+                        <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                         <div class="card">
-                            <h2>Asignar Características a un Producto</h2>
-                            <p:messages id="msgsPc" showDetail="false" />
-
-                            <h:panelGrid id="pcForm" columns="3" cellpadding="5">
-                                <h:outputLabel for="producto" value="Producto:" />
-                                <p:selectOneMenu id="producto"
-                                                 value="#{productoCaracteristicaModel.productoSeleccionado}">
-                                    <f:selectItem itemLabel="-- Elija un producto --" itemValue="#{null}" />
-                                    <f:selectItems value="#{productoCaracteristicaModel.listaProductos}" />
-                                </p:selectOneMenu>
-                                <h:panelGroup />
-
-                                <h:outputLabel for="caracteristica" value="Característica:" />
-                                <p:selectOneMenu id="caracteristica"
-                                                 value="#{productoCaracteristicaModel.caracteristicaSeleccionada}">
-                                    <f:selectItem itemLabel="-- Elija una característica --" itemValue="#{null}" />
-                                    <f:selectItems value="#{productoCaracteristicaModel.listaCaracteristicas}" />
-                                </p:selectOneMenu>
-                                <h:panelGroup />
-
-                                <h:outputLabel for="valor" value="Valor:" />
-                                <p:inputText id="valor" value="#{productoCaracteristicaModel.registro.valor}" />
-                                <h:panelGroup />
-                            </h:panelGrid>
-
-                            <div style="margin-top: 10px;">
-                                <p:commandButton value="Guardar"
-                                                 action="#{productoCaracteristicaModel.btnGuardarHandler}"
-                                                 update="msgsPc pcForm pcTabla" styleClass="btn btn-primary" />
-                                &#160;
-                                <p:commandButton value="Nuevo / Limpiar"
-                                                 action="#{productoCaracteristicaModel.btnNuevoHandler}"
-                                                 immediate="true" update="msgsPc pcForm" styleClass="btn" />
+                            <div style="margin-bottom: 10px;">
+                                <p:commandButton value="Nuevo" action="#{productoCaracteristicaModel.btnNuevoHandler}"
+                                                 update="msgsPc pnlFormPc" styleClass="btn btn-primary"
+                                                 oncomplete="var e=document.querySelector('[id$=pnlFormPc]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                             </div>
-                        </div>
-
-                        <div class="card">
                             <h3>Lista de Características del Producto</h3>
+                            <p:dataTable id="pcTabla" value="#{productoCaracteristicaModel.lazyModel}" var="item"
+                                         styleClass="tabla"
+                                         lazy="true"
+                                         selectionMode="single"
+                                         selection="#{productoCaracteristicaModel.seleccion}"
+                                         rowKey="#{item.idProductoCaracteristica}"
+                                         paginator="true" rows="5"
+                                         emptyMessage="No hay registros">
+                                <p:ajax event="rowSelect" update="btnPc" />
+                                <p:ajax event="rowUnselect" update="btnPc" />
+                                <p:column headerText="ID" style="font-size: 0.8em;">
+                                    #{item.idProductoCaracteristica}
+                                </p:column>
+                                <p:column headerText="Producto">
+                                    #{item.idProducto.nombre}
+                                </p:column>
+                                <p:column headerText="Característica">
+                                    #{item.idCaracteristica.nombre}
+                                </p:column>
+                                <p:column headerText="Valor">
+                                    #{item.valor}
+                                </p:column>
+                            </p:dataTable>
 
-                            <h:panelGroup id="pcTabla" layout="block">
-                                <p:dataTable value="#{productoCaracteristicaModel.registros}" var="item"
-                                             styleClass="tabla"
-                                             selectionMode="single"
-                                             selection="#{productoCaracteristicaModel.seleccion}"
-                                             rowKey="#{item.idProductoCaracteristica}"
-                                             paginator="true" rows="5" emptyMessage="No hay registros">
-                                    <p:ajax event="rowSelect" update="btnPc" />
-                                    <p:ajax event="rowUnselect" update="btnPc" />
-                                    <p:column headerText="ID" style="font-size: 0.8em;">
-                                        #{item.idProductoCaracteristica}
-                                    </p:column>
-                                    <p:column headerText="Producto">
-                                        #{item.idProducto.nombre}
-                                    </p:column>
-                                    <p:column headerText="Característica">
-                                        #{item.idCaracteristica.nombre}
-                                    </p:column>
-                                    <p:column headerText="Valor">
-                                        #{item.valor}
-                                    </p:column>
-                                </p:dataTable>
-
-                                <h:panelGroup id="btnPc" layout="block" style="margin-top: 12px;">
-                                    <comp:botonesTabla model="#{productoCaracteristicaModel}"
-                                                       editUpdate="msgsPc pcForm"
-                                                       deleteUpdate="msgsPc pcForm pcTabla btnPc" />
-                                    &#160;
-                                    <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
-                                                  rendered="#{empty productoCaracteristicaModel.seleccion}"
-                                                  style="color:#777; font-style: italic;" />
-                                </h:panelGroup>
+                            <h:panelGroup id="btnPc" layout="block" style="margin-top: 12px;">
+                                <comp:botonesTabla model="#{productoCaracteristicaModel}"
+                                                   editUpdate="msgsPc pnlFormPc"
+                                                   deleteUpdate="msgsPc pcTabla btnPc pnlFormPc" />
+                                <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                              rendered="#{empty productoCaracteristicaModel.seleccion}"
+                                              style="color:#777; font-style: italic;" />
                             </h:panelGroup>
                         </div>
+
+                        <!-- Formulario en panel: oculto hasta Nuevo/Editar -->
+                        <h:panelGroup id="pnlFormPc" layout="block">
+                            <h:panelGroup layout="block" rendered="#{productoCaracteristicaModel.formVisible}">
+                                <div class="card">
+                                    <h2>Asignar Características a un Producto</h2>
+
+                                    <h:panelGrid id="pcForm" columns="3" cellpadding="5">
+                                        <h:outputLabel for="producto" value="Producto:" />
+                                        <p:selectOneMenu id="producto"
+                                                         value="#{productoCaracteristicaModel.productoSeleccionado}">
+                                            <f:selectItem itemLabel="-- Elija un producto --" itemValue="#{null}" />
+                                            <f:selectItems value="#{productoCaracteristicaModel.listaProductos}" />
+                                        </p:selectOneMenu>
+                                        <h:panelGroup />
+
+                                        <h:outputLabel for="caracteristica" value="Característica:" />
+                                        <p:selectOneMenu id="caracteristica"
+                                                         value="#{productoCaracteristicaModel.caracteristicaSeleccionada}">
+                                            <f:selectItem itemLabel="-- Elija una característica --" itemValue="#{null}" />
+                                            <f:selectItems value="#{productoCaracteristicaModel.listaCaracteristicas}" />
+                                        </p:selectOneMenu>
+                                        <h:panelGroup />
+
+                                        <h:outputLabel for="valor" value="Valor:" />
+                                        <p:inputText id="valor" value="#{productoCaracteristicaModel.registro.valor}" />
+                                        <p:messages for="valor" />
+                                    </h:panelGrid>
+
+                                    <div style="margin-top: 10px;">
+                                        <p:commandButton value="Guardar"
+                                                         action="#{productoCaracteristicaModel.btnGuardarHandler}"
+                                                         update="msgsPc pnlFormPc pcTabla btnPc" styleClass="btn btn-primary" />
+                                        &#160;
+                                        <p:commandButton value="Cancelar"
+                                                         action="#{productoCaracteristicaModel.btnCancelarHandler}"
+                                                         update="msgsPc pnlFormPc pcTabla btnPc" styleClass="btn" />
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </h:panelGroup>
                     </h:panelGroup>
                 </p:tab>
             </p:tabView>

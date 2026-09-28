@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import org.primefaces.event.TabChangeEvent;
 import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
 import sv.edu.ues.ppi115.cafefe.control.ProductoTipoProductoRepository;
 import sv.edu.ues.ppi115.cafefe.control.TipoProductoRepository;
@@ -119,6 +120,36 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
             this.tipoSeleccionado = registro.getIdTipoProducto() != null
                     ? registro.getIdTipoProducto().getIdTipoProducto() : null;
         }
+    }
+
+    /**
+     * Eliminar con manejo de error: si la base de datos rechaza el borrado
+     * por claves foraneas u otro motivo, capturamos la excepcion para mostrar
+     * un mensaje amigable en vez de fallar en silencio en el AJAX.
+     */
+    @Override
+    public void btnEliminarHandler() {
+        try {
+            super.btnEliminarHandler();
+        } catch (Exception e) {
+            // Estado limpio: no dejar el registro apuntando a la fila que no
+            // se pudo borrar
+            this.limpiar();
+            this.formVisible = false;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "No se pudo eliminar la relación producto - tipo de producto", null));
+        }
+    }
+
+    /**
+     * Se dispara al cambiar de pestaña: vacía los desplegables para que
+     * aparezcan los tipos o productos creados en la otra pestaña de esta
+     * misma página.
+     */
+    public void onTabChange(TabChangeEvent evento) {
+        this.listaTipos = null;
+        this.listaProductos = null;
     }
 
     // ---------------------------------------------------------------

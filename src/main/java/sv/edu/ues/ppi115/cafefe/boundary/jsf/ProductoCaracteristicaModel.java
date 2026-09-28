@@ -164,9 +164,10 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
             // Estado limpio: no dejar el registro apuntando a la fila que no
             // se pudo borrar (evita un INSERT duplicado en el siguiente Guardar)
             this.limpiar();
+            this.formVisible = false;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_WARN,
-                    "No se puede eliminar: el registro tiene datos relacionados en otras tablas",
+                    "No se pudo eliminar la característica del producto",
                     null));
         }
     }
