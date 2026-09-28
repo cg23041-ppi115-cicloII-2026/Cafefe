@@ -27,8 +27,8 @@ import java.util.UUID;
 @NamedQueries({
     @NamedQuery(name = "ProductoCaracteristica.findAll", query = "SELECT p FROM ProductoCaracteristica p"),
     @NamedQuery(name = "ProductoCaracteristica.findByValor", query = "SELECT p FROM ProductoCaracteristica p WHERE p.valor = :valor"),
-    @NamedQuery(name = "ProductoCaracteristica.findByProducto", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idProducto = :idProducto"),
-    @NamedQuery(name = "ProductoCaracteristica.findByCaracteristica", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idCaracteristica = :idCaracteristica")})
+    @NamedQuery(name = "ProductoCaracteristica.findByProducto", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idProducto.idProducto = :idProducto"),
+    @NamedQuery(name = "ProductoCaracteristica.findByCaracteristica", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idCaracteristica.idCaracteristica = :idCaracteristica")})
 public class ProductoCaracteristica implements Serializable {
 
     private static final long serialVersionUID = 1L;

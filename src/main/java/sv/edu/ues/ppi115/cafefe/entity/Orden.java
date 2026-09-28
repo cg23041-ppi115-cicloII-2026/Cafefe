@@ -46,7 +46,10 @@ public class Orden implements Serializable {
     @OneToMany(mappedBy = "idOrden", fetch = FetchType.LAZY)
     private List<OrdenProducto> ordenProductoList;
     @JoinColumn(name = "id_empleado_rol", referencedColumnName = "id_empleado_rol")
-    @ManyToOne(fetch = FetchType.LAZY)
+    // EAGER: la tabla de la pestana "Ordenes" muestra empleado y rol de la
+    // orden; con LAZY romperia fuera de la transaccion (receta: FKs en
+    // columnas de tabla van EAGER)
+    @ManyToOne
     private EmpleadoRol idEmpleadoRol;
 
     public Orden() {

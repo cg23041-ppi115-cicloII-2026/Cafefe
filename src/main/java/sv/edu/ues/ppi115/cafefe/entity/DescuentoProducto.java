@@ -33,6 +33,7 @@ import java.util.UUID;
     @NamedQuery(name = "DescuentoProducto.findByFechaDesde", query = "SELECT d FROM DescuentoProducto d WHERE d.fechaDesde = :fechaDesde"),
     @NamedQuery(name = "DescuentoProducto.findByFechaHasta", query = "SELECT d FROM DescuentoProducto d WHERE d.fechaHasta = :fechaHasta"),
     @NamedQuery(name = "DescuentoProducto.findByValor", query = "SELECT d FROM DescuentoProducto d WHERE d.valor = :valor"),
+    @NamedQuery(name = "DescuentoProducto.findByProducto", query = "SELECT d FROM DescuentoProducto d WHERE d.idProducto.idProducto = :idProducto"),
     @NamedQuery(name = "DescuentoProducto.findByObservaciones", query = "SELECT d FROM DescuentoProducto d WHERE d.observaciones = :observaciones")})
 public class DescuentoProducto implements Serializable {
 

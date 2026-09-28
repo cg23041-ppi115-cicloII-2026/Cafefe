@@ -1,50 +1,65 @@
 package sv.edu.ues.ppi115.cafefe.boundary.jsf;
 
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolRepository;
+import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.OrdenProductoRepository;
 import sv.edu.ues.ppi115.cafefe.control.OrdenRepository;
-import sv.edu.ues.ppi115.cafefe.entity.EmpleadoRol;
 import sv.edu.ues.ppi115.cafefe.entity.Orden;
+import sv.edu.ues.ppi115.cafefe.entity.OrdenProducto;
 
+/**
+ * Pestana 2 de Orden.xhtml: consulta de ordenes ya cerradas.
+ *
+ * Reutiliza AbstractModel (tabla lazy + seleccion), pero a proposito NO
+ * tiene formulario ni Editar: una orden cerrada no se edita, solo se
+ * anula. Al seleccionar una fila se carga el detalle de sus lineas
+ * (OrdenProducto.findByOrden).
+ */
 @Named
 @ViewScoped
-public class OrdenModel extends AbstractModel<Orden, UUID> {
+public class OrdenModel extends AbstractModel<Orden, UUID> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private Date fechaSeleccionada;
-    private Date horaSeleccionada;
 
     @Inject
     private OrdenRepository ordenRepository;
 
     @Inject
-    private EmpleadoRolRepository empleadoRolRepository;
+    private OrdenProductoRepository ordenProductoRepository;
 
-    private List<EmpleadoRol> empleadoRoles;
+    /** Lineas de la orden seleccionada (detalle bajo la tabla). */
+    private List<OrdenProducto> lineasSeleccion = new ArrayList<>();
 
     @Override
-    public OrdenRepository getDao() {
+    public DefaultDAO<Orden, UUID> getDao() {
         return ordenRepository;
     }
 
     @Override
     public Orden instanciarRegistro() {
-        Orden r = new Orden(UUID.randomUUID());
-        r.setFechaCreacion(new Date());
-        return r;
+        // No se usa para crear (la orden nace en TomarOrdenModel), pero
+        // AbstractModel.limpiar() lo necesita con id nuevo
+        return new Orden(UUID.randomUUID());
     }
 
     @Override
     public Orden getRegistroById(Object id) {
-        return id == null ? null : ordenRepository.findById((UUID) id);
+        if (id != null && this.registros != null && !this.registros.isEmpty()) {
+            UUID busca = (UUID) id;
+            return this.registros.stream()
+                    .filter(o -> o.getIdOrden().equals(busca))
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
     }
 
     @Override
@@ -52,84 +67,50 @@ public class OrdenModel extends AbstractModel<Orden, UUID> {
         return dato != null ? dato.getIdOrden() : null;
     }
 
-    @Override
-    public void limpiar() {
-        super.limpiar();
-        Date ahora = new Date();
-        this.fechaSeleccionada = ahora;
-        this.horaSeleccionada = ahora;
+    /**
+     * rowSelect/rowUnselect de la tabla de ordenes: carga (o limpia) el
+     * detalle de lineas de la orden marcada.
+     */
+    public void onOrdenSeleccionada() {
+        this.lineasSeleccion = (this.seleccion != null)
+                ? ordenProductoRepository.findByOrden(this.seleccion.getIdOrden())
+                : new ArrayList<>();
     }
 
+    /**
+     * Anular una orden: primero borra sus lineas y luego la orden, todo
+     * en UNA transaccion (OrdenRepository). Si alguna linea ya fue
+     * facturada, la FK de factura_orden_producto revierte el borrado
+     * completo y se muestra el aviso.
+     */
     @Override
-    public void seleccionarRegistro(Orden r) {
-        super.seleccionarRegistro(r);
-        if (r != null && r.getFechaCreacion() != null) {
-            this.fechaSeleccionada = r.getFechaCreacion();
-            this.horaSeleccionada = r.getFechaCreacion();
+    public void btnEliminarHandler() {
+        try {
+            super.btnEliminarHandler();
+            this.lineasSeleccion = new ArrayList<>();
+        } catch (Exception e) {
+            this.limpiar();
+            this.formVisible = false;
+            this.lineasSeleccion = new ArrayList<>();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "No se pudo anular la orden (puede que ya este facturada)", null));
         }
     }
 
-    @Override
-    public void btnGuardarHandler() {
-        combinarFechaHora();
-        super.btnGuardarHandler();
+    public List<OrdenProducto> getLineasSeleccion() {
+        return lineasSeleccion;
     }
 
-    private void combinarFechaHora() {
-        if (this.registro != null) {
-            Calendar calFecha = Calendar.getInstance();
-            Calendar calHora = Calendar.getInstance();
+    public void setLineasSeleccion(List<OrdenProducto> lineasSeleccion) {
+        this.lineasSeleccion = lineasSeleccion;
+    }
 
-            if (this.fechaSeleccionada != null) {
-                calFecha.setTime(this.fechaSeleccionada);
-            }
-            if (this.horaSeleccionada != null) {
-                calHora.setTime(this.horaSeleccionada);
-            }
-
-            Calendar combinado = Calendar.getInstance();
-            combinado.set(Calendar.YEAR, calFecha.get(Calendar.YEAR));
-            combinado.set(Calendar.MONTH, calFecha.get(Calendar.MONTH));
-            combinado.set(Calendar.DAY_OF_MONTH, calFecha.get(Calendar.DAY_OF_MONTH));
-            combinado.set(Calendar.HOUR_OF_DAY, calHora.get(Calendar.HOUR_OF_DAY));
-            combinado.set(Calendar.MINUTE, calHora.get(Calendar.MINUTE));
-            combinado.set(Calendar.SECOND, 0);
-            combinado.set(Calendar.MILLISECOND, 0);
-            this.registro.setFechaCreacion(combinado.getTime());
+    /** Subtotal de una linea del detalle (null-safe, para la columna). */
+    public java.math.BigDecimal getSubtotal(OrdenProducto linea) {
+        if (linea == null || linea.getPrecio() == null || linea.getCantidad() == null) {
+            return java.math.BigDecimal.ZERO;
         }
-    }
-
-    // Carga perezosa: solo consulta la BD la primera vez que el XHTML la pide
-    public List<EmpleadoRol> getEmpleadoRoles() {
-        if (this.empleadoRoles == null) {
-            if (empleadoRolRepository != null) {
-                this.empleadoRoles = empleadoRolRepository.findAll();
-            } else {
-                this.empleadoRoles = new ArrayList<>();
-            }
-        }
-        return empleadoRoles;
-    }
-
-    public void setEmpleadoRoles(List<EmpleadoRol> empleadoRoles) {
-        this.empleadoRoles = empleadoRoles;
-    }
-
-    public Date getFechaSeleccionada() {
-        return fechaSeleccionada;
-    }
-
-    public void setFechaSeleccionada(Date fechaSeleccionada) {
-        this.fechaSeleccionada = fechaSeleccionada;
-    }
-
-    public Date getHoraSeleccionada() {
-        return horaSeleccionada;
-    }
-
-    public void setHoraSeleccionada(Date horaSeleccionada) {
-        this.horaSeleccionada = horaSeleccionada;
+        return linea.getPrecio().multiply(java.math.BigDecimal.valueOf(linea.getCantidad()));
     }
 }
-
-
