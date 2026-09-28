@@ -1,5 +1,7 @@
 package sv.edu.ues.ppi115.cafefe.boundary.jsf;
 
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -54,5 +56,25 @@ public class RolModel extends AbstractModel<Rol, UUID> implements Serializable {
 
     public void buscarPorNombre(String nombre) {
         this.registros = rolRepository.findByNombre(nombre);
+    }
+
+    /**
+     * Eliminar con manejo de error: capturamos la excepcion para mostrar un
+     * mensaje amigable en vez de fallar en silencio en el AJAX. La BD tiene
+     * ON DELETE RESTRICT, asi que un rol asignado a empleados no se puede borrar.
+     */
+    @Override
+    public void btnEliminarHandler() {
+        try {
+            super.btnEliminarHandler();
+        } catch (Exception e) {
+            // Estado limpio: no dejar el registro apuntando a la fila que no
+            // se pudo borrar (evita un INSERT duplicado en el siguiente Guardar)
+            this.limpiar();
+            this.formVisible = false;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "No se pudo eliminar el rol (puede estar asignado a empleados)", null));
+        }
     }
 }
