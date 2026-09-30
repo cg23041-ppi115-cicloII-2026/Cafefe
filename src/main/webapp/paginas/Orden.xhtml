@@ -68,7 +68,7 @@
                         </p:dataTable>
                     </div>
 
-                    <!-- Línea en edición: precio / cantidad / observaciones -->
+                    <!-- Línea en edición: precio / observaciones -->
                     <h:panelGroup id="pnlLinea" layout="block">
                         <div class="card">
                             <h3>Línea de la orden</h3>
@@ -83,10 +83,6 @@
                                 <h:outputLabel for="precioLinea" value="Precio:" />
                                 <p:inputText id="precioLinea" value="#{tomarOrdenModel.precioLinea}" />
                                 <p:messages for="precioLinea" />
-
-                                <h:outputLabel for="cantidadLinea" value="Cantidad:" />
-                                <p:inputText id="cantidadLinea" value="#{tomarOrdenModel.cantidadLinea}" />
-                                <p:messages for="cantidadLinea" />
 
                                 <h:outputLabel for="obsLinea" value="Observaciones:" />
                                 <p:inputTextarea id="obsLinea"
@@ -148,9 +144,6 @@
                                          emptyMessage="Aún no hay líneas: elija un producto y pulse Agregar">
                                 <p:column headerText="Producto">
                                     #{linea.idProducto.nombre}
-                                </p:column>
-                                <p:column headerText="Cantidad">
-                                    #{linea.cantidad}
                                 </p:column>
                                 <p:column headerText="Precio">
                                     #{linea.precio}
@@ -247,9 +240,6 @@
                                              emptyMessage="La orden no tiene líneas">
                                     <p:column headerText="Producto">
                                         #{linea.idProducto.nombre}
-                                    </p:column>
-                                    <p:column headerText="Cantidad">
-                                        #{linea.cantidad}
                                     </p:column>
                                     <p:column headerText="Precio">
                                         #{linea.precio}

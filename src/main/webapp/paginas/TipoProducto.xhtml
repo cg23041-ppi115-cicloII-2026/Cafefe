@@ -73,6 +73,10 @@
                                 <h2>Administración de Tipos de Producto</h2>
 
                                 <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="idTp" value="ID:" />
+                                    <p:inputText id="idTp" value="#{tipoProductoModel.registro.idTipoProducto}" required="false" disabled="true" />
+                                    <p:messages for="idTp" />
+
                                     <h:outputLabel for="nombre" value="Nombre del Producto:" />
                                     <p:inputText id="nombre" value="#{tipoProductoModel.registro.nombre}" />
                                     <p:messages for="nombre" />
@@ -157,9 +161,13 @@
                                     <h2>Asignar Tipos de Producto a un Producto</h2>
 
                                     <h:panelGrid columns="3" cellpadding="5">
+                                        <h:outputLabel for="idPtp" value="ID:" />
+                                        <p:inputText id="idPtp" value="#{productoTipoProductoModel.registro.idProductoTipoProducto}" required="false" disabled="true" />
+                                        <p:messages for="idPtp" />
+
                                         <h:outputLabel for="producto" value="Producto:" />
                                         <p:selectOneMenu id="producto"
-                                                         value="#{productoTipoProductoModel.productoSeleccionado}">
+                                                         value="#{productoTipoProductoModel.productoSeleccionado}" disabled="#{productoTipoProductoModel.editando}">
                                             <f:selectItem itemLabel="-- Elija un producto --" itemValue="#{null}" />
                                             <f:selectItems value="#{productoTipoProductoModel.listaProductos}" />
                                         </p:selectOneMenu>
@@ -167,7 +175,7 @@
 
                                         <h:outputLabel for="tipo" value="Tipo de producto:" />
                                         <p:selectOneMenu id="tipo"
-                                                         value="#{productoTipoProductoModel.tipoSeleccionado}">
+                                                         value="#{productoTipoProductoModel.tipoSeleccionado}" disabled="#{productoTipoProductoModel.editando}">
                                             <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
                                             <f:selectItems value="#{productoTipoProductoModel.listaTipos}" />
                                         </p:selectOneMenu>

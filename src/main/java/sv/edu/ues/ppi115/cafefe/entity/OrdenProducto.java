@@ -48,9 +48,6 @@ public class OrdenProducto implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "observaciones", length = 2147483647)
     private String observaciones;
-    // Cuantas unidades de este producto lleva la linea (BD: NOT NULL DEFAULT 1)
-    @Column(name = "cantidad")
-    private Integer cantidad;
     @OneToMany(mappedBy = "idOrdenProducto", fetch = FetchType.LAZY)
     private List<FacturaOrdenProducto> facturaOrdenProductoList;
     @JoinColumn(name = "id_orden", referencedColumnName = "id_orden")
@@ -89,14 +86,6 @@ public class OrdenProducto implements Serializable {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
     }
 
     public List<FacturaOrdenProducto> getFacturaOrdenProductoList() {

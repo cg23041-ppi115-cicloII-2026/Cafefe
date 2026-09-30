@@ -32,6 +32,8 @@ public class EmpleadoRolRepository extends DefaultDAO<EmpleadoRol, UUID> {
         return getEntityManager()
                 .createQuery("SELECT er FROM EmpleadoRol er "
                         + "WHERE er.activo = true "
+                        + "AND er.idEmpleado.activo = true "
+                        + "AND er.idRol.activo = true "
                         + "AND LOWER(er.idRol.nombre) IN ('cajero', 'gerente', 'administrador') "
                         + "ORDER BY er.idEmpleado.nombre", EmpleadoRol.class)
                 .getResultList();

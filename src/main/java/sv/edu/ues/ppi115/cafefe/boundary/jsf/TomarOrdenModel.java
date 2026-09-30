@@ -36,6 +36,9 @@ import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
  * quitar, cambiar precio); al pulsar "Guardar orden" se cierra para siempre
  * (1 INSERT de orden + N de lineas en UNA transaccion) y ya no se edita.
  *
+ * Cada linea representa UNA unidad del producto: las ordenes no manejan
+ * cantidad (si el cliente lleva dos, son dos lineas).
+ *
  * Estados:
  *  - combo "Atendido por": solo roles cajero/gerente/administrador (findCobradores)
  *  - tabla lazy de productos: SOLO activos, con busqueda por nombre
@@ -79,7 +82,6 @@ public class TomarOrdenModel implements Serializable {
     // Linea en edicion (se agrega al carrito con "Agregar a la orden")
     // ---------------------------------------------------------------
     private BigDecimal precioLinea;
-    private Integer cantidadLinea = 1;
     private String observacionesLinea = "";
 
     // ---------------------------------------------------------------
@@ -141,7 +143,6 @@ public class TomarOrdenModel implements Serializable {
     public void onProductoSeleccionado() {
         if (this.productoSeleccionado != null) {
             this.precioLinea = this.productoSeleccionado.getPrecioSugerido();
-            this.cantidadLinea = 1;
             this.observacionesLinea = "";
             this.caracteristicas = productoCaracteristicaRepository
                     .findByProducto(this.productoSeleccionado.getIdProducto());
@@ -288,10 +289,6 @@ public class TomarOrdenModel implements Serializable {
             mensaje(FacesMessage.SEVERITY_ERROR, "El precio debe ser mayor a 0");
             return;
         }
-        if (this.cantidadLinea == null || this.cantidadLinea < 1) {
-            mensaje(FacesMessage.SEVERITY_ERROR, "La cantidad minima es 1");
-            return;
-        }
 
         // precio de venta al momento de tomar la orden (snapshot)
         BigDecimal precioFinal = this.precioLinea.setScale(2, RoundingMode.HALF_UP);
@@ -311,14 +308,12 @@ public class TomarOrdenModel implements Serializable {
         OrdenProducto linea = new OrdenProducto(UUID.randomUUID());
         linea.setIdProducto(this.productoSeleccionado);
         linea.setPrecio(precioFinal);
-        linea.setCantidad(this.cantidadLinea);
         linea.setObservaciones(obsFinal);
         this.carrito.add(linea);
 
         // listo para la siguiente linea
         this.productoSeleccionado = null;
         this.precioLinea = null;
-        this.cantidadLinea = 1;
         this.observacionesLinea = "";
         this.caracteristicas = new ArrayList<>();
         this.descuentosProducto = new ArrayList<>();
@@ -372,7 +367,6 @@ public class TomarOrdenModel implements Serializable {
             this.carrito = new ArrayList<>();
             this.productoSeleccionado = null;
             this.precioLinea = null;
-            this.cantidadLinea = 1;
             this.observacionesLinea = "";
             this.caracteristicas = new ArrayList<>();
             this.descuentosProducto = new ArrayList<>();
@@ -392,7 +386,6 @@ public class TomarOrdenModel implements Serializable {
         this.busqueda = null;
         this.productoSeleccionado = null;
         this.precioLinea = null;
-        this.cantidadLinea = 1;
         this.observacionesLinea = "";
         this.caracteristicas = new ArrayList<>();
         this.descuentosProducto = new ArrayList<>();
@@ -412,11 +405,12 @@ public class TomarOrdenModel implements Serializable {
         return total.setScale(2, RoundingMode.HALF_UP);
     }
 
+    /** Subtotal de la linea: cada linea es una unidad, asi que es el precio. */
     public BigDecimal getSubtotal(OrdenProducto linea) {
-        if (linea == null || linea.getPrecio() == null || linea.getCantidad() == null) {
+        if (linea == null || linea.getPrecio() == null) {
             return BigDecimal.ZERO;
         }
-        return linea.getPrecio().multiply(BigDecimal.valueOf(linea.getCantidad()));
+        return linea.getPrecio();
     }
 
     private void mensaje(FacesMessage.Severity severidad, String texto) {
@@ -465,14 +459,6 @@ public class TomarOrdenModel implements Serializable {
 
     public void setPrecioLinea(BigDecimal precioLinea) {
         this.precioLinea = precioLinea;
-    }
-
-    public Integer getCantidadLinea() {
-        return cantidadLinea;
-    }
-
-    public void setCantidadLinea(Integer cantidadLinea) {
-        this.cantidadLinea = cantidadLinea;
     }
 
     public String getObservacionesLinea() {

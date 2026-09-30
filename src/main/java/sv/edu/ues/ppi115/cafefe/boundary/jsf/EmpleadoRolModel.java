@@ -109,8 +109,9 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
             List<Rol> asignados = new ArrayList<>();
             for (Rol r : todos) {
                 if (idsAsignados.contains(r.getIdRol())) {
+                    // los ya asignados se muestran aunque el rol este inactivo
                     asignados.add(r);
-                } else {
+                } else if (!Boolean.FALSE.equals(r.getActivo())) {
                     disponibles.add(r);
                 }
             }
@@ -250,13 +251,22 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
         if (this.listaEmpleados == null) {
             this.listaEmpleados = new ArrayList<>();
             for (Empleado e : empleadoRepository.findAll()) {
+                if (Boolean.FALSE.equals(e.getActivo())) {
+                    continue; // los inactivos no se pueden asignar
+                }
                 this.listaEmpleados.add(new SelectItem(
                         e.getIdEmpleado(),
                         (e.getNombre() != null ? e.getNombre() : "") + " "
                         + (e.getApellido() != null ? e.getApellido() : "")));
             }
         }
-        return this.listaEmpleados;
+        return incluirActual(this.listaEmpleados, this.empleadoSeleccionado, () -> {
+            Empleado e = empleadoRepository.findById(this.empleadoSeleccionado);
+            return e == null ? null : new SelectItem(
+                    e.getIdEmpleado(),
+                    (e.getNombre() != null ? e.getNombre() : "") + " "
+                    + (e.getApellido() != null ? e.getApellido() : ""));
+        });
     }
 
     public UUID getEmpleadoSeleccionado() {

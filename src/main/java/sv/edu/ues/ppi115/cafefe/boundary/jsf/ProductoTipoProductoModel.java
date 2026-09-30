@@ -159,20 +159,32 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
         if (this.listaProductos == null) {
             this.listaProductos = new ArrayList<>();
             for (Producto p : productoRepository.findAll()) {
+                if (Boolean.FALSE.equals(p.getActivo())) {
+                    continue; // los inactivos no se pueden asignar
+                }
                 this.listaProductos.add(new SelectItem(p.getIdProducto(), p.getNombre()));
             }
         }
-        return this.listaProductos;
+        return incluirActual(this.listaProductos, this.productoSeleccionado, () -> {
+            Producto p = productoRepository.findById(this.productoSeleccionado);
+            return p == null ? null : new SelectItem(p.getIdProducto(), p.getNombre());
+        });
     }
 
     public List<SelectItem> getListaTipos() {
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
             for (TipoProducto t : tipoProductoRepository.findAll()) {
+                if (Boolean.FALSE.equals(t.getActivo())) {
+                    continue; // los inactivos no se pueden asignar
+                }
                 this.listaTipos.add(new SelectItem(t.getIdTipoProducto(), t.getNombre()));
             }
         }
-        return this.listaTipos;
+        return incluirActual(this.listaTipos, this.tipoSeleccionado, () -> {
+            TipoProducto t = tipoProductoRepository.findById(this.tipoSeleccionado);
+            return t == null ? null : new SelectItem(t.getIdTipoProducto(), t.getNombre());
+        });
     }
 
     // ---------------------------------------------------------------

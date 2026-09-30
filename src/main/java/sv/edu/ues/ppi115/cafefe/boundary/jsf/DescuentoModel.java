@@ -145,10 +145,16 @@ public class DescuentoModel extends AbstractModel<Descuento, UUID> implements Se
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
             for (TipoDescuento t : tipoDescuentoRepository.findAll()) {
+                if (Boolean.FALSE.equals(t.getActivo())) {
+                    continue; // los inactivos no se pueden asignar
+                }
                 this.listaTipos.add(new SelectItem(t.getIdTipoDescuento(), t.getNombre()));
             }
         }
-        return this.listaTipos;
+        return incluirActual(this.listaTipos, this.tipoSeleccionado, () -> {
+            TipoDescuento t = tipoDescuentoRepository.findById(this.tipoSeleccionado);
+            return t == null ? null : new SelectItem(t.getIdTipoDescuento(), t.getNombre());
+        });
     }
 
     public UUID getTipoSeleccionado() {

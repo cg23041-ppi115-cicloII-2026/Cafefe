@@ -75,6 +75,10 @@
                                 <h2>Administración de Tipos de Característica</h2>
 
                                 <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="idTc" value="ID:" />
+                                    <p:inputText id="idTc" value="#{tipoCaracteristicaModel.registro.idTipoCaracteristica}" required="false" disabled="true" />
+                                    <p:messages for="idTc" />
+
                                     <h:outputLabel for="nombre" value="Nombre:" />
                                     <p:inputText id="nombre" value="#{tipoCaracteristicaModel.registro.nombre}" />
                                     <p:messages for="nombre" />
@@ -168,9 +172,13 @@
                                     <h2>Administración de Características</h2>
 
                                     <h:panelGrid columns="3" cellpadding="5">
+                                        <h:outputLabel for="idCr" value="ID:" />
+                                        <p:inputText id="idCr" value="#{caracteristicaModel.registro.idCaracteristica}" required="false" disabled="true" />
+                                        <p:messages for="idCr" />
+
                                         <h:outputLabel for="tipo" value="Tipo de característica:" />
                                         <p:selectOneMenu id="tipo"
-                                                         value="#{caracteristicaModel.tipoSeleccionado}">
+                                                         value="#{caracteristicaModel.tipoSeleccionado}" disabled="#{caracteristicaModel.editando}">
                                             <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
                                             <f:selectItems value="#{caracteristicaModel.listaTipos}" />
                                         </p:selectOneMenu>

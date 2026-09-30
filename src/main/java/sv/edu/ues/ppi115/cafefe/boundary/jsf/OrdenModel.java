@@ -106,11 +106,11 @@ public class OrdenModel extends AbstractModel<Orden, UUID> implements Serializab
         this.lineasSeleccion = lineasSeleccion;
     }
 
-    /** Subtotal de una linea del detalle (null-safe, para la columna). */
+    /** Subtotal de una linea del detalle: cada linea es una unidad, asi que es el precio. */
     public java.math.BigDecimal getSubtotal(OrdenProducto linea) {
-        if (linea == null || linea.getPrecio() == null || linea.getCantidad() == null) {
+        if (linea == null || linea.getPrecio() == null) {
             return java.math.BigDecimal.ZERO;
         }
-        return linea.getPrecio().multiply(java.math.BigDecimal.valueOf(linea.getCantidad()));
+        return linea.getPrecio();
     }
 }

@@ -70,6 +70,11 @@
                                 <h2>Administración de Empleados</h2>
 
                                 <h:panelGrid columns="3" cellpadding="5">
+                                    
+                                    <h:outputLabel for="id" value="ID:" />
+                                    <p:inputText id="id" value="#{empleadoModel.registro.idEmpleado}" required="false" disabled="true"/>
+                                    <p:messages for="id" />
+                                    
                                     <h:outputLabel for="nombre" value="Nombre:" />
                                     <p:inputText id="nombre" value="#{empleadoModel.registro.nombre}" required="true" />
                                     <p:messages for="nombre" />
@@ -156,8 +161,12 @@
                                 <h2>Asignación Empleado - Rol</h2>
 
                                 <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="idAsig" value="ID:" />
+                                    <p:inputText id="idAsig" value="#{empleadoRolModel.registro.idEmpleadoRol}" required="false" disabled="true" />
+                                    <p:messages for="idAsig" />
+
                                     <h:outputLabel for="cboEmpleado" value="Empleado:" />
-                                    <p:selectOneMenu id="cboEmpleado" value="#{empleadoRolModel.empleadoSeleccionado}">
+                                    <p:selectOneMenu id="cboEmpleado" value="#{empleadoRolModel.empleadoSeleccionado}" disabled="#{empleadoRolModel.editando}">
                                         <f:selectItem itemLabel="-- Elija un empleado --" itemValue="#{null}" />
                                         <f:selectItems value="#{empleadoRolModel.listaEmpleados}" />
                                         <!-- Al cambiar de empleado se recarga el pickList con sus roles -->
@@ -187,7 +196,8 @@
                                                 itemLabel="#{rol.nombre}" itemValue="#{rol}"
                                                 converter="#{rolConverter}"
                                                 showSourceFilter="true" showTargetFilter="true"
-                                                filterMatchMode="contains" responsive="true">
+                                                filterMatchMode="contains" responsive="true"
+                                                disabled="#{empleadoRolModel.editando}">
                                         <f:facet name="sourceCaption">Roles disponibles</f:facet>
                                         <f:facet name="targetCaption">Roles asignados</f:facet>
                                     </p:pickList>
@@ -257,6 +267,10 @@
                                 <h2>Rol</h2>
 
                                 <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="idRol" value="ID:" />
+                                    <p:inputText id="idRol" value="#{rolModel.registro.idRol}" required="false" disabled="true" />
+                                    <p:messages for="idRol" />
+
                                     <h:outputLabel for="nombreRol" value="Nombre:" />
                                     <p:inputText id="nombreRol" value="#{rolModel.registro.nombre}" required="true" />
                                     <p:messages for="nombreRol" />

@@ -69,6 +69,10 @@
                                 <h2>Administración de Tipos de Descuento</h2>
 
                                 <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="idTipoD" value="ID:" />
+                                    <p:inputText id="idTipoD" value="#{tipoDescuentoModel.registro.idTipoDescuento}" required="false" disabled="true" />
+                                    <p:messages for="idTipoD" />
+
                                     <h:outputLabel for="nombre" value="Nombre del Descuento:" />
                                     <p:inputText id="nombre" value="#{tipoDescuentoModel.registro.nombre}" required="true" />
                                     <p:messages for="nombre" />
@@ -166,12 +170,16 @@
                                 <h2>Administración de Descuentos</h2>
 
                                 <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="idDesc" value="ID:" />
+                                    <p:inputText id="idDesc" value="#{descuentoModel.registro.idDescuento}" required="false" disabled="true" />
+                                    <p:messages for="idDesc" />
+
                                     <h:outputLabel for="nombreDesc" value="Nombre:" />
                                     <p:inputText id="nombreDesc" value="#{descuentoModel.registro.nombre}" required="true" />
                                     <p:messages for="nombreDesc" />
 
                                     <h:outputLabel for="cboTipo" value="Tipo de Descuento:" />
-                                    <p:selectOneMenu id="cboTipo" value="#{descuentoModel.tipoSeleccionado}">
+                                    <p:selectOneMenu id="cboTipo" value="#{descuentoModel.tipoSeleccionado}" disabled="#{descuentoModel.editando}">
                                         <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
                                         <f:selectItems value="#{descuentoModel.listaTipos}" />
                                     </p:selectOneMenu>
@@ -179,12 +187,12 @@
 
                                     <h:outputLabel for="fechaDesde" value="Vigente desde:" />
                                     <p:datePicker id="fechaDesde" value="#{descuentoModel.registro.fechaDesde}"
-                                                  pattern="dd/MM/yyyy" showIcon="true" />
+                                                  pattern="dd/MM/yyyy" showIcon="true" disabled="#{descuentoModel.editando}" />
                                     <h:panelGroup />
 
                                     <h:outputLabel for="fechaHasta" value="Vigente hasta:" />
                                     <p:datePicker id="fechaHasta" value="#{descuentoModel.registro.fechaHasta}"
-                                                  pattern="dd/MM/yyyy" showIcon="true" />
+                                                  pattern="dd/MM/yyyy" showIcon="true" disabled="#{descuentoModel.editando}" />
                                     <h:panelGroup />
 
                                     <h:outputLabel for="observacionesDesc" value="Observaciones:" />
@@ -263,15 +271,19 @@
                                 <h2>Administración de Descuentos por Producto</h2>
 
                                 <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="idDescProd" value="ID:" />
+                                    <p:inputText id="idDescProd" value="#{descuentoProductoModel.registro.idDescuentoProducto}" required="false" disabled="true" />
+                                    <p:messages for="idDescProd" />
+
                                     <h:outputLabel for="cboDescuento" value="Descuento:" />
-                                    <p:selectOneMenu id="cboDescuento" value="#{descuentoProductoModel.descuentoSeleccionado}">
+                                    <p:selectOneMenu id="cboDescuento" value="#{descuentoProductoModel.descuentoSeleccionado}" disabled="#{descuentoProductoModel.editando}">
                                         <f:selectItem itemLabel="-- Elija un descuento --" itemValue="#{null}" />
                                         <f:selectItems value="#{descuentoProductoModel.listaDescuentos}" />
                                     </p:selectOneMenu>
                                     <h:panelGroup />
 
                                     <h:outputLabel for="cboProducto" value="Producto:" />
-                                    <p:selectOneMenu id="cboProducto" value="#{descuentoProductoModel.productoSeleccionado}">
+                                    <p:selectOneMenu id="cboProducto" value="#{descuentoProductoModel.productoSeleccionado}" disabled="#{descuentoProductoModel.editando}">
                                         <f:selectItem itemLabel="-- Elija un producto --" itemValue="#{null}" />
                                         <f:selectItems value="#{descuentoProductoModel.listaProductos}" />
                                     </p:selectOneMenu>
@@ -284,12 +296,12 @@
 
                                     <h:outputLabel for="fechaDesdeProd" value="Vigente desde:" />
                                     <p:datePicker id="fechaDesdeProd" value="#{descuentoProductoModel.registro.fechaDesde}"
-                                                  pattern="dd/MM/yyyy" showIcon="true" />
+                                                  pattern="dd/MM/yyyy" showIcon="true" disabled="#{descuentoProductoModel.editando}" />
                                     <h:panelGroup />
 
                                     <h:outputLabel for="fechaHastaProd" value="Vigente hasta:" />
                                     <p:datePicker id="fechaHastaProd" value="#{descuentoProductoModel.registro.fechaHasta}"
-                                                  pattern="dd/MM/yyyy" showIcon="true" />
+                                                  pattern="dd/MM/yyyy" showIcon="true" disabled="#{descuentoProductoModel.editando}" />
                                     <h:panelGroup />
 
                                     <h:outputLabel for="observacionesProd" value="Observaciones:" />

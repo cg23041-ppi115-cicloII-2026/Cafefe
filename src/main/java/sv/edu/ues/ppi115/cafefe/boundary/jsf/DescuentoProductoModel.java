@@ -180,10 +180,16 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
         if (this.listaProductos == null) {
             this.listaProductos = new ArrayList<>();
             for (Producto p : productoRepository.findAll()) {
+                if (Boolean.FALSE.equals(p.getActivo())) {
+                    continue; // los inactivos no se pueden asignar
+                }
                 this.listaProductos.add(new SelectItem(p.getIdProducto(), p.getNombre()));
             }
         }
-        return this.listaProductos;
+        return incluirActual(this.listaProductos, this.productoSeleccionado, () -> {
+            Producto p = productoRepository.findById(this.productoSeleccionado);
+            return p == null ? null : new SelectItem(p.getIdProducto(), p.getNombre());
+        });
     }
 
     public UUID getDescuentoSeleccionado() {
