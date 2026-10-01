@@ -54,6 +54,28 @@ public class RolModel extends AbstractModel<Rol, UUID> implements Serializable {
         return dato != null ? dato.getIdRol() : null;
     }
 
+    /**
+     * Guardar valida el nombre AQUI en el modelo (la vista no usa required,
+     * igual que productoCaracteristica): asi el boton Cancelar funciona
+     * aunque el formulario este vacio, y el aviso sale solo arriba.
+     */
+    @Override
+    public void btnGuardarHandler() {
+        if (this.registro != null
+                && (this.registro.getNombre() == null || this.registro.getNombre().trim().isEmpty())) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN, "Debe ingresar el nombre", null));
+            return; // no se guarda sin nombre y el formulario queda abierto
+        }
+        try {
+            super.btnGuardarHandler(); // guarda, recarga la tabla y limpia
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "No se pudo guardar: verifique los datos e intente de nuevo", null));
+        }
+    }
+
     public void buscarPorNombre(String nombre) {
         this.registros = rolRepository.findByNombre(nombre);
     }

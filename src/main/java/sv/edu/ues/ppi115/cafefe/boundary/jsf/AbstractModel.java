@@ -4,9 +4,6 @@ import jakarta.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.function.Supplier;
-import jakarta.faces.model.SelectItem;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
 
 /**
@@ -171,37 +168,13 @@ public abstract class AbstractModel<T, ID> implements Serializable {
 
     /**
      * ¿El formulario esta en modo edicion (vino de "Editar") y no de
-     * "Nuevo"? La vista lo usa en disabled="#{xModel.editando}" para las
-     * listas de seleccion, las ventanas emergentes y el campo ID: segun
-     * la rubrica solo deben permitirse cambios durante la creacion.
+     * "Nuevo"? La vista lo usa en disabled="#{xModel.editando}" para los
+     * calendarios: las fechas solo se eligen al crear. Las listas de
+     * seleccion NO se apagan en edicion; ahi el gris lo define el campo
+     * activo del registro (inactivos en gris y no elegibles).
      */
     public boolean isEditando() {
         return this.estado == ESTADO_CRUD.MODIFICAR;
-    }
-
-    /**
-     * Las listas de combos excluyen los registros inactivos. Si el valor
-     * actual del combo (registro en edicion) quedo inactivo despues de ser
-     * asignado, se agrega igual SOLO para mostrarlo: el combo esta gris en
-     * edicion y asi la ficha no se queda en blanco. Nunca modifica la
-     * lista cacheada.
-     *
-     * @param lista      lista ya filtrada (sin inactivos)
-     * @param actual     valor seleccionado actualmente en el combo
-     * @param itemActual construye el item del actual; null si no existe
-     * @return lista con el item del actual agregado solo si hacia falta
-     */
-    protected List<SelectItem> incluirActual(List<SelectItem> lista, UUID actual,
-            Supplier<SelectItem> itemActual) {
-        if (actual == null || lista.stream().anyMatch(si -> actual.equals(si.getValue()))) {
-            return lista;
-        }
-        List<SelectItem> completa = new ArrayList<>(lista);
-        SelectItem si = itemActual.get();
-        if (si != null) {
-            completa.add(si);
-        }
-        return completa;
     }
 
     public boolean isFormVisible() {

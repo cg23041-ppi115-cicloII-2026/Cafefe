@@ -23,18 +23,16 @@ public class EmpleadoRolRepository extends DefaultDAO<EmpleadoRol, UUID> {
     }
 
     /**
-     * Asignaciones que pueden COBRAR: la asignacion activa y su rol
-     * cobrador. Solo cajero, gerente y administrador pueden tomar y
-     * cobrar ordenes (lista fija aqui en el codigo, sin campo en la BD).
+     * Asignaciones que pueden REALIZAR ordenes: los empleados con rol
+     * cajero, gerente, administrador o mesero (lista fija aqui en el
+     * codigo, sin campo en la BD). Devuelve tambien las inactivas: el
+     * combo las muestra en gris, sin poder elegirlas.
      * Es la fuente del combo "Atendido por" de la vista Orden.
      */
     public List<EmpleadoRol> findCobradores() {
         return getEntityManager()
                 .createQuery("SELECT er FROM EmpleadoRol er "
-                        + "WHERE er.activo = true "
-                        + "AND er.idEmpleado.activo = true "
-                        + "AND er.idRol.activo = true "
-                        + "AND LOWER(er.idRol.nombre) IN ('cajero', 'gerente', 'administrador') "
+                        + "WHERE LOWER(er.idRol.nombre) IN ('cajero', 'gerente', 'administrador', 'mesero') "
                         + "ORDER BY er.idEmpleado.nombre", EmpleadoRol.class)
                 .getResultList();
     }

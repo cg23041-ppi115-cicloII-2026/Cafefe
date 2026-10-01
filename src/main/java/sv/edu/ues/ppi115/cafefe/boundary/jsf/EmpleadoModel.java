@@ -1,5 +1,7 @@
 package sv.edu.ues.ppi115.cafefe.boundary.jsf;
 
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -12,7 +14,7 @@ import sv.edu.ues.ppi115.cafefe.control.EmpleadoRepository;
 @Named
 @ViewScoped
 public class EmpleadoModel extends AbstractModel<Empleado, UUID> implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     @Inject
@@ -49,6 +51,35 @@ public class EmpleadoModel extends AbstractModel<Empleado, UUID> implements Seri
     }
 
     /**
+     * Guardar valida nombre y apellido AQUI en el modelo (la vista no usa
+     * required, igual que productoCaracteristica): asi el boton Cancelar
+     * funciona aunque el formulario este vacio, y el aviso sale solo en la
+     * parte superior sin duplicarse junto al campo.
+     */
+    @Override
+    public void btnGuardarHandler() {
+        if (this.registro != null) {
+            if (this.registro.getNombre() == null || this.registro.getNombre().trim().isEmpty()) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN, "Debe ingresar el nombre", null));
+                return; // no se guarda sin nombre y el formulario queda abierto
+            }
+            if (this.registro.getApellido() == null || this.registro.getApellido().trim().isEmpty()) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN, "Debe ingresar el apellido", null));
+                return; // no se guarda sin apellido
+            }
+        }
+        try {
+            super.btnGuardarHandler(); // guarda, recarga la tabla y limpia
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "No se pudo guardar: verifique los datos e intente de nuevo", null));
+        }
+    }
+
+    /**
      * Eliminar con manejo de error: la base de datos tiene claves foraneas
      * ON DELETE RESTRICT (empleado_rol puede referenciar al empleado), por lo
      * que capturamos la excepcion para mostrar un mensaje amigable.
@@ -62,12 +93,9 @@ public class EmpleadoModel extends AbstractModel<Empleado, UUID> implements Seri
             // se pudo borrar (evita un INSERT duplicado en el siguiente Guardar)
             this.limpiar();
             this.formVisible = false;
-            jakarta.faces.context.FacesContext.getCurrentInstance().addMessage(null,
-                    new jakarta.faces.application.FacesMessage(
-                            jakarta.faces.application.FacesMessage.SEVERITY_WARN,
-                            "No se puede eliminar: el empleado tiene asignaciones en otras tablas", null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "No se puede eliminar: el empleado tiene asignaciones en otras tablas", null));
         }
     }
 }
-
-

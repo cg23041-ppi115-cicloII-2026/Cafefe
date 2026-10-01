@@ -72,15 +72,15 @@
                                 <h:panelGrid columns="3" cellpadding="5">
                                     
                                     <h:outputLabel for="id" value="ID:" />
-                                    <p:inputText id="id" value="#{empleadoModel.registro.idEmpleado}" required="false" disabled="true"/>
+                                    <p:inputText id="id" value="#{empleadoModel.registro.idEmpleado}" required="false" disabled="true" size="36"/>
                                     <p:messages for="id" />
                                     
                                     <h:outputLabel for="nombre" value="Nombre:" />
-                                    <p:inputText id="nombre" value="#{empleadoModel.registro.nombre}" required="true" />
+                                    <p:inputText id="nombre" value="#{empleadoModel.registro.nombre}" />
                                     <p:messages for="nombre" />
 
                                     <h:outputLabel for="apellido" value="Apellido:" />
-                                    <p:inputText id="apellido" value="#{empleadoModel.registro.apellido}" required="true" />
+                                    <p:inputText id="apellido" value="#{empleadoModel.registro.apellido}" />
                                     <p:messages for="apellido" />
 
                                     <h:outputLabel for="activo" value="Estado:" />
@@ -162,18 +162,22 @@
 
                                 <h:panelGrid columns="3" cellpadding="5">
                                     <h:outputLabel for="idAsig" value="ID:" />
-                                    <p:inputText id="idAsig" value="#{empleadoRolModel.registro.idEmpleadoRol}" required="false" disabled="true" />
+                                    <p:inputText id="idAsig" value="#{empleadoRolModel.registro.idEmpleadoRol}" required="false" disabled="true" size="36" />
                                     <p:messages for="idAsig" />
 
                                     <h:outputLabel for="cboEmpleado" value="Empleado:" />
-                                    <p:selectOneMenu id="cboEmpleado" value="#{empleadoRolModel.empleadoSeleccionado}" disabled="#{empleadoRolModel.editando}">
+                                    <p:selectOneMenu id="cboEmpleado" value="#{empleadoRolModel.empleadoSeleccionado}">
                                         <f:selectItem itemLabel="-- Elija un empleado --" itemValue="#{null}" />
                                         <f:selectItems value="#{empleadoRolModel.listaEmpleados}" />
-                                        <!-- Al cambiar de empleado se recarga el pickList con sus roles -->
-                                        <p:ajax event="change" update="msgsAsig pnlRoles"
-                                                listener="#{empleadoRolModel.cambioEmpleado}" />
                                     </p:selectOneMenu>
                                     <h:panelGroup />
+
+                                    <h:outputLabel for="cboRol" value="Rol: *" />
+                                    <p:selectOneMenu id="cboRol" value="#{empleadoRolModel.rolSeleccionado}">
+                                        <f:selectItem itemLabel="Seleccione un Rol" itemValue="#{null}" />
+                                        <f:selectItems value="#{empleadoRolModel.listaRoles}" />
+                                    </p:selectOneMenu>
+                                    <p:messages for="cboRol" />
 
                                     <h:outputLabel for="observacionesAsig" value="Observaciones:" />
                                     <p:inputTextarea id="observacionesAsig"
@@ -187,21 +191,6 @@
                                                              itemLabel="Activo" />
                                     <h:panelGroup />
                                 </h:panelGrid>
-
-                                <!-- PickList: roles disponibles <-> roles asignados (N:N, varios por empleado) -->
-                                <h:panelGroup id="pnlRoles" layout="block" style="margin-top: 8px;">
-                                    <h:outputLabel for="pickRoles" value="Roles:"
-                                                   style="font-weight: bold; display: block; margin-bottom: 4px;" />
-                                    <p:pickList id="pickRoles" value="#{empleadoRolModel.roles}" var="rol"
-                                                itemLabel="#{rol.nombre}" itemValue="#{rol}"
-                                                converter="#{rolConverter}"
-                                                showSourceFilter="true" showTargetFilter="true"
-                                                filterMatchMode="contains" responsive="true"
-                                                disabled="#{empleadoRolModel.editando}">
-                                        <f:facet name="sourceCaption">Roles disponibles</f:facet>
-                                        <f:facet name="targetCaption">Roles asignados</f:facet>
-                                    </p:pickList>
-                                </h:panelGroup>
 
                                 <div style="margin-top: 10px;">
                                     <p:commandButton value="Guardar" action="#{empleadoRolModel.btnGuardarHandler}"
@@ -268,11 +257,11 @@
 
                                 <h:panelGrid columns="3" cellpadding="5">
                                     <h:outputLabel for="idRol" value="ID:" />
-                                    <p:inputText id="idRol" value="#{rolModel.registro.idRol}" required="false" disabled="true" />
+                                    <p:inputText id="idRol" value="#{rolModel.registro.idRol}" required="false" disabled="true" size="36" />
                                     <p:messages for="idRol" />
 
                                     <h:outputLabel for="nombreRol" value="Nombre:" />
-                                    <p:inputText id="nombreRol" value="#{rolModel.registro.nombre}" required="true" />
+                                    <p:inputText id="nombreRol" value="#{rolModel.registro.nombre}" />
                                     <p:messages for="nombreRol" />
 
                                     <h:outputLabel for="observacionesRol" value="Observaciones:" />

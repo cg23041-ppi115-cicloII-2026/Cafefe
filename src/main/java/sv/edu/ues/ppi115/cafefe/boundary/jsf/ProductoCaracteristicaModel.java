@@ -189,32 +189,26 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
         if (this.listaProductos == null) {
             this.listaProductos = new ArrayList<>();
             for (Producto p : productoRepository.findAll()) {
-                if (Boolean.FALSE.equals(p.getActivo())) {
-                    continue; // los inactivos no se pueden asignar
-                }
-                this.listaProductos.add(new SelectItem(p.getIdProducto(), p.getNombre()));
+                // inactivo: se muestra en gris pero no se puede elegir
+                boolean inactivo = Boolean.FALSE.equals(p.getActivo());
+                this.listaProductos.add(new SelectItem(p.getIdProducto(), p.getNombre(),
+                        null, inactivo));
             }
         }
-        return incluirActual(this.listaProductos, this.productoSeleccionado, () -> {
-            Producto p = productoRepository.findById(this.productoSeleccionado);
-            return p == null ? null : new SelectItem(p.getIdProducto(), p.getNombre());
-        });
+        return this.listaProductos;
     }
 
     public List<SelectItem> getListaCaracteristicas() {
         if (this.listaCaracteristicas == null) {
             this.listaCaracteristicas = new ArrayList<>();
             for (Caracteristica c : caracteristicaRepository.findAll()) {
-                if (Boolean.FALSE.equals(c.getActivo())) {
-                    continue; // los inactivos no se pueden asignar
-                }
-                this.listaCaracteristicas.add(new SelectItem(c.getIdCaracteristica(), c.getNombre()));
+                // inactivo: se muestra en gris pero no se puede elegir
+                boolean inactivo = Boolean.FALSE.equals(c.getActivo());
+                this.listaCaracteristicas.add(new SelectItem(c.getIdCaracteristica(), c.getNombre(),
+                        null, inactivo));
             }
         }
-        return incluirActual(this.listaCaracteristicas, this.caracteristicaSeleccionada, () -> {
-            Caracteristica c = caracteristicaRepository.findById(this.caracteristicaSeleccionada);
-            return c == null ? null : new SelectItem(c.getIdCaracteristica(), c.getNombre());
-        });
+        return this.listaCaracteristicas;
     }
 
     // ---------------------------------------------------------------

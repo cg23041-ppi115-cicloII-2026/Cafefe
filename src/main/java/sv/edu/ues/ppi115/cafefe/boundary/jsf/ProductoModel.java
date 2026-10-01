@@ -208,16 +208,13 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
             for (TipoProducto t : tipoProductoRepository.findAll()) {
-                if (Boolean.FALSE.equals(t.getActivo())) {
-                    continue; // los inactivos no se pueden asignar
-                }
-                this.listaTipos.add(new SelectItem(t.getIdTipoProducto(), t.getNombre()));
+                // inactivo: se muestra en gris pero no se puede elegir
+                boolean inactivo = Boolean.FALSE.equals(t.getActivo());
+                this.listaTipos.add(new SelectItem(t.getIdTipoProducto(), t.getNombre(),
+                        null, inactivo));
             }
         }
-        return incluirActual(this.listaTipos, this.tipoSeleccionado, () -> {
-            TipoProducto t = tipoProductoRepository.findById(this.tipoSeleccionado);
-            return t == null ? null : new SelectItem(t.getIdTipoProducto(), t.getNombre());
-        });
+        return this.listaTipos;
     }
 
     public UUID getTipoSeleccionado() {

@@ -179,16 +179,13 @@ public class CaracteristicaModel extends AbstractModel<Caracteristica, UUID> imp
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
             for (TipoCaracteristica t : tipoCaracteristicaRepository.findAll()) {
-                if (Boolean.FALSE.equals(t.getActivo())) {
-                    continue; // los inactivos no se pueden asignar
-                }
-                this.listaTipos.add(new SelectItem(t.getIdTipoCaracteristica(), t.getNombre()));
+                // inactivo: se muestra en gris pero no se puede elegir
+                boolean inactivo = Boolean.FALSE.equals(t.getActivo());
+                this.listaTipos.add(new SelectItem(t.getIdTipoCaracteristica(), t.getNombre(),
+                        null, inactivo));
             }
         }
-        return incluirActual(this.listaTipos, this.tipoSeleccionado, () -> {
-            TipoCaracteristica t = tipoCaracteristicaRepository.findById(this.tipoSeleccionado);
-            return t == null ? null : new SelectItem(t.getIdTipoCaracteristica(), t.getNombre());
-        });
+        return this.listaTipos;
     }
 
     public UUID getTipoSeleccionado() {

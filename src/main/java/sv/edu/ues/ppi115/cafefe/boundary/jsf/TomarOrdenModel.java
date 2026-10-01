@@ -40,7 +40,7 @@ import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
  * cantidad (si el cliente lleva dos, son dos lineas).
  *
  * Estados:
- *  - combo "Atendido por": solo roles cajero/gerente/administrador (findCobradores)
+ *  - combo "Atendido por": solo roles cajero/gerente/administrador/mesero (findCobradores)
  *  - tabla lazy de productos: SOLO activos, con busqueda por nombre
  *  - al elegir producto se prellenan precio y caracteristicas, y se
  *    muestran sus descuentos (debajo de observaciones); si hay uno
@@ -96,7 +96,8 @@ public class TomarOrdenModel implements Serializable {
     private List<OrdenProducto> carrito = new ArrayList<>();
 
     // ---------------------------------------------------------------
-    // Combo: solo asignaciones activas de cajero, gerente o administrador
+    // Combo: asignaciones de cajero, gerente, administrador o mesero;
+    // las inactivas salen en gris y no se pueden elegir
     // ---------------------------------------------------------------
     public List<SelectItem> getListaCobradores() {
         if (this.listaCobradores == null) {
@@ -105,7 +106,11 @@ public class TomarOrdenModel implements Serializable {
                 String etiqueta = er.getIdEmpleado().getNombre() + " "
                         + er.getIdEmpleado().getApellido()
                         + " (" + er.getIdRol().getNombre() + ")";
-                this.listaCobradores.add(new SelectItem(er.getIdEmpleadoRol(), etiqueta));
+                boolean inactivo = Boolean.FALSE.equals(er.getActivo())
+                        || Boolean.FALSE.equals(er.getIdEmpleado().getActivo())
+                        || Boolean.FALSE.equals(er.getIdRol().getActivo());
+                this.listaCobradores.add(new SelectItem(er.getIdEmpleadoRol(), etiqueta,
+                        null, inactivo));
             }
         }
         return this.listaCobradores;
