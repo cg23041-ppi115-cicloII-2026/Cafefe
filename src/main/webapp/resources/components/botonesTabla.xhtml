@@ -9,6 +9,9 @@
         <cc:attribute name="model" required="true" />
         <cc:attribute name="editUpdate" required="true" />
         <cc:attribute name="deleteUpdate" required="true" />
+        <!-- Por defecto se muestra; las tablas que no permiten eliminar
+             (ej: Descuentos por Producto) pasan mostrarEliminar="false" -->
+        <cc:attribute name="mostrarEliminar" type="boolean" default="true" />
     </cc:interface>
 
     <cc:implementation>
@@ -22,6 +25,7 @@
         </p:commandButton>
         &#160;
         <p:commandButton value="#{msg['crud.eliminar']}"
+                         rendered="#{cc.attrs.mostrarEliminar}"
                          action="#{cc.attrs.model.btnEliminarHandler}"
                          disabled="#{empty cc.attrs.model.seleccion}"
                          update="#{cc.attrs.deleteUpdate}"

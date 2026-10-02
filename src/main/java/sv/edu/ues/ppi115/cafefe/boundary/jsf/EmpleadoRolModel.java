@@ -136,7 +136,7 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
             this.formVisible = false;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_INFO,
-                    eraModificacion ? "Cambios guardados correctamente" : "Guardado correctamente",
+                    eraModificacion ? "Registro actualizado con éxito" : "Guardado correctamente",
                     null));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(

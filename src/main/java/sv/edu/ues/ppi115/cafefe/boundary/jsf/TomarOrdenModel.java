@@ -9,43 +9,47 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolRepository;
-import sv.edu.ues.ppi115.cafefe.control.OrdenRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoCaracteristicaRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
+import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolRepository;
+import sv.edu.ues.ppi115.cafefe.control.OrdenProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.OrdenRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
+import sv.edu.ues.ppi115.cafefe.entity.Descuento;
+import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
 import sv.edu.ues.ppi115.cafefe.entity.EmpleadoRol;
 import sv.edu.ues.ppi115.cafefe.entity.Orden;
 import sv.edu.ues.ppi115.cafefe.entity.OrdenProducto;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
-import sv.edu.ues.ppi115.cafefe.entity.ProductoCaracteristica;
-import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
 
 /**
- * Tomar Orden: pestana 1 de Orden.xhtml (el flujo de caja).
+ * Orden.xhtml completo: pestana "Tomar Orden" (cabecera) y pestana
+ * "Detalle de Orden" (lineas del producto).
  *
- * No extiende AbstractModel porque no es el CRUD de un registro: es un
- * "carrito". La orden vive editable EN MEMORIA mientras se toma (agregar,
- * quitar, cambiar precio); al pulsar "Guardar orden" se cierra para siempre
- * (1 INSERT de orden + N de lineas en UNA transaccion) y ya no se edita.
+ * Logica incremental:
+ *  - "Guardar Ordenes" INSERTA la orden (persona que la toma + fecha);
+ *    una orden guardada NO se edita ni se cancela: sus campos quedan
+ *    bloqueados en pantalla.
+ *  - cada producto se INSERTA individualmente con "Guardar" del
+ *    formulario de linea; las lineas no se editan ni se eliminan.
+ *  - "Cancelar Ordenes" solo limpia el formulario (no toca la BD).
+ *  - "Aplicar Descuento" recalcula el Precio de las lineas cuyo producto
+ *    tenga el descuento vigente HOY y lo anota en Observaciones; el
+ *    dialogo "Descuentos que aplican" solo lista descuentos aplicables
+ *    (vigentes y con productos asignados).
  *
- * Cada linea representa UNA unidad del producto: las ordenes no manejan
- * cantidad (si el cliente lleva dos, son dos lineas).
- *
- * Estados:
- *  - combo "Atendido por": solo roles cajero/gerente/administrador/mesero (findCobradores)
- *  - tabla lazy de productos: SOLO activos, con busqueda por nombre
- *  - al elegir producto se prellenan precio y caracteristicas, y se
- *    muestran sus descuentos (debajo de observaciones); si hay uno
- *    vigente aparece la casilla "Aplicar descuento"
- *  - carrito: List<OrdenProducto> en memoria (todavia sin orden)
+ * Roles: la combo de persona usa EmpleadoRolRepository.findCobradores
+ * (cajero, gerente, administrador o mesero) y los inactivos salen en
+ * gris. Las lineas se eligen con el dialogo de productos (solo activos).
  */
 @Named
 @ViewScoped
@@ -60,45 +64,48 @@ public class TomarOrdenModel implements Serializable {
     @Inject
     private OrdenRepository ordenRepository;
     @Inject
-    private ProductoCaracteristicaRepository productoCaracteristicaRepository;
+    private OrdenProductoRepository ordenProductoRepository;
     @Inject
     private DescuentoProductoRepository descuentoProductoRepository;
+    @Inject
+    private DescuentoRepository descuentoRepository;
 
     // ---------------------------------------------------------------
-    // Cabecera de la orden
+    // Cabecera de la orden (pestana Tomar Orden)
     // ---------------------------------------------------------------
-    private UUID cobradorSeleccionado;
+    /** Orden en curso: se crea en memoria y se INSERTA al guardar. */
+    private Orden orden;
+    /** true cuando ya hizo INSERT (despues no se edita ni se cancela). */
+    private boolean ordenGuardada;
+    /** Persona que toma la orden (PK de empleado_rol, combo). */
+    private UUID empleadoRolSeleccionado;
     private List<SelectItem> listaCobradores;
 
     // ---------------------------------------------------------------
-    // Selector de productos (tabla lazy de activos)
+    // Lineas (pestana Detalle de Orden)
     // ---------------------------------------------------------------
-    private String busqueda;
-    private Producto productoSeleccionado; // fila marcada en la tabla
-    private List<ProductoCaracteristica> caracteristicas = new ArrayList<>();
-    private LazyModelConsulta<Producto> productosLazy;
+    private List<OrdenProducto> lineas = new ArrayList<>();
 
-    // ---------------------------------------------------------------
-    // Linea en edicion (se agrega al carrito con "Agregar a la orden")
-    // ---------------------------------------------------------------
+    private boolean formLineaVisible;
+    private UUID lineaId;
+    private String productoTexto;              // valor del autocomplete
+    private Producto productoSeleccionado;
     private BigDecimal precioLinea;
     private String observacionesLinea = "";
 
     // ---------------------------------------------------------------
-    // Descuento del producto elegido (mostrado bajo Observaciones)
+    // Dialogo "Descuentos que aplican"
     // ---------------------------------------------------------------
-    private List<DescuentoProducto> descuentosProducto = new ArrayList<>();
-    private Boolean aplicarDescuento = Boolean.FALSE;
+    private UUID descuentoSeleccionado;
+    private List<SelectItem> listaDescuentosAplicables;
 
     // ---------------------------------------------------------------
-    // Carrito: lineas en memoria, todavia sin orden
+    // Cabecera: combo de persona (roles que toman orden) y orden
     // ---------------------------------------------------------------
-    private List<OrdenProducto> carrito = new ArrayList<>();
-
-    // ---------------------------------------------------------------
-    // Combo: asignaciones de cajero, gerente, administrador o mesero;
-    // las inactivas salen en gris y no se pueden elegir
-    // ---------------------------------------------------------------
+    /**
+     * Asignaciones de cajero, gerente, administrador o mesero; las
+     * inactivas salen en gris y no se pueden elegir.
+     */
     public List<SelectItem> getListaCobradores() {
         if (this.listaCobradores == null) {
             this.listaCobradores = new ArrayList<>();
@@ -116,78 +123,316 @@ public class TomarOrdenModel implements Serializable {
         return this.listaCobradores;
     }
 
-    // ---------------------------------------------------------------
-    // Tabla lazy de productos: solo activos + busqueda opcional por nombre
-    // ---------------------------------------------------------------
-    public LazyModelConsulta<Producto> getProductosLazy() {
-        if (this.productosLazy == null) {
-            this.productosLazy = new LazyModelConsulta<>(
-                    (primero, tamano)
-                    -> productoRepository.findActivosRange(primero, tamano, normalizar(this.busqueda)),
-                    () -> productoRepository.countActivos(normalizar(this.busqueda)),
-                    p -> p.getIdProducto());
+    /** Orden en curso; si aun no existe se crea con id y fecha nuevos. */
+    public Orden getOrden() {
+        if (this.orden == null) {
+            Orden nueva = new Orden(UUID.randomUUID());
+            nueva.setFechaCreacion(new Date());
+            this.orden = nueva;
         }
-        return this.productosLazy;
-    }
-
-    /** Texto vacio o en blanco cuenta como "sin filtro". */
-    private String normalizar(String texto) {
-        if (texto == null) {
-            return null;
-        }
-        String t = texto.trim();
-        return t.isEmpty() ? null : t;
+        return this.orden;
     }
 
     /**
-     * Al marcar una fila de productos: la linea se prellena con el
-     * precio_sugerido, se cargan sus caracteristicas y sus descuentos
-     * (y se desmarca "Aplicar descuento" para que nunca se arrastre
-     * de otro producto).
+     * Guardar Ordenes: INSERTA la orden. Una orden guardada no se edita
+     * (el formulario queda bloqueado en la vista).
      */
-    public void onProductoSeleccionado() {
-        if (this.productoSeleccionado != null) {
-            this.precioLinea = this.productoSeleccionado.getPrecioSugerido();
-            this.observacionesLinea = "";
-            this.caracteristicas = productoCaracteristicaRepository
-                    .findByProducto(this.productoSeleccionado.getIdProducto());
-            this.descuentosProducto = descuentoProductoRepository
-                    .findByProducto(this.productoSeleccionado.getIdProducto());
+    public void btnGuardarOrdenHandler() {
+        if (this.ordenGuardada) {
+            return;
+        }
+        if (this.empleadoRolSeleccionado == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "Elija la persona que toma la orden");
+            return;
+        }
+        Orden o = getOrden();
+        if (o.getFechaCreacion() == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "La fecha de orden no puede quedar vacía");
+            return;
+        }
+        EmpleadoRol persona = empleadoRolRepository.findById(this.empleadoRolSeleccionado);
+        if (persona == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "La persona que toma la orden no es válida");
+            return;
+        }
+        o.setIdEmpleadoRol(persona);
+        try {
+            ordenRepository.crear(o);
+        } catch (Exception e) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "No se pudo guardar la orden");
+            return;
+        }
+        this.ordenGuardada = true;
+        this.lineas = new ArrayList<>();
+        mensaje(FacesMessage.SEVERITY_INFO, "Guardado correctamente");
+    }
+
+    /**
+     * Nuevo Ordenes: estado limpio para capturar OTRA orden (la anterior
+     * queda guardada en la BD; una orden guardada no se cancela).
+     */
+    public void btnNuevaOrdenHandler() {
+        this.orden = null;         // se recrea con id y fecha nuevos
+        this.ordenGuardada = false;
+        this.empleadoRolSeleccionado = null;
+        this.lineas = new ArrayList<>();
+        limpiarFormularioLinea();
+        this.descuentoSeleccionado = null;
+    }
+
+    /**
+     * Cancelar Ordenes: solo limpia el formulario; no borra ni modifica
+     * nada en la BD (una orden guardada no se cancela).
+     */
+    public void btnCancelarOrdenHandler() {
+        if (!this.ordenGuardada) {
+            this.orden = null;     // id y fecha nuevos
+            this.empleadoRolSeleccionado = null;
+        }
+        limpiarFormularioLinea();
+        this.descuentoSeleccionado = null;
+    }
+
+    // ---------------------------------------------------------------
+    // Lineas: abrir/cerrar formulario, guardar y dialogo de producto
+    // ---------------------------------------------------------------
+    /** Nuevo: abre el formulario de linea con id nuevo. */
+    public void btnNuevoLineaHandler() {
+        if (!this.ordenGuardada) {
+            mensaje(FacesMessage.SEVERITY_ERROR,
+                    "Primero guarde la orden en la pestaña Tomar Orden");
+            return;
+        }
+        this.lineaId = UUID.randomUUID();
+        this.productoTexto = null;
+        this.productoSeleccionado = null;
+        this.precioLinea = null;
+        this.observacionesLinea = "";
+        this.formLineaVisible = true;
+    }
+
+    /** Cancelar: cierra el formulario de linea sin tocar la BD. */
+    public void btnCancelarLineaHandler() {
+        limpiarFormularioLinea();
+    }
+
+    private void limpiarFormularioLinea() {
+        this.formLineaVisible = false;
+        this.lineaId = null;
+        this.productoTexto = null;
+        this.productoSeleccionado = null;
+        this.precioLinea = null;
+        this.observacionesLinea = "";
+    }
+
+    /**
+     * Sugerencias del autocomplete del dialogo de producto: SOLO
+     * productos activos, por nombre (los inactivos no aparecen).
+     */
+    public List<String> buscarProductos(String consulta) {
+        String q = (consulta == null) ? "" : consulta.trim().toLowerCase();
+        List<String> nombres = new ArrayList<>();
+        for (Producto p : productoRepository.findActivos()) {
+            String nombre = p.getNombre();
+            if (nombre == null || nombre.trim().isEmpty()) {
+                continue;
+            }
+            if (q.isEmpty() || nombre.toLowerCase().contains(q)) {
+                nombres.add(nombre);
+            }
+        }
+        Collections.sort(nombres);
+        return nombres;
+    }
+
+    /**
+     * Seleccionar (dialogo de producto): toma el producto activo cuyo
+     * nombre coincide y prellena el precio con el precio sugerido.
+     */
+    public void btnSeleccionarProductoHandler() {
+        String texto = (this.productoTexto == null) ? "" : this.productoTexto.trim();
+        if (texto.isEmpty()) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "Elija un producto de la lista");
+            return;
+        }
+        Producto encontrado = null;
+        for (Producto p : productoRepository.findActivos()) {
+            if (texto.equalsIgnoreCase(p.getNombre())) {
+                encontrado = p;
+                break;
+            }
+        }
+        if (encontrado == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "Elija un producto de la lista");
+            return;
+        }
+        this.productoSeleccionado = encontrado;
+        this.precioLinea = encontrado.getPrecioSugerido();
+    }
+
+    /**
+     * Guardar linea: INSERT en orden_producto apuntando a la orden ya
+     * guardada. Las lineas no se editan ni se eliminan.
+     */
+    public void btnGuardarLineaHandler() {
+        if (!this.ordenGuardada) {
+            mensaje(FacesMessage.SEVERITY_ERROR,
+                    "Primero guarde la orden en la pestaña Tomar Orden");
+            return;
+        }
+        if (this.productoSeleccionado == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "Elija un producto");
+            return;
+        }
+        if (this.precioLinea == null || this.precioLinea.signum() <= 0) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "El precio debe ser mayor a 0");
+            return;
+        }
+        Orden gestionada = ordenRepository.findById(this.orden.getIdOrden());
+        if (gestionada == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "La orden ya no existe");
+            return;
+        }
+        Producto prod = productoRepository.findById(this.productoSeleccionado.getIdProducto());
+        if (prod == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "El producto ya no existe");
+            return;
+        }
+        OrdenProducto linea = new OrdenProducto(
+                this.lineaId != null ? this.lineaId : UUID.randomUUID());
+        linea.setIdOrden(gestionada);
+        linea.setIdProducto(prod);
+        linea.setPrecio(this.precioLinea.setScale(2, RoundingMode.HALF_UP));
+        linea.setObservaciones(this.observacionesLinea == null
+                ? "" : this.observacionesLinea.trim());
+        try {
+            ordenProductoRepository.crear(linea);
+        } catch (Exception e) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "No se pudo guardar la línea");
+            return;
+        }
+        this.lineas = ordenProductoRepository.findByOrden(gestionada.getIdOrden());
+        limpiarFormularioLinea();
+        mensaje(FacesMessage.SEVERITY_INFO, "Guardado correctamente");
+    }
+
+    // ---------------------------------------------------------------
+    // Dialogo "Descuentos que aplican"
+    // ---------------------------------------------------------------
+    /**
+     * Descuentos aplicables: vigentes HOY (rango del descuento y de la
+     * asignacion a producto) con valor y al menos un producto; los de
+     * tipo inactivo no aparecen. Etiqueta: "Nombre (20)%".
+     */
+    public List<SelectItem> getListaDescuentosAplicables() {
+        if (this.listaDescuentosAplicables == null) {
+            Map<UUID, String> nombres = new LinkedHashMap<>();
+            Map<UUID, Integer> valores = new LinkedHashMap<>();
+            for (DescuentoProducto dp : descuentoProductoRepository.findAll()) {
+                Descuento d = dp.getIdDescuento();
+                if (d == null || d.getIdDescuento() == null) {
+                    continue;
+                }
+                if (dp.getValor() == null || dp.getValor() <= 0) {
+                    continue;
+                }
+                if (!esVigente(dp)) {
+                    continue;
+                }
+                if (d.getIdTipoDescuento() != null
+                        && Boolean.FALSE.equals(d.getIdTipoDescuento().getActivo())) {
+                    continue;
+                }
+                UUID id = d.getIdDescuento();
+                if (!nombres.containsKey(id)) {
+                    nombres.put(id, d.getNombre());
+                    valores.put(id, dp.getValor());
+                } else if (dp.getValor() > valores.get(id)) {
+                    valores.put(id, dp.getValor());
+                }
+            }
+            this.listaDescuentosAplicables = new ArrayList<>();
+            for (Map.Entry<UUID, String> e : nombres.entrySet()) {
+                this.listaDescuentosAplicables.add(new SelectItem(
+                        e.getKey(), e.getValue() + " (" + valores.get(e.getKey()) + ")%"));
+            }
+        }
+        return this.listaDescuentosAplicables;
+    }
+
+    /**
+     * Aplicar descuento: recalcula el Precio de cada linea cuyo producto
+     * tenga el descuento elegido vigente hoy y anota el descuento en
+     * Observaciones. Una linea ya anotada con ese descuento se salta
+     * (no se aplica dos veces).
+     */
+    public void btnAplicarDescuentoHandler() {
+        if (!this.ordenGuardada) {
+            mensaje(FacesMessage.SEVERITY_ERROR,
+                    "Primero guarde la orden en la pestaña Tomar Orden");
+            return;
+        }
+        if (this.descuentoSeleccionado == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "Seleccione un descuento");
+            return;
+        }
+        Descuento desc = descuentoRepository.findById(this.descuentoSeleccionado);
+        if (desc == null) {
+            mensaje(FacesMessage.SEVERITY_ERROR, "Seleccione un descuento");
+            return;
+        }
+        List<OrdenProducto> actuales = ordenProductoRepository.findByOrden(this.orden.getIdOrden());
+        int aplicadas = 0;
+        for (OrdenProducto linea : actuales) {
+            if (linea.getIdProducto() == null || linea.getPrecio() == null) {
+                continue;
+            }
+            DescuentoProducto mejor = null;
+            for (DescuentoProducto dp
+                    : descuentoProductoRepository.findByProducto(linea.getIdProducto().getIdProducto())) {
+                if (dp.getIdDescuento() == null || dp.getIdDescuento().getIdDescuento() == null
+                        || desc.getIdDescuento() == null) {
+                    continue;
+                }
+                if (!desc.getIdDescuento().equals(dp.getIdDescuento().getIdDescuento())) {
+                    continue;
+                }
+                if (dp.getValor() == null || dp.getValor() <= 0 || !esVigente(dp)) {
+                    continue;
+                }
+                if (mejor == null || dp.getValor() > mejor.getValor()) {
+                    mejor = dp;
+                }
+            }
+            if (mejor == null) {
+                continue;
+            }
+            String obs = (linea.getObservaciones() == null) ? "" : linea.getObservaciones();
+            String marca = "Descuento aplicado: "
+                    + (desc.getNombre() == null ? "" : desc.getNombre());
+            if (obs.contains(marca)) {
+                continue;
+            }
+            linea.setPrecio(aplicar(linea.getPrecio(), mejor.getValor()));
+            String nota = "[" + marca + " (-" + mejor.getValor() + "%)]";
+            linea.setObservaciones(obs.trim().isEmpty() ? nota : obs + " " + nota);
+            ordenProductoRepository.modificar(linea);
+            aplicadas++;
+        }
+        this.lineas = ordenProductoRepository.findByOrden(this.orden.getIdOrden());
+        if (aplicadas == 0) {
+            mensaje(FacesMessage.SEVERITY_WARN,
+                    "La orden no tiene productos con este descuento aplicable");
         } else {
-            this.caracteristicas = new ArrayList<>();
-            this.descuentosProducto = new ArrayList<>();
+            this.descuentoSeleccionado = null;
+            mensaje(FacesMessage.SEVERITY_INFO,
+                    "Descuento aplicado a " + aplicadas + " producto(s)");
         }
-        this.aplicarDescuento = Boolean.FALSE;
     }
 
     // ---------------------------------------------------------------
-    // Descuentos del producto elegido
+    // Vigencia de los descuentos y calculo del precio
     // ---------------------------------------------------------------
-    /** Descuentos del producto que estan vigentes HOY (casilla aplicable). */
-    public List<DescuentoProducto> getDescuentosVigentes() {
-        List<DescuentoProducto> vigentes = new ArrayList<>();
-        for (DescuentoProducto d : this.descuentosProducto) {
-            if (esVigente(d)) {
-                vigentes.add(d);
-            }
-        }
-        return vigentes;
-    }
-
-    /**
-     * El descuento que se aplicaria al marcar la casilla: el de mayor
-     * valor entre los vigentes (si hay varios).
-     */
-    public DescuentoProducto getDescuentoAplicable() {
-        DescuentoProducto mejor = null;
-        for (DescuentoProducto d : getDescuentosVigentes()) {
-            if (mejor == null || valorDe(d) > valorDe(mejor)) {
-                mejor = d;
-            }
-        }
-        return mejor;
-    }
-
     /**
      * Vigente = hoy dentro de las fechas del descuento_producto Y dentro
      * de las fechas del descuento general (null = sin ese limite).
@@ -215,57 +460,6 @@ public class TomarOrdenModel implements Serializable {
         return fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-    private int valorDe(DescuentoProducto d) {
-        return d.getValor() == null ? 0 : d.getValor();
-    }
-
-    /** Texto de una linea de descuento, ej: "10% con Carné Estudiantil (estudiantil) — 10% — vigente del 27/09/2026 al 26/12/2026". */
-    public String getDescripcionDescuento(DescuentoProducto d) {
-        if (d == null) {
-            return "";
-        }
-        String nombre = d.getIdDescuento() != null ? d.getIdDescuento().getNombre() : "Descuento";
-        String tipo = (d.getIdDescuento() != null && d.getIdDescuento().getIdTipoDescuento() != null)
-                ? d.getIdDescuento().getIdTipoDescuento().getNombre() : "";
-        String valor = d.getValor() != null ? d.getValor() + "%" : "";
-        String rango = formatoRango(d.getFechaDesde(), d.getFechaHasta());
-        StringBuilder sb = new StringBuilder(nombre);
-        if (!tipo.isEmpty()) {
-            sb.append(" (").append(tipo).append(")");
-        }
-        if (!valor.isEmpty()) {
-            sb.append(" — ").append(valor);
-        }
-        sb.append(esVigente(d) ? " — vigente " : " — NO vigente ").append(rango);
-        return sb.toString();
-    }
-
-    private String formatoRango(Date desde, Date hasta) {
-        if (desde == null && hasta == null) {
-            return "";
-        }
-        SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
-        if (desde == null) {
-            return "hasta " + f.format(hasta);
-        }
-        if (hasta == null) {
-            return "desde " + f.format(desde);
-        }
-        return "del " + f.format(desde) + " al " + f.format(hasta);
-    }
-
-    /**
-     * Precio de la linea con el descuento aplicado (vista previa en la
-     * interfaz y precio final al agregar la linea).
-     */
-    public BigDecimal getPrecioConDescuento() {
-        DescuentoProducto aplicable = getDescuentoAplicable();
-        if (aplicable == null || this.precioLinea == null) {
-            return this.precioLinea;
-        }
-        return aplicar(this.precioLinea, aplicable.getValor());
-    }
-
     /** precio - valor% redondeado a 2 decimales (numeric(8,2)). */
     private BigDecimal aplicar(BigDecimal precio, Integer valor) {
         if (valor == null || valor <= 0 || valor > 100) {
@@ -273,149 +467,6 @@ public class TomarOrdenModel implements Serializable {
         }
         return precio.multiply(BigDecimal.valueOf(100 - valor))
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-    }
-
-    // ---------------------------------------------------------------
-    // Carrito: agregar / quitar lineas
-    // ---------------------------------------------------------------
-    /**
-     * Agrega la linea en edicion al carrito. Validaciones manuales (mismo
-     * criterio que los guards del resto del proyecto, sin required JSF).
-     * Si "Aplicar descuento" esta marcado, la linea se guarda con el
-     * precio ya descontado y se anota el descuento en observaciones
-     * (la BD no tiene columna de descuento en orden_producto).
-     */
-    public void agregarLinea() {
-        if (this.productoSeleccionado == null) {
-            mensaje(FacesMessage.SEVERITY_ERROR, "Elija un producto de la tabla");
-            return;
-        }
-        if (this.precioLinea == null || this.precioLinea.signum() <= 0) {
-            mensaje(FacesMessage.SEVERITY_ERROR, "El precio debe ser mayor a 0");
-            return;
-        }
-
-        // precio de venta al momento de tomar la orden (snapshot)
-        BigDecimal precioFinal = this.precioLinea.setScale(2, RoundingMode.HALF_UP);
-        String obsFinal = this.observacionesLinea == null ? "" : this.observacionesLinea;
-
-        DescuentoProducto aplicable = Boolean.TRUE.equals(this.aplicarDescuento)
-                ? getDescuentoAplicable() : null;
-        if (aplicable != null) {
-            precioFinal = aplicar(precioFinal, aplicable.getValor());
-            String nota = "Descuento aplicado: "
-                    + (aplicable.getIdDescuento() != null
-                            ? aplicable.getIdDescuento().getNombre() : "")
-                    + " (-" + aplicable.getValor() + "%)";
-            obsFinal = obsFinal.isEmpty() ? nota : obsFinal + " [" + nota + "]";
-        }
-
-        OrdenProducto linea = new OrdenProducto(UUID.randomUUID());
-        linea.setIdProducto(this.productoSeleccionado);
-        linea.setPrecio(precioFinal);
-        linea.setObservaciones(obsFinal);
-        this.carrito.add(linea);
-
-        // listo para la siguiente linea
-        this.productoSeleccionado = null;
-        this.precioLinea = null;
-        this.observacionesLinea = "";
-        this.caracteristicas = new ArrayList<>();
-        this.descuentosProducto = new ArrayList<>();
-        this.aplicarDescuento = Boolean.FALSE;
-
-        mensaje(FacesMessage.SEVERITY_INFO,
-                "Linea agregada - total de la orden: " + getTotal());
-    }
-
-    public void quitarLinea(OrdenProducto linea) {
-        if (linea != null) {
-            this.carrito.remove(linea);
-            mensaje(FacesMessage.SEVERITY_INFO,
-                    "Linea quitada - total de la orden: " + getTotal());
-        }
-    }
-
-    // ---------------------------------------------------------------
-    // Guardar (cierra la orden) y cancelar (descarta todo)
-    // ---------------------------------------------------------------
-    /**
-     * Cierra la orden: INSERT de la orden + INSERT de todas sus lineas en
-     * UNA sola transaccion (OrdenRepository.crearConLineas). Despues de
-     * esto la orden ya no se puede editar; conserva el cobrador para poder
-     * tomar la siguiente orden seguida.
-     */
-    public void guardarOrden() {
-        if (this.cobradorSeleccionado == null) {
-            mensaje(FacesMessage.SEVERITY_ERROR, "Elija quien atiende la orden");
-            return;
-        }
-        if (this.carrito.isEmpty()) {
-            mensaje(FacesMessage.SEVERITY_ERROR, "La orden no tiene lineas");
-            return;
-        }
-        try {
-            EmpleadoRol atiende = empleadoRolRepository.findById(this.cobradorSeleccionado);
-            if (atiende == null) {
-                mensaje(FacesMessage.SEVERITY_ERROR, "No se encontro la asignacion empleado-rol");
-                return;
-            }
-            Orden orden = new Orden(UUID.randomUUID());
-            orden.setFechaCreacion(new Date());
-            orden.setIdEmpleadoRol(atiende);
-            ordenRepository.crearConLineas(orden, this.carrito);
-
-            int cantidadLineas = this.carrito.size();
-            BigDecimal total = getTotal();
-
-            // orden cerrada: se limpia todo menos el cobrador
-            this.carrito = new ArrayList<>();
-            this.productoSeleccionado = null;
-            this.precioLinea = null;
-            this.observacionesLinea = "";
-            this.caracteristicas = new ArrayList<>();
-            this.descuentosProducto = new ArrayList<>();
-            this.aplicarDescuento = Boolean.FALSE;
-            this.busqueda = null;
-
-            mensaje(FacesMessage.SEVERITY_INFO,
-                    "Orden guardada: " + cantidadLineas + " linea(s) - total " + total);
-        } catch (Exception e) {
-            mensaje(FacesMessage.SEVERITY_ERROR, "No se pudo guardar la orden");
-        }
-    }
-
-    /** Descarta la orden en curso sin escribir nada en la BD. */
-    public void cancelar() {
-        this.cobradorSeleccionado = null;
-        this.busqueda = null;
-        this.productoSeleccionado = null;
-        this.precioLinea = null;
-        this.observacionesLinea = "";
-        this.caracteristicas = new ArrayList<>();
-        this.descuentosProducto = new ArrayList<>();
-        this.aplicarDescuento = Boolean.FALSE;
-        this.carrito = new ArrayList<>();
-        mensaje(FacesMessage.SEVERITY_INFO, "Orden descartada");
-    }
-
-    // ---------------------------------------------------------------
-    // Totales
-    // ---------------------------------------------------------------
-    public BigDecimal getTotal() {
-        BigDecimal total = BigDecimal.ZERO;
-        for (OrdenProducto linea : this.carrito) {
-            total = total.add(getSubtotal(linea));
-        }
-        return total.setScale(2, RoundingMode.HALF_UP);
-    }
-
-    /** Subtotal de la linea: cada linea es una unidad, asi que es el precio. */
-    public BigDecimal getSubtotal(OrdenProducto linea) {
-        if (linea == null || linea.getPrecio() == null) {
-            return BigDecimal.ZERO;
-        }
-        return linea.getPrecio();
     }
 
     private void mensaje(FacesMessage.Severity severidad, String texto) {
@@ -426,20 +477,40 @@ public class TomarOrdenModel implements Serializable {
     // ---------------------------------------------------------------
     // Getters y Setters
     // ---------------------------------------------------------------
-    public UUID getCobradorSeleccionado() {
-        return cobradorSeleccionado;
+    public boolean isOrdenGuardada() {
+        return ordenGuardada;
     }
 
-    public void setCobradorSeleccionado(UUID cobradorSeleccionado) {
-        this.cobradorSeleccionado = cobradorSeleccionado;
+    public UUID getEmpleadoRolSeleccionado() {
+        return empleadoRolSeleccionado;
     }
 
-    public String getBusqueda() {
-        return busqueda;
+    public void setEmpleadoRolSeleccionado(UUID empleadoRolSeleccionado) {
+        this.empleadoRolSeleccionado = empleadoRolSeleccionado;
     }
 
-    public void setBusqueda(String busqueda) {
-        this.busqueda = busqueda;
+    public List<OrdenProducto> getLineas() {
+        return lineas;
+    }
+
+    public boolean isFormLineaVisible() {
+        return formLineaVisible;
+    }
+
+    public UUID getLineaId() {
+        return lineaId;
+    }
+
+    public void setLineaId(UUID lineaId) {
+        this.lineaId = lineaId;
+    }
+
+    public String getProductoTexto() {
+        return productoTexto;
+    }
+
+    public void setProductoTexto(String productoTexto) {
+        this.productoTexto = productoTexto;
     }
 
     public Producto getProductoSeleccionado() {
@@ -448,14 +519,6 @@ public class TomarOrdenModel implements Serializable {
 
     public void setProductoSeleccionado(Producto productoSeleccionado) {
         this.productoSeleccionado = productoSeleccionado;
-    }
-
-    public List<ProductoCaracteristica> getCaracteristicas() {
-        return caracteristicas;
-    }
-
-    public void setCaracteristicas(List<ProductoCaracteristica> caracteristicas) {
-        this.caracteristicas = caracteristicas;
     }
 
     public BigDecimal getPrecioLinea() {
@@ -474,27 +537,11 @@ public class TomarOrdenModel implements Serializable {
         this.observacionesLinea = observacionesLinea;
     }
 
-    public List<DescuentoProducto> getDescuentosProducto() {
-        return descuentosProducto;
+    public UUID getDescuentoSeleccionado() {
+        return descuentoSeleccionado;
     }
 
-    public void setDescuentosProducto(List<DescuentoProducto> descuentosProducto) {
-        this.descuentosProducto = descuentosProducto;
-    }
-
-    public Boolean getAplicarDescuento() {
-        return aplicarDescuento;
-    }
-
-    public void setAplicarDescuento(Boolean aplicarDescuento) {
-        this.aplicarDescuento = aplicarDescuento;
-    }
-
-    public List<OrdenProducto> getCarrito() {
-        return carrito;
-    }
-
-    public void setCarrito(List<OrdenProducto> carrito) {
-        this.carrito = carrito;
+    public void setDescuentoSeleccionado(UUID descuentoSeleccionado) {
+        this.descuentoSeleccionado = descuentoSeleccionado;
     }
 }

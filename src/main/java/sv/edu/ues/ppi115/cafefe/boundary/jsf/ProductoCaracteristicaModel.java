@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.primefaces.event.TabChangeEvent;
 import sv.edu.ues.ppi115.cafefe.control.CaracteristicaRepository;
 import sv.edu.ues.ppi115.cafefe.control.ProductoCaracteristicaRepository;
@@ -17,6 +19,7 @@ import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
 import sv.edu.ues.ppi115.cafefe.entity.Caracteristica;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
 import sv.edu.ues.ppi115.cafefe.entity.ProductoCaracteristica;
+import sv.edu.ues.ppi115.cafefe.entity.TipoCaracteristica;
 
 /**
  * Modelo de vista para el CRUD de ProductoCaracteristica.
@@ -117,6 +120,43 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
                         "Debe elegir el producto y la caracteristica", null));
                 return; // no se guarda hasta que ambos combos tengan valor
             }
+            // ---- Validacion contra la expresion regular del tipo ----
+            // Sea cual sea la expresion guardada en tipo_caracteristica se
+            // aplica aqui; si no existe o esta mal escrita, se detecta y
+            // se bloquea el guardado con un aviso.
+            Caracteristica elegida = caracteristicaRepository.findById(this.caracteristicaSeleccionada);
+            TipoCaracteristica tipo = (elegida != null) ? elegida.getIdTipoCaracteristica() : null;
+            String nombreTipo = (tipo != null && tipo.getNombre() != null)
+                    ? tipo.getNombre() : "(sin tipo)";
+            String regex = (tipo != null) ? tipo.getExpresionRegular() : null;
+            String valor = this.registro.getValor();
+
+            if (valor != null && !valor.trim().isEmpty()) {
+                if (regex == null || regex.trim().isEmpty()) {
+                    // DETECCION: el tipo de caracteristica no tiene expresion regular
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "El tipo de característica '" + nombreTipo
+                                    + "' no tiene expresión regular definida", null));
+                    return; // no se guarda sin poder validar
+                }
+                try {
+                    if (!Pattern.matches(regex.trim(), valor.trim())) {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                                FacesMessage.SEVERITY_WARN,
+                                "El valor no cumple la validación de " + nombreTipo
+                                        + ": " + regex.trim(), null));
+                        return; // el valor no cumple la expresion regular del tipo
+                    }
+                } catch (PatternSyntaxException e) {
+                    // DETECCION: la expresion regular guardada esta mal escrita
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "La expresión regular del tipo '" + nombreTipo
+                                    + "' no es válida: " + regex.trim(), null));
+                    return; // no se puede validar con una expresion rota
+                }
+            }
             // Estado coherente: si la relacion ya existe en BD pero el estado
             // quedo en CREAR, guardarla como MODIFICAR para no intentar un
             // INSERT con ID duplicado.
@@ -180,6 +220,23 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     public void onTabChange(TabChangeEvent evento) {
         this.listaProductos = null;
         this.listaCaracteristicas = null;
+    }
+
+    /**
+     * Texto concatenado que muestra la tabla de la vista:
+     * "tipo: valor caracteristica" (ejemplo: "volumen: 8.00 Onzas").
+     */
+    public String getResumen(ProductoCaracteristica pc) {
+        if (pc == null) {
+            return "";
+        }
+        Caracteristica car = pc.getIdCaracteristica();
+        String tipo = (car != null && car.getIdTipoCaracteristica() != null
+                && car.getIdTipoCaracteristica().getNombre() != null)
+                ? car.getIdTipoCaracteristica().getNombre() : "";
+        String nombre = (car != null && car.getNombre() != null) ? car.getNombre() : "";
+        String valor = (pc.getValor() != null) ? pc.getValor() : "";
+        return tipo + ": " + valor + " " + nombre;
     }
 
     // ---------------------------------------------------------------

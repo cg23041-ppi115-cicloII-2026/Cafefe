@@ -247,10 +247,7 @@
                                     #{item.idProducto.nombre}
                                 </p:column>
                                 <p:column headerText="Característica">
-                                    #{item.idCaracteristica.nombre}
-                                </p:column>
-                                <p:column headerText="Valor">
-                                    #{item.valor}
+                                    #{productoCaracteristicaModel.getResumen(item)}
                                 </p:column>
                             </p:dataTable>
 
@@ -353,6 +350,7 @@
                             <!-- Botones: componente compuesto botonesTabla.xhtml -->
                             <h:panelGroup id="botoneraDescProd" layout="block" style="margin-top: 12px;">
                                 <comp:botonesTabla model="#{descuentoProductoModel}"
+                                                   mostrarEliminar="false"
                                                    editUpdate="msgsDescProd pnlFormDescProd"
                                                    deleteUpdate="msgsDescProd tblDescProd botoneraDescProd pnlFormDescProd" />
                                 <h:outputText value="#{msg['crud.seleccionarFila']}"
@@ -372,11 +370,15 @@
                                         <p:inputText id="idDescProd" value="#{descuentoProductoModel.registro.idDescuentoProducto}" required="false" disabled="true" size="36" />
                                         <p:messages for="idDescProd" />
 
-                                        <h:outputLabel for="cboDescuento" value="Descuento:" />
-                                        <p:selectOneMenu id="cboDescuento" value="#{descuentoProductoModel.descuentoSeleccionado}">
-                                            <f:selectItem itemLabel="-- Elija un descuento --" itemValue="#{null}" />
-                                            <f:selectItems value="#{descuentoProductoModel.listaDescuentos}" />
-                                        </p:selectOneMenu>
+                                        <h:outputLabel for="txtDescElegido" value="Descuento:" />
+                                        <h:panelGroup id="pnlSelDesc" layout="block">
+                                            <p:inputText id="txtDescElegido" value="#{descuentoProductoModel.descuentoElegido}"
+                                                         disabled="true" size="36" />
+                                            <p:commandButton id="btnSelDesc" value="Seleccionar descuento"
+                                                             type="button" styleClass="btn btn-primary"
+                                                             style="margin-left: 8px;"
+                                                             onclick="PF('dlgSelDesc').show()" />
+                                        </h:panelGroup>
                                         <h:panelGroup />
 
                                         <h:outputLabel for="cboProducto" value="Producto:" />
@@ -421,6 +423,31 @@
                                 </div>
                             </h:panelGroup>
                         </h:panelGroup>
+
+                        <!-- Ventana emergente: Tipo de Descuento > Descuento (cascada) -->
+                        <p:dialog id="dlgSelDesc" header="Seleccionar descuento" widgetVar="dlgSelDesc"
+                                  modal="true" closable="true" resizable="false" width="430">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputLabel for="cboTipoDescDlg" value="Tipo de Descuento:" />
+                                <p:selectOneMenu id="cboTipoDescDlg" value="#{descuentoProductoModel.tipoSeleccionado}">
+                                    <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
+                                    <f:selectItems value="#{descuentoProductoModel.listaTipos}" />
+                                    <p:ajax event="change" update="cboDescDlg" />
+                                </p:selectOneMenu>
+
+                                <h:outputLabel for="cboDescDlg" value="Descuento:" />
+                                <p:selectOneMenu id="cboDescDlg" value="#{descuentoProductoModel.descuentoSeleccionado}">
+                                    <f:selectItem itemLabel="-- Elija un descuento --" itemValue="#{null}" />
+                                    <f:selectItems value="#{descuentoProductoModel.listaDescuentos}" />
+                                    <p:ajax event="change" update="txtDescElegido" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <f:facet name="footer">
+                                <p:commandButton id="btnConfDesc" value="Seleccionar" type="button"
+                                                 styleClass="btn btn-primary"
+                                                 onclick="PF('dlgSelDesc').hide()" />
+                            </f:facet>
+                        </p:dialog>
                     </h:panelGroup>
                 </p:tab>
             </p:tabView>
