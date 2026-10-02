@@ -15,9 +15,11 @@ import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoRepository;
 import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoRepository;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
 import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
+import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
 
 /**
  * Descuento aplicado a un producto (tabla descuento_producto): reutiliza
@@ -41,9 +43,15 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
     @Inject
     private ProductoRepository productoRepository;
 
+    @Inject
+    private TipoDescuentoRepository tipoDescuentoRepository;
+
     // ---- Desplegables del formulario (mismo patron que ProductoModel) ----
+    // tipoSeleccionado = primer nivel de la cascada de la ventana emergente
+    private UUID tipoSeleccionado;
     private UUID descuentoSeleccionado;
     private UUID productoSeleccionado;
+    private List<SelectItem> listaTipos;
     private List<SelectItem> listaDescuentos;
     private List<SelectItem> listaProductos;
 
@@ -82,18 +90,21 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
     @Override
     public void limpiar() {
         super.limpiar();
-        // una asignacion nueva empieza sin descuento ni producto elegidos
+        // una asignacion nueva empieza sin tipo, descuento ni producto elegidos
+        this.tipoSeleccionado = null;
         this.descuentoSeleccionado = null;
         this.productoSeleccionado = null;
+        this.listaDescuentos = null;
     }
 
     @Override
     public void btnGuardarHandler() {
-        // Validaciones minimas antes de tocar la base de datos
+        // Validaciones antes de tocar la base de datos
         if (this.registro != null) {
             if (this.descuentoSeleccionado == null) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
-                        FacesMessage.SEVERITY_WARN, "Seleccione un descuento", null));
+                        FacesMessage.SEVERITY_WARN,
+                        "Seleccione un descuento (tipo de descuento y descuento)", null));
                 return;
             }
             if (this.productoSeleccionado == null) {
@@ -101,20 +112,75 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
                         FacesMessage.SEVERITY_WARN, "Seleccione un producto", null));
                 return;
             }
-            if (this.registro.getValor() == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
-                        FacesMessage.SEVERITY_WARN, "Indique el valor del descuento", null));
-                return;
-            }
-            if (this.registro.getFechaDesde() != null && this.registro.getFechaHasta() != null
-                    && this.registro.getFechaDesde().after(this.registro.getFechaHasta())) {
+            // Datos del descuento elegido en el cascada
+            Descuento descuento = descuentoRepository.findById(this.descuentoSeleccionado);
+            TipoDescuento tipo = (descuento != null) ? descuento.getIdTipoDescuento() : null;
+            String nombreTipo = (tipo != null && tipo.getNombre() != null)
+                    ? tipo.getNombre() : "(sin tipo)";
+
+            // El tipo inactivo no se puede usar (los descuentos no tienen estado)
+            if (tipo != null && Boolean.FALSE.equals(tipo.getActivo())) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                         FacesMessage.SEVERITY_WARN,
-                        "La fecha desde no puede ser mayor que la fecha hasta", null));
+                        "El tipo de descuento '" + nombreTipo + "' está inactivo", null));
+                return;
+            }
+
+            // Valor: obligatorio y sin sobrepasar el maximo del tipo
+            if (this.registro.getValor() == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "El valor no es válido. El valor no puede ser nulo", null));
+                return;
+            }
+            Integer maximo = (tipo != null) ? tipo.getDescuentoMaximo() : null;
+            if (maximo != null && this.registro.getValor() > maximo) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "El valor no es válido. El valor no cumple la validación de "
+                                + nombreTipo + ": debe ser menor o igual a " + maximo, null));
+                return;
+            }
+
+            // Fechas: no pueden quedar vacias
+            if (this.registro.getFechaDesde() == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "La fecha inicial no es válida. La fecha no puede quedar vacía", null));
+                return;
+            }
+            if (this.registro.getFechaHasta() == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "La fecha final no es válida. La fecha no puede quedar vacía", null));
+                return;
+            }
+            if (this.registro.getFechaDesde().after(this.registro.getFechaHasta())) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "La fecha final no es válida. La fecha de finalización no puede ser "
+                                + "anterior a la fecha de inicio", null));
+                return;
+            }
+            // Fechas: dentro del rango del descuento elegido
+            if (descuento != null && descuento.getFechaDesde() != null
+                    && this.registro.getFechaDesde().before(descuento.getFechaDesde())) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "La fecha inicial no es válida. La fecha de inicio debe ser después "
+                                + "de la fecha inicial aplicable del descuento", null));
+                return;
+            }
+            if (descuento != null && descuento.getFechaHasta() != null
+                    && this.registro.getFechaHasta().after(descuento.getFechaHasta())) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "La fecha final no es válida. La fecha de finalización no puede ser "
+                                + "posterior a la de fin del descuento", null));
                 return;
             }
             // FKs: aplica descuento y producto elegidos en los combos ANTES de persistir
-            this.registro.setIdDescuento(descuentoRepository.findById(this.descuentoSeleccionado));
+            this.registro.setIdDescuento(descuento);
             this.registro.setIdProducto(productoRepository.findById(this.productoSeleccionado));
         }
         try {
@@ -134,6 +200,11 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
         this.productoSeleccionado = null;
         if (this.registro != null) {
             if (this.registro.getIdDescuento() != null) {
+                // el tipo primero: su setter limpia la seleccion de descuento
+                if (this.registro.getIdDescuento().getIdTipoDescuento() != null) {
+                    setTipoSeleccionado(this.registro.getIdDescuento()
+                            .getIdTipoDescuento().getIdTipoDescuento());
+                }
                 this.descuentoSeleccionado = this.registro.getIdDescuento().getIdDescuento();
             }
             if (this.registro.getIdProducto() != null) {
@@ -162,26 +233,83 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
     }
 
     /**
-     * Al cambiar de pestaña en Producto.xhtml se vacían los desplegables de
-     * descuento y producto para que muestren lo recién creado en la pestaña
-     * Producto (carga perezosa: se recargan en el siguiente render).
+     * Al cambiar de pestaña en Producto.xhtml se vacían los desplegables
+     * de la ventana emergente (tipo y descuento) y el de productos, para
+     * que muestren lo recién creado (carga perezosa: se recargan en el
+     * siguiente render).
      */
     public void onTabChange(TabChangeEvent evento) {
+        this.listaTipos = null;
         this.listaDescuentos = null;
         this.listaProductos = null;
     }
 
     /**
-     * Lista desplegable de descuentos (carga perezosa: una vez por vista).
+     * Tipos de descuento del primer select de la ventana emergente
+     * (carga perezosa: una vez por vista). Los inactivos aparecen en
+     * gris y no se pueden elegir.
+     */
+    public List<SelectItem> getListaTipos() {
+        if (this.listaTipos == null) {
+            this.listaTipos = new ArrayList<>();
+            for (TipoDescuento t : tipoDescuentoRepository.findAll()) {
+                boolean inactivo = Boolean.FALSE.equals(t.getActivo());
+                this.listaTipos.add(new SelectItem(t.getIdTipoDescuento(),
+                        t.getNombre(), null, inactivo));
+            }
+        }
+        return this.listaTipos;
+    }
+
+    /**
+     * Descuentos del tipo elegido (cascada: vacía hasta elegir el tipo).
+     * Los descuentos no tienen campo activo.
      */
     public List<SelectItem> getListaDescuentos() {
         if (this.listaDescuentos == null) {
             this.listaDescuentos = new ArrayList<>();
-            for (Descuento d : descuentoRepository.findAll()) {
-                this.listaDescuentos.add(new SelectItem(d.getIdDescuento(), d.getNombre()));
+            if (this.tipoSeleccionado != null) {
+                TipoDescuento tipo = tipoDescuentoRepository.findById(this.tipoSeleccionado);
+                UUID idTipo = (tipo != null) ? tipo.getIdTipoDescuento() : null;
+                for (Descuento d : descuentoRepository.findAll()) {
+                    if (idTipo != null && d.getIdTipoDescuento() != null
+                            && idTipo.equals(d.getIdTipoDescuento().getIdTipoDescuento())) {
+                        this.listaDescuentos.add(new SelectItem(
+                                d.getIdDescuento(), d.getNombre()));
+                    }
+                }
             }
         }
         return this.listaDescuentos;
+    }
+
+    public UUID getTipoSeleccionado() {
+        return tipoSeleccionado;
+    }
+
+    /**
+     * Cambiar el tipo en la ventana emergente reinicia la selección de
+     * descuento y recarga su lista (cascada Tipo > Descuento).
+     */
+    public void setTipoSeleccionado(UUID tipoSeleccionado) {
+        this.tipoSeleccionado = tipoSeleccionado;
+        this.descuentoSeleccionado = null;
+        this.listaDescuentos = null;
+    }
+
+    /**
+     * Nombre del descuento elegido que muestra el input del formulario
+     * junto al botón de la ventana emergente.
+     */
+    public String getDescuentoElegido() {
+        if (this.descuentoSeleccionado == null) {
+            return "(ninguno)";
+        }
+        Descuento d = descuentoRepository.findById(this.descuentoSeleccionado);
+        if (d == null) {
+            return "(ninguno)";
+        }
+        return d.getNombre();
     }
 
     /**

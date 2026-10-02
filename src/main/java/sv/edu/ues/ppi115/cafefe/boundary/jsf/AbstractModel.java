@@ -102,13 +102,13 @@ public abstract class AbstractModel<T, ID> implements Serializable {
             getDao().crear(this.registro);
         }
         this.cargarRegistros();
-        this.limpiar();
+        this.limpiar(); 
         this.formVisible = false; // guardado: se vuelve a la vista de solo tabla
         // Confirmacion de exito: TODO boton Guardar avisa que se guardo
         // (un solo mensaje limpio, regla del proyecto)
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                 FacesMessage.SEVERITY_INFO,
-                esModificacion ? "Cambios guardados correctamente" : "Guardado correctamente",
+                esModificacion ? "Registro actualizado con éxito" : "Guardado correctamente",
                 null));
     }
 
@@ -127,6 +127,10 @@ public abstract class AbstractModel<T, ID> implements Serializable {
             this.cargarRegistros();
             this.limpiar();
             this.formVisible = false;
+            // Confirmacion de exito: todo Eliminar avisa que se borro
+            // (un solo mensaje limpio, regla del proyecto)
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_INFO, "Registro eliminado correctamente", null));
         }
     }
 
