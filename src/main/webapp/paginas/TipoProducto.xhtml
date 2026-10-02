@@ -19,7 +19,7 @@
             <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
             <div class="card">
                 <div style="margin-bottom: 10px;">
-                    <p:commandButton value="Nuevo" action="#{tipoProductoModel.btnNuevoHandler}"
+                    <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{tipoProductoModel.btnNuevoHandler}"
                                      update="msgsTp pnlFormTp" styleClass="btn btn-primary"
                                      oncomplete="var e=document.querySelector('[id$=pnlFormTp]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                 </div>
@@ -51,7 +51,7 @@
                     <comp:botonesTabla model="#{tipoProductoModel}"
                                        editUpdate="msgsTp pnlFormTp"
                                        deleteUpdate="msgsTp tblTp botoneraTp pnlFormTp" />
-                    <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                    <h:outputText value="#{msg['crud.seleccionarFila']}"
                                   rendered="#{empty tipoProductoModel.seleccion}"
                                   style="color:#777; font-style: italic;" />
                 </h:panelGroup>
@@ -68,7 +68,7 @@
                             <p:inputText id="idTp" value="#{tipoProductoModel.registro.idTipoProducto}" required="false" disabled="true" size="36" />
                             <p:messages for="idTp" />
 
-                            <h:outputLabel for="nombre" value="Nombre del Producto:" />
+                            <h:outputLabel for="nombre" value="Nombre del Tipo:" />
                             <p:inputText id="nombre" value="#{tipoProductoModel.registro.nombre}" />
                             <p:messages for="nombre" />
 
@@ -84,10 +84,10 @@
                         </h:panelGrid>
 
                         <div style="margin-top: 10px;">
-                            <p:commandButton value="Guardar" action="#{tipoProductoModel.btnGuardarHandler}"
+                            <p:commandButton value="#{msg['crud.guardar']}" action="#{tipoProductoModel.btnGuardarHandler}"
                                              update="msgsTp pnlFormTp tblTp botoneraTp" styleClass="btn btn-primary" />
                             &#160;
-                            <p:commandButton value="Cancelar" action="#{tipoProductoModel.btnCancelarHandler}"
+                            <p:commandButton value="#{msg['crud.cancelar']}" action="#{tipoProductoModel.btnCancelarHandler}"
                                              update="msgsTp pnlFormTp tblTp botoneraTp" styleClass="btn" />
                         </div>
                     </div>

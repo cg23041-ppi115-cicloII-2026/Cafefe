@@ -26,7 +26,7 @@
                     <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                     <div class="card">
                         <div style="margin-bottom: 10px;">
-                            <p:commandButton value="Nuevo" action="#{tipoCaracteristicaModel.btnNuevoHandler}"
+                            <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{tipoCaracteristicaModel.btnNuevoHandler}"
                                              update="msgsTc pnlFormTc" styleClass="btn btn-primary"
                                              oncomplete="var e=document.querySelector('[id$=pnlFormTc]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                         </div>
@@ -62,7 +62,7 @@
                             <comp:botonesTabla model="#{tipoCaracteristicaModel}"
                                                editUpdate="msgsTc pnlFormTc"
                                                deleteUpdate="msgsTc tblTc botoneraTc pnlFormTc" />
-                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                            <h:outputText value="#{msg['crud.seleccionarFila']}"
                                           rendered="#{empty tipoCaracteristicaModel.seleccion}"
                                           style="color:#777; font-style: italic;" />
                         </h:panelGroup>
@@ -103,10 +103,10 @@
 
                                 <div style="margin-top: 10px;">
                                     <!-- AJAX: actualiza mensajes, formulario y tabla sin recargar la página -->
-                                    <p:commandButton value="Guardar" action="#{tipoCaracteristicaModel.btnGuardarHandler}"
+                                    <p:commandButton value="#{msg['crud.guardar']}" action="#{tipoCaracteristicaModel.btnGuardarHandler}"
                                                      update="msgsTc pnlFormTc tblTc botoneraTc" styleClass="btn btn-primary" />
                                     &#160;
-                                    <p:commandButton value="Cancelar" action="#{tipoCaracteristicaModel.btnCancelarHandler}"
+                                    <p:commandButton value="#{msg['crud.cancelar']}" action="#{tipoCaracteristicaModel.btnCancelarHandler}"
                                                      update="msgsTc pnlFormTc tblTc botoneraTc" styleClass="btn" />
                                 </div>
                             </div>
@@ -123,7 +123,7 @@
                         <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                         <div class="card">
                             <div style="margin-bottom: 10px;">
-                                <p:commandButton value="Nuevo" action="#{caracteristicaModel.btnNuevoHandler}"
+                                <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{caracteristicaModel.btnNuevoHandler}"
                                                  update="msgsCr pnlFormCr" styleClass="btn btn-primary"
                                                  oncomplete="var e=document.querySelector('[id$=pnlFormCr]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                             </div>
@@ -159,7 +159,7 @@
                                 <comp:botonesTabla model="#{caracteristicaModel}"
                                                    editUpdate="msgsCr pnlFormCr"
                                                    deleteUpdate="msgsCr tblCr botoneraCr pnlFormCr" />
-                                <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                <h:outputText value="#{msg['crud.seleccionarFila']}"
                                               rendered="#{empty caracteristicaModel.seleccion}"
                                               style="color:#777; font-style: italic;" />
                             </h:panelGroup>
@@ -203,10 +203,10 @@
 
                                     <div style="margin-top: 10px;">
                                         <!-- AJAX: actualiza mensajes, formulario y tabla sin recargar la página -->
-                                        <p:commandButton value="Guardar" action="#{caracteristicaModel.btnGuardarHandler}"
+                                        <p:commandButton value="#{msg['crud.guardar']}" action="#{caracteristicaModel.btnGuardarHandler}"
                                                          update="msgsCr pnlFormCr tblCr botoneraCr" styleClass="btn btn-primary" />
                                         &#160;
-                                        <p:commandButton value="Cancelar" action="#{caracteristicaModel.btnCancelarHandler}"
+                                        <p:commandButton value="#{msg['crud.cancelar']}" action="#{caracteristicaModel.btnCancelarHandler}"
                                                          update="msgsCr pnlFormCr tblCr botoneraCr" styleClass="btn" />
                                     </div>
                                 </div>

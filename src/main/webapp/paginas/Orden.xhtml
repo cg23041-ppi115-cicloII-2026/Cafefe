@@ -40,7 +40,7 @@
                             &#160;
                             <p:inputText id="txtBusqueda" value="#{tomarOrdenModel.busqueda}" />
                             &#160;
-                            <p:commandButton value="Buscar" process="@this txtBusqueda"
+                            <p:commandButton value="#{msg['crud.buscar']}" process="@this txtBusqueda"
                                              update="tblProductos" styleClass="btn" />
                         </div>
                         <h3>Productos (activos)</h3>
@@ -125,7 +125,7 @@
                             </h:panelGroup>
 
                             <div style="margin-top: 10px;">
-                                <p:commandButton value="Agregar a la orden"
+                                <p:commandButton value="#{msg['pagina.orden.agregar']}"
                                                  action="#{tomarOrdenModel.agregarLinea}"
                                                  update="msgsTomar tblProductos pnlLinea pnlCarrito"
                                                  styleClass="btn btn-primary" />
@@ -155,7 +155,7 @@
                                     #{linea.observaciones}
                                 </p:column>
                                 <p:column headerText="">
-                                    <p:commandButton value="Quitar"
+                                    <p:commandButton value="#{msg['pagina.orden.quitar']}"
                                                      action="#{tomarOrdenModel.quitarLinea(linea)}"
                                                      update="msgsTomar pnlCarrito"
                                                      styleClass="btn" />
@@ -167,12 +167,12 @@
                             </div>
 
                             <div style="margin-top: 10px;">
-                                <p:commandButton value="Guardar orden"
+                                <p:commandButton value="#{msg['pagina.orden.guardar']}"
                                                  action="#{tomarOrdenModel.guardarOrden}"
                                                  update="msgsTomar pnlCabecera tblProductos pnlLinea pnlCarrito"
                                                  styleClass="btn btn-primary" />
                                 &#160;
-                                <p:commandButton value="Cancelar"
+                                <p:commandButton value="#{msg['crud.cancelar']}"
                                                  action="#{tomarOrdenModel.cancelar}"
                                                  update="msgsTomar pnlCabecera tblProductos pnlLinea pnlCarrito"
                                                  styleClass="btn" />
@@ -214,7 +214,7 @@
                              no se edita), por eso el botón va aparte del compuesto
                              botonesTabla, que traería un Editar que no aplica. -->
                         <h:panelGroup id="botoneraOrdenes" layout="block" style="margin-top: 12px;">
-                            <p:commandButton value="Anular" action="#{ordenModel.btnEliminarHandler}"
+                            <p:commandButton value="#{msg['pagina.orden.anular']}" action="#{ordenModel.btnEliminarHandler}"
                                              disabled="#{empty ordenModel.seleccion}"
                                              update="msgsConsulta tblOrdenes botoneraOrdenes detalleOrdenes"
                                              styleClass="btn"

@@ -5,6 +5,9 @@
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core">
 
+    <!-- Idioma global de la sesión (misma receta que index.xhtml) -->
+    <f:view locale="#{sesionUsuario.locale}">
+
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title><ui:insert name="titulo">Cafefe</ui:insert></title>
@@ -81,5 +84,7 @@
         </div>
 
     </h:body>
+
+    </f:view>
 
 </html>

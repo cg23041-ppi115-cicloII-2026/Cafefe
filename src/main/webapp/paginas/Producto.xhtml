@@ -34,7 +34,7 @@
                     <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                     <div class="card">
                         <div style="margin-bottom: 10px;">
-                            <p:commandButton value="Nuevo" action="#{productoModel.btnNuevoHandler}"
+                            <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{productoModel.btnNuevoHandler}"
                                              update="msgsProd pnlFormProd" styleClass="btn btn-primary"
                                              oncomplete="var e=document.querySelector('[id$=pnlFormProd]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                         </div>
@@ -47,16 +47,16 @@
                                      emptyMessage="No hay registros">
                             <p:ajax event="rowSelect" update="btnProd" />
                             <p:ajax event="rowUnselect" update="btnProd" />
-                            <p:column headerText="#{msg['crud.id']}" style="font-size: 0.8em;">
+                            <p:column headerText="ID" style="font-size: 0.8em;">
                                 #{item.idProducto}
                             </p:column>
-                            <p:column headerText="#{msg['crud.nombre']}">
+                            <p:column headerText="Nombre">
                                 #{item.nombre}
                             </p:column>
                             <p:column headerText="Precio">
                                 #{item.precioSugerido}
                             </p:column>
-                            <p:column headerText="#{msg['crud.estado']}">
+                            <p:column headerText="Estado">
                                 #{item.activo ? 'ACTIVO' : 'INACTIVO'}
                             </p:column>
                             <p:column headerText="Comentarios">
@@ -69,7 +69,7 @@
                             <comp:botonesTabla model="#{productoModel}"
                                                editUpdate="msgsProd pnlFormProd"
                                                deleteUpdate="msgsProd prodTabla btnProd pnlFormProd" />
-                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                            <h:outputText value="#{msg['crud.seleccionarFila']}"
                                           rendered="#{empty productoModel.seleccion}"
                                           style="color:#777; font-style: italic;" />
                         </h:panelGroup>
@@ -82,11 +82,11 @@
                                 <h2>Administración de Productos</h2>
 
                                 <h:panelGrid id="prodForm" columns="3" cellpadding="5">
-                                    <h:outputLabel for="idProd" value="#{msg['crud.id']}:" />
+                                    <h:outputLabel for="idProd" value="ID:" />
                                     <p:inputText id="idProd" value="#{productoModel.registro.idProducto}" required="false" disabled="true" size="36" />
                                     <p:messages for="idProd" />
 
-                                    <h:outputLabel for="nombre" value="#{msg['crud.nombre']}:" />
+                                    <h:outputLabel for="nombre" value="Nombre:" />
                                     <p:inputText id="nombre" value="#{productoModel.registro.nombre}" />
                                     <p:messages for="nombre" />
 
@@ -94,10 +94,10 @@
                                     <p:inputText id="precio" value="#{productoModel.registro.precioSugerido}" />
                                     <p:messages for="precio" />
 
-                                    <h:outputLabel for="activo" value="#{msg['crud.estado']}:" />
+                                    <h:outputLabel for="activo" value="Estado:" />
                                     <p:selectBooleanCheckbox id="activo"
                                                              value="#{productoModel.registro.activo}"
-                                                             itemLabel="#{msg['crud.activo']}" />
+                                                             itemLabel="Activo" />
                                     <h:panelGroup />
 
                                     <h:outputLabel for="comentarios" value="Comentarios:" />
@@ -127,7 +127,7 @@
                         <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                         <div class="card">
                             <div style="margin-bottom: 10px;">
-                                <p:commandButton value="Nuevo" action="#{productoTipoProductoModel.btnNuevoHandler}"
+                                <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{productoTipoProductoModel.btnNuevoHandler}"
                                                  update="msgsPtp pnlFormPtp" styleClass="btn btn-primary"
                                                  oncomplete="var e=document.querySelector('[id$=pnlFormPtp]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                             </div>
@@ -140,7 +140,7 @@
                                          emptyMessage="No hay registros">
                                 <p:ajax event="rowSelect" update="botoneraPtp" />
                                 <p:ajax event="rowUnselect" update="botoneraPtp" />
-                                <p:column headerText="#{msg['crud.id']}" style="font-size: 0.8em;">
+                                <p:column headerText="ID" style="font-size: 0.8em;">
                                     #{item.idProductoTipoProducto}
                                 </p:column>
                                 <p:column headerText="Producto">
@@ -152,7 +152,7 @@
                                 <p:column headerText="Fecha">
                                     #{item.fechaCreacion}
                                 </p:column>
-                                <p:column headerText="#{msg['crud.observaciones']}">
+                                <p:column headerText="Observaciones">
                                     #{item.observaciones}
                                 </p:column>
                             </p:dataTable>
@@ -162,7 +162,7 @@
                                 <comp:botonesTabla model="#{productoTipoProductoModel}"
                                                    editUpdate="msgsPtp pnlFormPtp"
                                                    deleteUpdate="msgsPtp tblPtp botoneraPtp pnlFormPtp" />
-                                <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                <h:outputText value="#{msg['crud.seleccionarFila']}"
                                               rendered="#{empty productoTipoProductoModel.seleccion}"
                                               style="color:#777; font-style: italic;" />
                             </h:panelGroup>
@@ -175,7 +175,7 @@
                                     <h2>Asignar Tipos de Producto a un Producto</h2>
 
                                     <h:panelGrid columns="3" cellpadding="5">
-                                        <h:outputLabel for="idPtp" value="#{msg['crud.id']}:" />
+                                        <h:outputLabel for="idPtp" value="ID:" />
                                         <p:inputText id="idPtp" value="#{productoTipoProductoModel.registro.idProductoTipoProducto}" required="false" disabled="true" size="36" />
                                         <p:messages for="idPtp" />
 
@@ -195,7 +195,7 @@
                                         </p:selectOneMenu>
                                         <h:panelGroup />
 
-                                        <h:outputLabel for="ptpObservaciones" value="#{msg['crud.observaciones']}:" />
+                                        <h:outputLabel for="ptpObservaciones" value="Observaciones:" />
                                         <p:inputTextarea id="ptpObservaciones"
                                                          value="#{productoTipoProductoModel.registro.observaciones}"
                                                          rows="3" cols="50" />
@@ -225,7 +225,7 @@
                         <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                         <div class="card">
                             <div style="margin-bottom: 10px;">
-                                <p:commandButton value="Nuevo" action="#{productoCaracteristicaModel.btnNuevoHandler}"
+                                <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{productoCaracteristicaModel.btnNuevoHandler}"
                                                  update="msgsPc pnlFormPc" styleClass="btn btn-primary"
                                                  oncomplete="var e=document.querySelector('[id$=pnlFormPc]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                             </div>
@@ -240,7 +240,7 @@
                                          emptyMessage="No hay registros">
                                 <p:ajax event="rowSelect" update="btnPc" />
                                 <p:ajax event="rowUnselect" update="btnPc" />
-                                <p:column headerText="#{msg['crud.id']}" style="font-size: 0.8em;">
+                                <p:column headerText="ID" style="font-size: 0.8em;">
                                     #{item.idProductoCaracteristica}
                                 </p:column>
                                 <p:column headerText="Producto">
@@ -258,7 +258,7 @@
                                 <comp:botonesTabla model="#{productoCaracteristicaModel}"
                                                    editUpdate="msgsPc pnlFormPc"
                                                    deleteUpdate="msgsPc pcTabla btnPc pnlFormPc" />
-                                <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                <h:outputText value="#{msg['crud.seleccionarFila']}"
                                               rendered="#{empty productoCaracteristicaModel.seleccion}"
                                               style="color:#777; font-style: italic;" />
                             </h:panelGroup>
@@ -271,7 +271,7 @@
                                     <h2>Asignar Características a un Producto</h2>
 
                                     <h:panelGrid id="pcForm" columns="3" cellpadding="5">
-                                        <h:outputLabel for="idPc" value="#{msg['crud.id']}:" />
+                                        <h:outputLabel for="idPc" value="ID:" />
                                         <p:inputText id="idPc" value="#{productoCaracteristicaModel.registro.idProductoCaracteristica}" required="false" disabled="true" size="36" />
                                         <p:messages for="idPc" />
 
@@ -319,7 +319,7 @@
                         <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                         <div class="card">
                             <div style="margin-bottom: 10px;">
-                                <p:commandButton value="Nuevo" action="#{descuentoProductoModel.btnNuevoHandler}"
+                                <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{descuentoProductoModel.btnNuevoHandler}"
                                                  update="msgsDescProd pnlFormDescProd" styleClass="btn btn-primary"
                                                  oncomplete="var e=document.querySelector('[id$=pnlFormDescProd]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                             </div>
@@ -333,7 +333,7 @@
                                          emptyMessage="No hay registros">
                                 <p:ajax event="rowSelect" update="botoneraDescProd" />
                                 <p:ajax event="rowUnselect" update="botoneraDescProd" />
-                                <p:column headerText="#{msg['crud.id']}" style="font-size: 0.8em;">
+                                <p:column headerText="ID" style="font-size: 0.8em;">
                                     #{item.idDescuentoProducto}
                                 </p:column>
                                 <p:column headerText="Descuento">
@@ -345,7 +345,7 @@
                                 <p:column headerText="Valor">
                                     #{item.valor}
                                 </p:column>
-                                <p:column headerText="#{msg['crud.observaciones']}">
+                                <p:column headerText="Observaciones">
                                     #{item.observaciones}
                                 </p:column>
                             </p:dataTable>
@@ -355,7 +355,7 @@
                                 <comp:botonesTabla model="#{descuentoProductoModel}"
                                                    editUpdate="msgsDescProd pnlFormDescProd"
                                                    deleteUpdate="msgsDescProd tblDescProd botoneraDescProd pnlFormDescProd" />
-                                <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                                <h:outputText value="#{msg['crud.seleccionarFila']}"
                                               rendered="#{empty descuentoProductoModel.seleccion}"
                                               style="color:#777; font-style: italic;" />
                             </h:panelGroup>
@@ -368,7 +368,7 @@
                                     <h2>Administración de Descuentos por Producto</h2>
 
                                     <h:panelGrid columns="3" cellpadding="5">
-                                        <h:outputLabel for="idDescProd" value="#{msg['crud.id']}:" />
+                                        <h:outputLabel for="idDescProd" value="ID:" />
                                         <p:inputText id="idDescProd" value="#{descuentoProductoModel.registro.idDescuentoProducto}" required="false" disabled="true" size="36" />
                                         <p:messages for="idDescProd" />
 
@@ -401,7 +401,7 @@
                                                       pattern="dd/MM/yyyy" showIcon="true" disabled="#{descuentoProductoModel.editando}" />
                                         <h:panelGroup />
 
-                                        <h:outputLabel for="observacionesProd" value="#{msg['crud.observaciones']}:" />
+                                        <h:outputLabel for="observacionesProd" value="Observaciones:" />
                                         <p:inputTextarea id="observacionesProd" value="#{descuentoProductoModel.registro.observaciones}"
                                                          rows="3" cols="50" />
                                         <p:messages for="observacionesProd" />

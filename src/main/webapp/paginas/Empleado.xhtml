@@ -21,7 +21,7 @@
                     <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                     <div class="card">
                         <div style="margin-bottom: 10px;">
-                            <p:commandButton value="Nuevo" action="#{empleadoModel.btnNuevoHandler}"
+                            <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{empleadoModel.btnNuevoHandler}"
                                              update="msgsEmpleado pnlFormEmpleado" styleClass="btn btn-primary"
                                              oncomplete="var e=document.querySelector('[id$=pnlFormEmpleado]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                         </div>
@@ -57,7 +57,7 @@
                             <comp:botonesTabla model="#{empleadoModel}"
                                                editUpdate="msgsEmpleado pnlFormEmpleado"
                                                deleteUpdate="msgsEmpleado tblEmpleados botonera pnlFormEmpleado" />
-                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                            <h:outputText value="#{msg['crud.seleccionarFila']}"
                                           rendered="#{empty empleadoModel.seleccion}"
                                           style="color:#777; font-style: italic;" />
                         </h:panelGroup>
@@ -95,11 +95,11 @@
                                 </h:panelGrid>
 
                                 <div style="margin-top: 10px;">
-                                    <p:commandButton value="Guardar" action="#{empleadoModel.btnGuardarHandler}"
+                                    <p:commandButton value="#{msg['crud.guardar']}" action="#{empleadoModel.btnGuardarHandler}"
                                                      update="msgsEmpleado pnlFormEmpleado tblEmpleados botonera"
                                                      styleClass="btn btn-primary" />
                                     &#160;
-                                    <p:commandButton value="Cancelar" action="#{empleadoModel.btnCancelarHandler}"
+                                    <p:commandButton value="#{msg['crud.cancelar']}" action="#{empleadoModel.btnCancelarHandler}"
                                                      update="msgsEmpleado pnlFormEmpleado tblEmpleados botonera"
                                                      styleClass="btn" />
                                 </div>
@@ -116,7 +116,7 @@
                     <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                     <div class="card">
                         <div style="margin-bottom: 10px;">
-                            <p:commandButton value="Nuevo" action="#{empleadoRolModel.btnNuevoHandler}"
+                            <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{empleadoRolModel.btnNuevoHandler}"
                                              update="msgsAsig pnlFormRol" styleClass="btn btn-primary"
                                              oncomplete="var e=document.querySelector('[id$=pnlFormRol]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                         </div>
@@ -148,7 +148,7 @@
                             <comp:botonesTabla model="#{empleadoRolModel}"
                                                editUpdate="msgsAsig pnlFormRol"
                                                deleteUpdate="msgsAsig tblAsignaciones botoneraRol pnlFormRol" />
-                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                            <h:outputText value="#{msg['crud.seleccionarFila']}"
                                           rendered="#{empty empleadoRolModel.seleccion}"
                                           style="color:#777; font-style: italic;" />
                         </h:panelGroup>
@@ -193,11 +193,11 @@
                                 </h:panelGrid>
 
                                 <div style="margin-top: 10px;">
-                                    <p:commandButton value="Guardar" action="#{empleadoRolModel.btnGuardarHandler}"
+                                    <p:commandButton value="#{msg['crud.guardar']}" action="#{empleadoRolModel.btnGuardarHandler}"
                                                      update="msgsAsig pnlFormRol tblAsignaciones botoneraRol"
                                                      styleClass="btn btn-primary" />
                                     &#160;
-                                    <p:commandButton value="Cancelar" action="#{empleadoRolModel.btnCancelarHandler}"
+                                    <p:commandButton value="#{msg['crud.cancelar']}" action="#{empleadoRolModel.btnCancelarHandler}"
                                                      update="msgsAsig pnlFormRol tblAsignaciones botoneraRol"
                                                      styleClass="btn" />
                                 </div>
@@ -214,7 +214,7 @@
                     <!-- SOLO la tabla; el formulario aparece al pulsar Nuevo/Editar -->
                     <div class="card">
                         <div style="margin-bottom: 10px;">
-                            <p:commandButton value="Nuevo" action="#{rolModel.btnNuevoHandler}"
+                            <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{rolModel.btnNuevoHandler}"
                                              update="msgsRoles pnlFormRoles" styleClass="btn btn-primary"
                                              oncomplete="var e=document.querySelector('[id$=pnlFormRoles]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                         </div>
@@ -243,7 +243,7 @@
                             <comp:botonesTabla model="#{rolModel}"
                                                editUpdate="msgsRoles pnlFormRoles"
                                                deleteUpdate="msgsRoles tblRoles botoneraRoles pnlFormRoles" />
-                            <h:outputText value="Seleccione una fila de la tabla para editar o eliminar"
+                            <h:outputText value="#{msg['crud.seleccionarFila']}"
                                           rendered="#{empty rolModel.seleccion}"
                                           style="color:#777; font-style: italic;" />
                         </h:panelGroup>
@@ -278,11 +278,11 @@
                                 </h:panelGrid>
 
                                 <div style="margin-top: 10px;">
-                                    <p:commandButton value="Guardar" action="#{rolModel.btnGuardarHandler}"
+                                    <p:commandButton value="#{msg['crud.guardar']}" action="#{rolModel.btnGuardarHandler}"
                                                      update="msgsRoles pnlFormRoles tblRoles botoneraRoles"
                                                      styleClass="btn btn-primary" />
                                     &#160;
-                                    <p:commandButton value="Cancelar" action="#{rolModel.btnCancelarHandler}"
+                                    <p:commandButton value="#{msg['crud.cancelar']}" action="#{rolModel.btnCancelarHandler}"
                                                      update="msgsRoles pnlFormRoles tblRoles botoneraRoles"
                                                      styleClass="btn" />
                                 </div>
