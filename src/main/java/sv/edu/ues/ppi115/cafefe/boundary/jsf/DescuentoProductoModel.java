@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.primefaces.event.TabChangeEvent;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoRepository;
@@ -158,6 +159,16 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
                     FacesMessage.SEVERITY_WARN,
                     "No se pudo eliminar el descuento del producto", null));
         }
+    }
+
+    /**
+     * Al cambiar de pestaña en Producto.xhtml se vacían los desplegables de
+     * descuento y producto para que muestren lo recién creado en la pestaña
+     * Producto (carga perezosa: se recargan en el siguiente render).
+     */
+    public void onTabChange(TabChangeEvent evento) {
+        this.listaDescuentos = null;
+        this.listaProductos = null;
     }
 
     /**

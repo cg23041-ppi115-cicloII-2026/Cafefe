@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="jakarta.faces.facelets"
-      xmlns:h="jakarta.faces.html">
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -24,6 +25,16 @@
             <div class="titulo">
                 <h1><ui:insert name="titulo">NO PUSISTE LEYENDA</ui:insert></h1>
             </div>
+
+            <!-- Selector de idioma global de la sesión (a un lado: arriba a la derecha) -->
+            <h:form id="frmIdioma">
+                <h:selectOneMenu id="cbxIdioma"
+                                 value="#{sesionUsuario.localidad}"
+                                 onchange="submit()"
+                                 valueChangeListener="#{sesionUsuario.localidadChanged}">
+                    <f:selectItems value="#{sesionUsuario.listaIdiomas}" />
+                </h:selectOneMenu>
+            </h:form>
         </div>
 
         <!-- Cuerpo: menu lateral izquierdo -->
@@ -36,6 +47,7 @@
 
                     <div class="sidebar-grupo">
                         <div class="sidebar-grupo-titulo">Menú</div>
+                        <a href="#{request.contextPath}/paginas/Producto.jsf">Producto</a>
                         <a href="#{request.contextPath}/paginas/TipoProducto.jsf">Tipos de Producto</a>
                         <a href="#{request.contextPath}/paginas/ProductoCaracteristica.jsf">Caracteristica</a>
                         <a href="#{request.contextPath}/paginas/TipoDescuento.jsf">Descuentos</a>
@@ -50,7 +62,6 @@
                 <!-- Barra de navegacion superior: ahora solo cubre el contenido -->
                 <div id="menu">
                     <ui:insert name="menu">
-                        <a href="#{request.contextPath}/paginas/Producto.jsf">Producto</a>
                         <a href="#{request.contextPath}/paginas/Empleado.jsf">Empleado</a>
                         <a href="#{request.contextPath}/paginas/Orden.jsf">Ordenes</a>
                     </ui:insert>

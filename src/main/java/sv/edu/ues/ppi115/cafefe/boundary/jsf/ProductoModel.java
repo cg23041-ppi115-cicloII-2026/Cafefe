@@ -158,6 +158,9 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
                 }
             }
         } catch (Exception e) {
+            // Si super() ya dejo su confirmacion de exito, quitarla: en un
+            // error solo debe verse UN mensaje limpio (regla del proyecto)
+            FacesContext.getCurrentInstance().getMessageList().clear();
             // Sin esto la excepcion de EJB la traga MyFaces y NO se pinta nada
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_WARN,
@@ -196,7 +199,7 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
             this.formVisible = false;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_WARN,
-                    "No se puede eliminar: existen datos relacionados con este producto",
+                    "No se puede eliminar: quite primero las asignaciones del producto",
                     null));
         }
     }

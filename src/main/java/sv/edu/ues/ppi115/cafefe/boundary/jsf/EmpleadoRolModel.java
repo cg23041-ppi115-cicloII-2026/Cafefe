@@ -127,9 +127,17 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
             } else {
                 empleadoRolRepository.crear(this.registro);
             }
+
+            // Confirmacion de exito: este guardar es personalizado (no pasa
+            // por super), asi que avisa aqui (un solo mensaje limpio)
+            boolean eraModificacion = (this.estado == ESTADO_CRUD.MODIFICAR);
             this.cargarRegistros();
             this.limpiar();
             this.formVisible = false;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_INFO,
+                    eraModificacion ? "Cambios guardados correctamente" : "Guardado correctamente",
+                    null));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_WARN,

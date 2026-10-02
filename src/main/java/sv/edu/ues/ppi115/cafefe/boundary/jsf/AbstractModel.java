@@ -4,6 +4,8 @@ import jakarta.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
 
 /**
@@ -90,6 +92,8 @@ public abstract class AbstractModel<T, ID> implements Serializable {
         if (this.registro == null || getDao() == null) {
             return;
         }
+        // Recuerda si era edicion ANTES de limpiar() (limpiar pone estado=CREAR)
+        boolean esModificacion = (this.estado == ESTADO_CRUD.MODIFICAR);
         if (this.estado == ESTADO_CRUD.MODIFICAR) {
             // Se está editando un registro existente (vino de "Editar")
             getDao().modificar(this.registro);
@@ -100,6 +104,12 @@ public abstract class AbstractModel<T, ID> implements Serializable {
         this.cargarRegistros();
         this.limpiar();
         this.formVisible = false; // guardado: se vuelve a la vista de solo tabla
+        // Confirmacion de exito: TODO boton Guardar avisa que se guardo
+        // (un solo mensaje limpio, regla del proyecto)
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                FacesMessage.SEVERITY_INFO,
+                esModificacion ? "Cambios guardados correctamente" : "Guardado correctamente",
+                null));
     }
 
     public void btnModificarHandler() {
