@@ -280,12 +280,15 @@
                                         </p:selectOneMenu>
                                         <h:panelGroup />
 
-                                        <h:outputLabel for="caracteristica" value="Característica:" />
-                                        <p:selectOneMenu id="caracteristica"
-                                                         value="#{productoCaracteristicaModel.caracteristicaSeleccionada}">
-                                            <f:selectItem itemLabel="-- Elija una característica --" itemValue="#{null}" />
-                                            <f:selectItems value="#{productoCaracteristicaModel.listaCaracteristicas}" />
-                                        </p:selectOneMenu>
+                                        <h:outputLabel for="txtCaracElegida" value="Característica:" />
+                                        <h:panelGroup id="pnlSelCarac" layout="block">
+                                            <p:inputText id="txtCaracElegida" value="#{productoCaracteristicaModel.caracteristicaElegida}"
+                                                         disabled="true" size="36" />
+                                            <p:commandButton id="btnSelCarac" value="#{msg['crud.seleccionarCaracteristica']}"
+                                                             type="button" styleClass="btn btn-primary"
+                                                             style="margin-left: 8px;"
+                                                             onclick="PF('dlgSelPC').show()" />
+                                        </h:panelGroup>
                                         <h:panelGroup />
 
                                         <h:outputLabel for="valor" value="Valor:" />
@@ -305,6 +308,31 @@
                                 </div>
                             </h:panelGroup>
                         </h:panelGroup>
+
+                        <!-- Ventana emergente: Tipo de Caracteristica > Caracteristica (cascada) -->
+                        <p:dialog id="dlgSelPC" header="Seleccionar característica" widgetVar="dlgSelPC"
+                                  modal="true" closable="true" resizable="false" width="430">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputLabel for="cboTipoCaracDlg" value="Tipo de Característica:" />
+                                <p:selectOneMenu id="cboTipoCaracDlg" value="#{productoCaracteristicaModel.tipoSeleccionado}">
+                                    <f:selectItem itemLabel="-- Elija un tipo --" itemValue="#{null}" />
+                                    <f:selectItems value="#{productoCaracteristicaModel.listaTipos}" />
+                                    <p:ajax event="change" update="cboCaracDlg" />
+                                </p:selectOneMenu>
+
+                                <h:outputLabel for="cboCaracDlg" value="Característica:" />
+                                <p:selectOneMenu id="cboCaracDlg" value="#{productoCaracteristicaModel.caracteristicaSeleccionada}">
+                                    <f:selectItem itemLabel="-- Elija una característica --" itemValue="#{null}" />
+                                    <f:selectItems value="#{productoCaracteristicaModel.listaCaracteristicas}" />
+                                    <p:ajax event="change" update="txtCaracElegida" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <f:facet name="footer">
+                                <p:commandButton id="btnConfCarac" value="#{msg['crud.seleccionar']}" type="button"
+                                                 styleClass="btn btn-primary"
+                                                 onclick="PF('dlgSelPC').hide()" />
+                            </f:facet>
+                        </p:dialog>
                     </h:panelGroup>
                 </p:tab>
 
@@ -374,7 +402,7 @@
                                         <h:panelGroup id="pnlSelDesc" layout="block">
                                             <p:inputText id="txtDescElegido" value="#{descuentoProductoModel.descuentoElegido}"
                                                          disabled="true" size="36" />
-                                            <p:commandButton id="btnSelDesc" value="Seleccionar descuento"
+                                            <p:commandButton id="btnSelDesc" value="#{msg['crud.seleccionarDescuento']}"
                                                              type="button" styleClass="btn btn-primary"
                                                              style="margin-left: 8px;"
                                                              onclick="PF('dlgSelDesc').show()" />
@@ -443,7 +471,7 @@
                                 </p:selectOneMenu>
                             </h:panelGrid>
                             <f:facet name="footer">
-                                <p:commandButton id="btnConfDesc" value="Seleccionar" type="button"
+                                <p:commandButton id="btnConfDesc" value="#{msg['crud.seleccionar']}" type="button"
                                                  styleClass="btn btn-primary"
                                                  onclick="PF('dlgSelDesc').hide()" />
                             </f:facet>

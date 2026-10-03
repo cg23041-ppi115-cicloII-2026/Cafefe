@@ -16,6 +16,7 @@ import org.primefaces.event.TabChangeEvent;
 import sv.edu.ues.ppi115.cafefe.control.CaracteristicaRepository;
 import sv.edu.ues.ppi115.cafefe.control.ProductoCaracteristicaRepository;
 import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaRepository;
 import sv.edu.ues.ppi115.cafefe.entity.Caracteristica;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
 import sv.edu.ues.ppi115.cafefe.entity.ProductoCaracteristica;
@@ -59,17 +60,22 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     @Inject
     private ProductoRepository productoRepository;
 
+    @Inject private CaracteristicaRepository caracteristicaRepository;
+
     @Inject
-    private CaracteristicaRepository caracteristicaRepository;
+    private TipoCaracteristicaRepository tipoCaracteristicaRepository;
 
     // Selecciones de los desplegables (se guardan como UUID y se
     // convierten a las entidades Producto/Caracteristica al guardar)
     private UUID productoSeleccionado;
     private UUID caracteristicaSeleccionada;
+    // tipoSeleccionado = primer nivel de la cascada de la ventana emergente
+    private UUID tipoSeleccionado;
 
     // Listas de los desplegables (se cargan una sola vez por vista)
     private List<SelectItem> listaProductos;
     private List<SelectItem> listaCaracteristicas;
+    private List<SelectItem> listaTipos;
 
     // Filtros: los UUID llegan como texto desde el formulario
     private String filtroProducto;
@@ -108,6 +114,8 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
         // un registro nuevo no tiene relaciones elegidas todavia
         this.productoSeleccionado = null;
         this.caracteristicaSeleccionada = null;
+        // una asignacion nueva empieza sin tipo de caracteristica elegido
+        this.tipoSeleccionado = null;
     }
 
     @Override
@@ -220,6 +228,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     public void onTabChange(TabChangeEvent evento) {
         this.listaProductos = null;
         this.listaCaracteristicas = null;
+        this.listaTipos = null;
     }
 
     /**
@@ -255,17 +264,75 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
         return this.listaProductos;
     }
 
+    /**
+     * Tipos de caracteristica del primer select de la ventana emergente
+     * (carga perezosa: una vez por vista). Los inactivos aparecen en
+     * gris y no se pueden elegir.
+     */
+    public List<SelectItem> getListaTipos() {
+        if (this.listaTipos == null) {
+            this.listaTipos = new ArrayList<>();
+            for (TipoCaracteristica t : tipoCaracteristicaRepository.findAll()) {
+                boolean inactivo = Boolean.FALSE.equals(t.getActivo());
+                this.listaTipos.add(new SelectItem(t.getIdTipoCaracteristica(),
+                        t.getNombre(), null, inactivo));
+            }
+        }
+        return this.listaTipos;
+    }
+
+    /**
+     * Caracteristicas del tipo elegido (cascada: vacia hasta elegir el
+     * tipo). Las inactivas se muestran en gris y no se pueden elegir.
+     */
     public List<SelectItem> getListaCaracteristicas() {
         if (this.listaCaracteristicas == null) {
             this.listaCaracteristicas = new ArrayList<>();
-            for (Caracteristica c : caracteristicaRepository.findAll()) {
-                // inactivo: se muestra en gris pero no se puede elegir
-                boolean inactivo = Boolean.FALSE.equals(c.getActivo());
-                this.listaCaracteristicas.add(new SelectItem(c.getIdCaracteristica(), c.getNombre(),
-                        null, inactivo));
+            if (this.tipoSeleccionado != null) {
+                TipoCaracteristica tipo = tipoCaracteristicaRepository.findById(this.tipoSeleccionado);
+                UUID idTipo = (tipo != null) ? tipo.getIdTipoCaracteristica() : null;
+                if (idTipo != null) {
+                    for (Caracteristica c : caracteristicaRepository.findAll()) {
+                        if (c.getIdTipoCaracteristica() != null
+                                && idTipo.equals(c.getIdTipoCaracteristica().getIdTipoCaracteristica())) {
+                            boolean inactivo = Boolean.FALSE.equals(c.getActivo());
+                            this.listaCaracteristicas.add(new SelectItem(c.getIdCaracteristica(),
+                                    c.getNombre(), null, inactivo));
+                        }
+                    }
+                }
             }
         }
         return this.listaCaracteristicas;
+    }
+
+    public UUID getTipoSeleccionado() {
+        return tipoSeleccionado;
+    }
+
+    /**
+     * Cambiar el tipo en la ventana emergente reinicia la seleccion de
+     * caracteristica y recarga su lista (cascada Tipo > Caracteristica).
+     */
+    public void setTipoSeleccionado(UUID tipoSeleccionado) {
+        this.tipoSeleccionado = tipoSeleccionado;
+        this.caracteristicaSeleccionada = null;
+        this.listaCaracteristicas = null;
+    }
+
+    /**
+     * Nombre de la caracteristica elegida que muestra el input del
+     * formulario junto al boton de la ventana emergente.
+     */
+    public String getCaracteristicaElegida() {
+        if (this.caracteristicaSeleccionada == null) {
+            return "(ninguno)";
+        }
+        Caracteristica c = caracteristicaRepository.findById(this.caracteristicaSeleccionada);
+        if (c == null) {
+            return "(ninguno)";
+        }
+        return c.getNombre();
     }
 
     // ---------------------------------------------------------------
