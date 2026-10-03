@@ -4,8 +4,19 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,5 +83,37 @@ public class BundleTest {
                         "Falta " + clave + " en " + archivo);
             }
         }
+    }
+
+    @Test
+    public void testTodasLasLlavesUsadasEnLasVistasExistenEnElBundle() throws IOException {
+        Properties base = cargar("CRUD.properties");
+        Path webapp = Paths.get("src", "main", "webapp");
+        assertTrue(Files.isDirectory(webapp), "No se encontro src/main/webapp");
+        Pattern patron = Pattern.compile("#\\{msg\\[\\s*['\"]([^'\"]+)['\"]\\s*\\]}");
+        Set<String> usadas = new TreeSet<>();
+        List<String> faltantes = new ArrayList<>();
+        try (Stream<Path> archivos = Files.walk(webapp)) {
+            for (Iterator<Path> it = archivos.iterator(); it.hasNext();) {
+                Path archivo = it.next();
+                if (!archivo.getFileName().toString().endsWith(".xhtml")) {
+                    continue;
+                }
+                for (String linea : Files.readAllLines(archivo, StandardCharsets.UTF_8)) {
+                    Matcher coincidencia = patron.matcher(linea);
+                    while (coincidencia.find()) {
+                        String llave = coincidencia.group(1);
+                        usadas.add(llave);
+                        if (!base.containsKey(llave)) {
+                            faltantes.add(llave + " (" + archivo.getFileName() + ")");
+                        }
+                    }
+                }
+            }
+        }
+        assertFalse(usadas.isEmpty(),
+                "No se encontro ninguna llave #{msg[...]} en las vistas");
+        assertTrue(faltantes.isEmpty(),
+                "Llaves usadas en vistas y ausentes de CRUD.properties: " + faltantes);
     }
 }
