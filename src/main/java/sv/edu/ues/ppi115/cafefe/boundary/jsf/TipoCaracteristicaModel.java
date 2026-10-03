@@ -68,7 +68,13 @@ public class TipoCaracteristicaModel extends AbstractModel<TipoCaracteristica, U
                     "Debe ingresar el nombre", null));
             return; // no se guarda sin nombre y el formulario queda abierto
         }
-        super.btnGuardarHandler();
+        try {
+            super.btnGuardarHandler(); // guarda, recarga la tabla y limpia
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "No se pudo guardar: verifique los datos e intente de nuevo", null));
+        }
     }
 
     /**

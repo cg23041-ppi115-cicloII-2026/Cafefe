@@ -103,6 +103,11 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
                         "Debe elegir el producto y el tipo de producto", null));
                 return; // no se guarda hasta que ambos combos tengan valor
             }
+            if (this.estado != ESTADO_CRUD.MODIFICAR
+                    && this.registro.getIdProductoTipoProducto() != null
+                    && productoTipoProductoRepository.findById(this.registro.getIdProductoTipoProducto()) != null) {
+                this.estado = ESTADO_CRUD.MODIFICAR;
+            }
             // Convierte los UUID elegidos en las entidades reales
             this.registro.setIdProducto(productoRepository.findById(productoSeleccionado));
             this.registro.setIdTipoProducto(tipoProductoRepository.findById(tipoSeleccionado));

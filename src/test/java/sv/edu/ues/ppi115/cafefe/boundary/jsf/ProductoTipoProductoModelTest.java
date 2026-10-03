@@ -150,6 +150,30 @@ public class ProductoTipoProductoModelTest {
     }
 
     @Test
+    public void testGuardarRelacionExistenteEnEstadoCrearUsaModificar() {
+        modelo.limpiar();
+        ProductoTipoProducto r = modelo.getRegistro();
+        UUID idRelacion = UUID.randomUUID();
+        r.setIdProductoTipoProducto(idRelacion);
+        UUID idProducto = UUID.randomUUID();
+        UUID idTipo = UUID.randomUUID();
+        modelo.setProductoSeleccionado(idProducto);
+        modelo.setTipoSeleccionado(idTipo);
+        Producto producto = new Producto(idProducto);
+        TipoProducto tipo = new TipoProducto(idTipo);
+        when(productoTipoProductoRepository.findById(idRelacion)).thenReturn(r);
+        when(productoRepository.findById(idProducto)).thenReturn(producto);
+        when(tipoProductoRepository.findById(idTipo)).thenReturn(tipo);
+
+        modelo.btnGuardarHandler();
+
+        verify(productoTipoProductoRepository, never()).crear(any());
+        verify(productoTipoProductoRepository, times(1)).modificar(r);
+        assertEquals("Registro actualizado con éxito", unicoMensaje().getSummary());
+        assertEquals(FacesMessage.SEVERITY_INFO, contexto.mensajes.get(0).getSeverity());
+    }
+
+    @Test
     public void testEditarPrecargaLosDesplegables() {
         UUID idProducto = UUID.randomUUID();
         UUID idTipo = UUID.randomUUID();

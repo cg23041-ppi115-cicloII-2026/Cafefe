@@ -109,14 +109,17 @@ public class TipoCaracteristicaModelTest {
     }
 
     @Test
-    public void testGuardarCuandoElDaoFallaPropagaLaExcepcion() {
+    public void testGuardarCuandoElDaoFallaAvisaAlUsuario() {
         modelo.limpiar();
         modelo.getRegistro().setNombre("Tamaño");
         doThrow(new RuntimeException("boom")).when(tipoCaracteristicaRepository).crear(any());
 
-        assertThrows(RuntimeException.class, () -> modelo.btnGuardarHandler());
+        modelo.btnGuardarHandler();
 
-        assertTrue(contexto.mensajes.isEmpty());
+        assertEquals("No se pudo guardar: verifique los datos e intente de nuevo",
+                unicoMensaje().getSummary());
+        assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
+        verify(tipoCaracteristicaRepository, never()).modificar(any());
     }
 
     @Test
