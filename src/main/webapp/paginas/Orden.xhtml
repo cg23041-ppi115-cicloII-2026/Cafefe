@@ -11,6 +11,19 @@
 
     <ui:define name="contenido">
         <h:form id="frmPagina">
+            <!-- Botones de pagina: trabajan sobre la cabecera de Tomar Orden -->
+            <div style="margin-bottom: 10px;">
+                <p:commandButton id="btnNuevaOrden" value="#{msg['pagina.orden.nuevaOrden']}"
+                                 action="#{ordenModel.btnNuevaOrdenHandler}"
+                                 update="tabs:msgsTomar tabs:pnlCabecera"
+                                 styleClass="btn btn-primary" />
+                &#160;
+                <p:commandButton id="btnCancelarOrden" value="#{msg['pagina.orden.cancelarOrden']}"
+                                 action="#{ordenModel.btnCancelarOrdenHandler}"
+                                 update="tabs:msgsTomar tabs:pnlCabecera"
+                                 styleClass="btn" />
+            </div>
+
             <p:tabView id="tabs">
 
                 <!-- ================= PESTAÑA 1: TOMAR ORDEN ================= -->
@@ -18,244 +31,177 @@
 
                     <p:messages id="msgsTomar" showDetail="false" styleClass="top-messages" />
 
-                    <!-- Cabecera: quién cobra (solo roles con puede_cobrar) -->
+                    <!-- Cabecera de la orden: tabla 'orden' -->
                     <div class="card">
                         <h3>Tomar Orden</h3>
                         <h:panelGroup id="pnlCabecera" layout="block">
-                            <h:panelGrid columns="2" cellpadding="5">
-                                <h:outputLabel for="cboCobrador" value="Atendido por:" />
+                            <h:panelGrid columns="3" cellpadding="5">
+                                <h:outputLabel for="id" value="ID:" />
+                                <p:inputText id="id" value="#{ordenModel.registro.idOrden}"
+                                             required="false" disabled="true" size="36" />
+                                <p:messages for="id" />
+
+                                <h:outputLabel for="cboCobrador" value="Empleado:" />
                                 <p:selectOneMenu id="cboCobrador"
-                                                 value="#{tomarOrdenModel.cobradorSeleccionado}">
-                                    <f:selectItem itemLabel="-- Elija quién cobra --" itemValue="#{null}" />
-                                    <f:selectItems value="#{tomarOrdenModel.listaCobradores}" />
+                                                 value="#{ordenModel.cobradorSeleccionado}"
+                                                 disabled="#{ordenModel.ordenGuardada}">
+                                    <f:selectItem itemLabel="-- Elija quién realiza la orden --" itemValue="#{null}" />
+                                    <f:selectItems value="#{ordenModel.listaCobradores}" />
                                 </p:selectOneMenu>
+                                <p:messages for="cboCobrador" />
+
+                                <h:outputLabel for="fecha" value="Fecha de orden:" />
+                                <p:inputText id="fecha" value="#{ordenModel.registro.fechaCreacion}"
+                                             required="false" disabled="true" size="36">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                                </p:inputText>
+                                <p:messages for="fecha" />
                             </h:panelGrid>
+
+                            <div style="margin-top: 10px;">
+                                <p:commandButton value="#{msg['crud.guardar']}"
+                                                 action="#{ordenModel.btnGuardarHandler}"
+                                                 update="msgsTomar pnlCabecera"
+                                                 disabled="#{ordenModel.ordenGuardada}"
+                                                 styleClass="btn btn-primary" />
+                            </div>
                         </h:panelGroup>
                     </div>
+                </p:tab>
+                 <!-- ================= PESTAÑA 2: DETALLE DE ORDEN ================= -->
+                <p:tab id="tabDetalleOrden" title="Detalle de Orden">
 
-                    <!-- Selector de productos: tabla lazy SOLO activos + búsqueda -->
+                    <p:messages id="msgsDetalle" showDetail="false" styleClass="top-messages" />
+
+                    <!-- Tabla con las lineas de la tabla 'orden_producto' -->
                     <div class="card">
                         <div style="margin-bottom: 10px;">
-                            <h:outputLabel for="txtBusqueda" value="Buscar producto:" />
-                            &#160;
-                            <p:inputText id="txtBusqueda" value="#{tomarOrdenModel.busqueda}" />
-                            &#160;
-                            <p:commandButton value="#{msg['crud.buscar']}" process="@this txtBusqueda"
-                                             update="tblProductos" styleClass="btn" />
+                            <p:commandButton id="btnAplicarDescuento" value="#{msg['pagina.orden.aplicarDescuento']}"
+                                             action="#{ordenProductoModel.btnAbrirDescuentos(ordenModel.registro.idOrden)}"
+                                             update="msgsDetalle dlgAplicarDesc"
+                                             oncomplete="if (args.listos) PF('dlgAplicarDesc').show();"
+                                             styleClass="btn btn-primary" />
                         </div>
-                        <h3>Productos (activos)</h3>
-                        <p:dataTable id="tblProductos" value="#{tomarOrdenModel.productosLazy}" var="item"
+
+                        <p:dataTable id="detalleTabla" value="#{ordenProductoModel.lazyModel}" var="item"
                                      styleClass="tabla"
                                      lazy="true"
-                                     selectionMode="single" selection="#{tomarOrdenModel.productoSeleccionado}"
-                                     rowKey="#{item.idProducto}"
-                                     paginator="true" rows="5"
-                                     emptyMessage="No hay productos">
-                            <!-- Al marcar una fila se prellena la línea con precio_sugerido -->
-                            <p:ajax event="rowSelect" update="pnlLinea"
-                                    listener="#{tomarOrdenModel.onProductoSeleccionado}" />
-                            <p:ajax event="rowUnselect" update="pnlLinea"
-                                    listener="#{tomarOrdenModel.onProductoSeleccionado}" />
-                            <p:column headerText="Nombre">
-                                #{item.nombre}
+                                     paginator="true" paginatorPosition="both" rows="5"
+                                     emptyMessage="No hay registros">
+                            <p:column headerText="ID" style="font-size: 0.8em;">
+                                #{item.idOrdenProducto}
                             </p:column>
-                            <p:column headerText="Precio sugerido">
-                                #{item.precioSugerido}
+                            <p:column headerText="Producto">
+                                #{item.idProducto.nombre}
                             </p:column>
-                            <p:column headerText="Comentarios">
-                                #{item.comentarios}
+                            <p:column headerText="Precio">
+                                #{item.precio}
+                            </p:column>
+                            <p:column headerText="Observaciones">
+                                #{item.observaciones}
                             </p:column>
                         </p:dataTable>
-                    </div>
 
-                    <!-- Línea en edición: precio / observaciones -->
-                    <h:panelGroup id="pnlLinea" layout="block">
-                        <div class="card">
-                            <h3>Línea de la orden</h3>
-
-                            <!-- Recordatorio del producto elegido (resalta la selección) -->
-                            <h:panelGroup layout="block"
-                                           style="background: #eef3fa; border-left: 4px solid #369; padding: 8px 10px; margin-bottom: 8px; font-weight: bold;">
-                                <h:outputText value="#{empty tomarOrdenModel.productoSeleccionado ? 'Producto: (elija uno de la tabla de arriba)' : 'Producto elegido: '.concat(tomarOrdenModel.productoSeleccionado.nombre)}" />
-                            </h:panelGroup>
-
-                            <h:panelGrid columns="3" cellpadding="5">
-                                <h:outputLabel for="precioLinea" value="Precio:" />
-                                <p:inputText id="precioLinea" value="#{tomarOrdenModel.precioLinea}" />
-                                <p:messages for="precioLinea" />
-
-                                <h:outputLabel for="obsLinea" value="Observaciones:" />
-                                <p:inputTextarea id="obsLinea"
-                                                 value="#{tomarOrdenModel.observacionesLinea}"
-                                                 rows="2" cols="40" />
-                                <p:messages for="obsLinea" />
-                            </h:panelGrid>
-
-                            <!-- Descuento del producto: se muestra DEBAJO de Observaciones -->
-                            <h:panelGroup layout="block" rendered="#{not empty tomarOrdenModel.descuentosProducto}">
-                                <div style="margin-top: 6px; padding: 8px 10px; background: #fdf6e3; border-left: 4px solid #cc9900;">
-                                    <strong>Descuentos del producto:</strong>
-                                    <ui:repeat value="#{tomarOrdenModel.descuentosProducto}" var="d">
-                                        <div style="font-size: 0.9em;">#{tomarOrdenModel.getDescripcionDescuento(d)}</div>
-                                    </ui:repeat>
-
-                                    <!-- La casilla solo aparece si hay un descuento VIGENTE -->
-                                    <h:panelGroup layout="block" rendered="#{not empty tomarOrdenModel.descuentosVigentes}">
-                                        <p:selectBooleanCheckbox id="chkAplicarDescuento"
-                                                                 value="#{tomarOrdenModel.aplicarDescuento}"
-                                                                 itemLabel="Aplicar descuento">
-                                            <p:ajax event="change" update="pnlLinea" />
-                                        </p:selectBooleanCheckbox>
-                                        <h:panelGroup layout="block" rendered="#{tomarOrdenModel.aplicarDescuento}">
-                                            <div style="font-size: 0.9em; font-weight: bold;">
-                                                Se aplica: #{tomarOrdenModel.descuentoAplicable.idDescuento.nombre} →
-                                                nuevo precio: #{tomarOrdenModel.precioConDescuento}
-                                            </div>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </div>
-                            </h:panelGroup>
-
-                            <!-- Características del producto elegido (solo lectura) -->
-                            <h:panelGroup layout="block" rendered="#{not empty tomarOrdenModel.caracteristicas}">
-                                <h4>Características del producto</h4>
-                                <ui:repeat value="#{tomarOrdenModel.caracteristicas}" var="c">
-                                    <div style="font-size: 0.9em;">#{c.idCaracteristica.nombre}: #{c.valor}</div>
-                                </ui:repeat>
-                            </h:panelGroup>
-
-                            <div style="margin-top: 10px;">
-                                <p:commandButton value="#{msg['pagina.orden.agregar']}"
-                                                 action="#{tomarOrdenModel.agregarLinea}"
-                                                 update="msgsTomar tblProductos pnlLinea pnlCarrito"
-                                                 styleClass="btn btn-primary" />
-                            </div>
-                        </div>
-                    </h:panelGroup>
-
-                    <!-- Carrito: líneas en memoria mientras la orden está ABIERTA.
-                         Es la única tabla sin lazy: todavía no existen en la BD. -->
-                    <h:panelGroup id="pnlCarrito" layout="block">
-                        <div class="card">
-                            <h3>Orden en curso</h3>
-                            <p:dataTable id="tblCarrito" value="#{tomarOrdenModel.carrito}" var="linea"
-                                         styleClass="tabla"
-                                         paginator="true" rows="5"
-                                         emptyMessage="Aún no hay líneas: elija un producto y pulse Agregar">
-                                <p:column headerText="Producto">
-                                    #{linea.idProducto.nombre}
-                                </p:column>
-                                <p:column headerText="Precio">
-                                    #{linea.precio}
-                                </p:column>
-                                <p:column headerText="Subtotal">
-                                    #{tomarOrdenModel.getSubtotal(linea)}
-                                </p:column>
-                                <p:column headerText="Observaciones">
-                                    #{linea.observaciones}
-                                </p:column>
-                                <p:column headerText="">
-                                    <p:commandButton value="#{msg['pagina.orden.quitar']}"
-                                                     action="#{tomarOrdenModel.quitarLinea(linea)}"
-                                                     update="msgsTomar pnlCarrito"
-                                                     styleClass="btn" />
-                                </p:column>
-                            </p:dataTable>
-
-                            <div style="margin-top: 10px; text-align: right; font-weight: bold;">
-                                Total: #{tomarOrdenModel.total}
-                            </div>
-
-                            <div style="margin-top: 10px;">
-                                <p:commandButton value="#{msg['pagina.orden.guardar']}"
-                                                 action="#{tomarOrdenModel.guardarOrden}"
-                                                 update="msgsTomar pnlCabecera tblProductos pnlLinea pnlCarrito"
-                                                 styleClass="btn btn-primary" />
+                        <div style="margin-top: 10px;">
+                            <h:panelGroup id="btnsLinea" layout="block">
+                                <p:commandButton id="btnNuevaLinea" value="#{msg['crud.nuevoBoton']}"
+                                                 action="#{ordenProductoModel.btnNuevoHandler}"
+                                                 update="msgsDetalle pnlFormDetalle btnsLinea"
+                                                 styleClass="btn btn-primary"
+                                                 oncomplete="var e=document.querySelector('[id$=pnlFormDetalle]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                                 &#160;
-                                <p:commandButton value="#{msg['crud.cancelar']}"
-                                                 action="#{tomarOrdenModel.cancelar}"
-                                                 update="msgsTomar pnlCabecera tblProductos pnlLinea pnlCarrito"
-                                                 styleClass="btn" />
-                            </div>
+                                <p:commandButton id="btnCancelarLinea" value="#{msg['crud.cancelar']}"
+                                                 action="#{ordenProductoModel.btnCancelarHandler}"
+                                                 update="msgsDetalle pnlFormDetalle btnsLinea"
+                                                 styleClass="btn"
+                                                 rendered="#{ordenProductoModel.formVisible}" />
+                            </h:panelGroup>
                         </div>
-                    </h:panelGroup>
-                </p:tab>
-
-                <!-- ================= PESTAÑA 2: ÓRDENES (consulta/anulación) ================= -->
-                <p:tab id="tabConsulta" title="Órdenes">
-
-                    <p:messages id="msgsConsulta" showDetail="false" styleClass="top-messages" />
-
-                    <div class="card">
-                        <h3>Órdenes registradas</h3>
-                        <p:dataTable id="tblOrdenes" value="#{ordenModel.lazyModel}" var="item"
-                                     styleClass="tabla"
-                                     lazy="true"
-                                     selectionMode="single" selection="#{ordenModel.seleccion}"
-                                     rowKey="#{item.idOrden}"
-                                     paginator="true" rows="5"
-                                     emptyMessage="No hay órdenes">
-                            <p:ajax event="rowSelect" update="botoneraOrdenes detalleOrdenes"
-                                    listener="#{ordenModel.onOrdenSeleccionada}" />
-                            <p:ajax event="rowUnselect" update="botoneraOrdenes detalleOrdenes"
-                                    listener="#{ordenModel.onOrdenSeleccionada}" />
-                            <p:column headerText="Fecha">
-                                #{item.fechaCreacion}
-                            </p:column>
-                            <p:column headerText="Empleado">
-                                #{item.idEmpleadoRol.idEmpleado.nombre} #{item.idEmpleadoRol.idEmpleado.apellido}
-                            </p:column>
-                            <p:column headerText="Rol">
-                                #{item.idEmpleadoRol.idRol.nombre}
-                            </p:column>
-                        </p:dataTable>
-
-                        <!-- Solo Anular: aquí NO existe Editar (una orden cerrada
-                             no se edita), por eso el botón va aparte del compuesto
-                             botonesTabla, que traería un Editar que no aplica. -->
-                        <h:panelGroup id="botoneraOrdenes" layout="block" style="margin-top: 12px;">
-                            <p:commandButton value="#{msg['pagina.orden.anular']}" action="#{ordenModel.btnEliminarHandler}"
-                                             disabled="#{empty ordenModel.seleccion}"
-                                             update="msgsConsulta tblOrdenes botoneraOrdenes detalleOrdenes"
-                                             styleClass="btn"
-                                             onclick="return confirm('¿Anular esta orden?');">
-                                <f:setPropertyActionListener value="#{ordenModel.seleccion}"
-                                                             target="#{ordenModel.registro}" />
-                            </p:commandButton>
-                            &#160;
-                            <h:outputText value="Seleccione una fila de la tabla para anular la orden"
-                                          rendered="#{empty ordenModel.seleccion}"
-                                          style="color:#777; font-style: italic;" />
-                        </h:panelGroup>
                     </div>
 
-                    <!-- Detalle: líneas de la orden seleccionada -->
-                    <h:panelGroup id="detalleOrdenes" layout="block">
-                        <h:panelGroup layout="block" rendered="#{not empty ordenModel.seleccion}">
+                    <!-- Formulario de la linea: aparece al pulsar Nuevo -->
+                    <h:panelGroup id="pnlFormDetalle" layout="block">
+                        <h:panelGroup layout="block" rendered="#{ordenProductoModel.formVisible}">
                             <div class="card">
-                                <h3>Líneas de la orden</h3>
-                                <p:dataTable id="tblLineas" value="#{ordenModel.lineasSeleccion}" var="linea"
-                                             styleClass="tabla"
-                                             paginator="true" rows="5"
-                                             emptyMessage="La orden no tiene líneas">
-                                    <p:column headerText="Producto">
-                                        #{linea.idProducto.nombre}
-                                    </p:column>
-                                    <p:column headerText="Precio">
-                                        #{linea.precio}
-                                    </p:column>
-                                    <p:column headerText="Subtotal">
-                                        #{ordenModel.getSubtotal(linea)}
-                                    </p:column>
-                                    <p:column headerText="Observaciones">
-                                        #{linea.observaciones}
-                                    </p:column>
-                                </p:dataTable>
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    <h:outputLabel for="idLinea" value="ID:" />
+                                    <p:inputText id="idLinea" value="#{ordenProductoModel.registro.idOrdenProducto}"
+                                                 required="false" disabled="true" size="36" />
+                                    <p:messages for="idLinea" />
+
+                                    <h:outputLabel for="txtProductoLinea" value="Producto:" />
+                                    <h:panelGroup id="pnlSelProducto" layout="block">
+                                        <p:inputText id="txtProductoLinea" value="#{ordenProductoModel.productoElegido}"
+                                                     disabled="true" size="36" />
+                                        <p:commandButton id="btnSelProducto" value="#{msg['pagina.orden.seleccionarProducto']}"
+                                                         type="button" styleClass="btn btn-primary"
+                                                         style="margin-left: 8px;"
+                                                         onclick="PF('dlgSelProducto').show()" />
+                                    </h:panelGroup>
+                                    <h:panelGroup />
+
+                                    <h:outputLabel for="precioLinea" value="Precio:" />
+                                    <p:inputText id="precioLinea" value="#{ordenProductoModel.registro.precio}"
+                                                 size="36" />
+                                    <p:messages for="precioLinea" />
+
+                                    <h:outputLabel for="obsLinea" value="Observaciones:" />
+                                    <p:inputTextarea id="obsLinea"
+                                                     value="#{ordenProductoModel.registro.observaciones}"
+                                                     rows="3" cols="50" />
+                                    <p:messages for="obsLinea" />
+                                </h:panelGrid>
+
+                                <div style="margin-top: 10px;">
+                                    <p:commandButton id="btnGuardarLinea" value="#{msg['crud.guardar']}"
+                                                     action="#{ordenProductoModel.btnGuardarLinea(ordenModel.registro.idOrden)}"
+                                                     update="msgsDetalle pnlFormDetalle btnsLinea detalleTabla"
+                                                     styleClass="btn btn-primary" />
+                                </div>
                             </div>
+
+                            <!-- Ventana emergente: seleccionar el producto de la linea -->
+                            <p:dialog id="dlgSelProducto" header="Seleccionar Producto"
+                                      widgetVar="dlgSelProducto" modal="true" closable="true"
+                                      resizable="false" width="460">
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <h:outputLabel for="acProducto" value="Producto:" />
+                                    <p:autoComplete id="acProducto"
+                                                    value="#{ordenProductoModel.productoBusqueda}"
+                                                    completeMethod="#{ordenProductoModel.completarProductos}"
+                                                    minQueryLength="0" forceSelection="true" size="36" />
+                                </h:panelGrid>
+                                <f:facet name="footer">
+                                    <p:commandButton id="btnConfProducto" value="#{msg['pagina.orden.seleccionar']}"
+                                                     styleClass="btn btn-primary"
+                                                     action="#{ordenProductoModel.btnSeleccionarProductoHandler}"
+                                                     update="msgsDetalle pnlFormDetalle"
+                                                     oncomplete="PF('dlgSelProducto').hide()" />
+                                </f:facet>
+                            </p:dialog>
                         </h:panelGroup>
                     </h:panelGroup>
-                </p:tab>
 
+                    <!-- Ventana emergente: descuentos aplicables a los productos de la orden -->
+                    <p:dialog id="dlgAplicarDesc" widgetVar="dlgAplicarDesc" modal="true"
+                              closable="true" resizable="false" width="430">
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <h:outputLabel for="cboDescAplicable" value="Descuento aplicable:" />
+                            <p:selectOneMenu id="cboDescAplicable"
+                                             value="#{ordenProductoModel.descuentoAplicableSeleccionado}">
+                                <f:selectItem itemLabel="Seleccione un descuento" itemValue="#{null}" />
+                                <f:selectItems value="#{ordenProductoModel.listaDescuentosAplicables}" />
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <f:facet name="footer">
+                            <p:commandButton id="btnAplicarDesc" value="#{msg['pagina.orden.aplicar']}"
+                                             styleClass="btn btn-primary"
+                                             action="#{ordenProductoModel.btnAplicarDescuentoHandler}"
+                                             update="msgsDetalle detalleTabla"
+                                             oncomplete="PF('dlgAplicarDesc').hide()" />
+                        </f:facet>
+                    </p:dialog>
+                </p:tab>
             </p:tabView>
         </h:form>
     </ui:define>
