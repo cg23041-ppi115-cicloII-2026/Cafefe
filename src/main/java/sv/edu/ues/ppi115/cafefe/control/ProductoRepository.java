@@ -48,48 +48,6 @@ public class ProductoRepository extends DefaultDAO<Producto, UUID> {
     }
 
     /**
-     * Paginacion de productos SOLO activos con busqueda opcional por
-     * nombre (tabla lazy de la pestana "Tomar Orden"). Si nombre viene
-     * null o vacio, no filtra por texto.
-     */
-    public List<Producto> findActivosRange(int start, int max, String nombre) {
-        if (nombre == null || nombre.isBlank()) {
-            return getEntityManager()
-                    .createQuery("SELECT p FROM Producto p WHERE p.activo = true "
-                            + "ORDER BY p.nombre", Producto.class)
-                    .setFirstResult(start)
-                    .setMaxResults(max)
-                    .getResultList();
-        }
-        return getEntityManager()
-                .createQuery("SELECT p FROM Producto p WHERE p.activo = true "
-                        + "AND LOWER(p.nombre) LIKE LOWER(:patron) "
-                        + "ORDER BY p.nombre", Producto.class)
-                .setParameter("patron", "%" + nombre + "%")
-                .setFirstResult(start)
-                .setMaxResults(max)
-                .getResultList();
-    }
-
-    /**
-     * Total de productos activos (con el mismo filtro del rango) para el
-     * paginador de la tabla lazy.
-     */
-    public Long countActivos(String nombre) {
-        if (nombre == null || nombre.isBlank()) {
-            return getEntityManager()
-                    .createQuery("SELECT COUNT(p) FROM Producto p "
-                            + "WHERE p.activo = true", Long.class)
-                    .getSingleResult();
-        }
-        return getEntityManager()
-                .createQuery("SELECT COUNT(p) FROM Producto p WHERE p.activo = true "
-                        + "AND LOWER(p.nombre) LIKE LOWER(:patron)", Long.class)
-                .setParameter("patron", "%" + nombre + "%")
-                .getSingleResult();
-    }
-
-    /**
      * Eliminar un producto: NO se borra en cascada ninguna de sus
      * relaciones (asi lo exige la regla: si hay relacion, el borrado se
      * bloquea). Si el producto tiene tipos, caracteristicas, descuentos u

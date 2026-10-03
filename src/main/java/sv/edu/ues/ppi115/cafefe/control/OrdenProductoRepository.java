@@ -48,14 +48,4 @@ public class OrdenProductoRepository extends DefaultDAO<OrdenProducto, UUID> {
                 .setParameter("idOrden", idOrden)
                 .getResultList();
     }
-
-    /**
-     * Aparecimientos de un producto en distintas ordenes.
-     */
-    public List<OrdenProducto> findByProducto(UUID idProducto) {
-        return getEntityManager()
-                .createNamedQuery("OrdenProducto.findByProducto", OrdenProducto.class)
-                .setParameter("idProducto", idProducto)
-                .getResultList();
-    }
 }
