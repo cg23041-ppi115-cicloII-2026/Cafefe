@@ -55,6 +55,7 @@ public class BundleTest {
     public void testEstanLasClavesDeLosBotonesDeOrdenYDelDialogo() throws IOException {
         String[] claves = {
             "crud.seleccionar",
+            "crud.seleccionarFila",
             "crud.seleccionarDescuento",
             "crud.seleccionarCaracteristica",
             "pagina.orden.nuevaOrden",
