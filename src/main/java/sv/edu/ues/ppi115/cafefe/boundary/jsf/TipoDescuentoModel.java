@@ -74,6 +74,11 @@ public class TipoDescuentoModel extends AbstractModel<TipoDescuento, UUID> imple
                         FacesMessage.SEVERITY_WARN, "Indique el descuento maximo", null));
                 return; // no se guarda sin descuento maximo (el valor por defecto es 0)
             }
+            if (this.registro.getDescuentoMaximo() < 0 || this.registro.getDescuentoMaximo() > 100) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN, "El descuento máximo debe estar entre 0 y 100", null));
+                return; // es un porcentaje: ni negativo ni mayor a 100
+            }
         }
         try {
             super.btnGuardarHandler(); // guarda, recarga la tabla y limpia

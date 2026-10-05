@@ -116,6 +116,9 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
         this.caracteristicaSeleccionada = null;
         // una asignacion nueva empieza sin tipo de caracteristica elegido
         this.tipoSeleccionado = null;
+        // y sin lista cacheada: si no, el dialogo dlgSelPC se redibuja con
+        // opciones viejas y el combo falla con "no es una opcion valida"
+        this.listaCaracteristicas = null;
     }
 
     @Override

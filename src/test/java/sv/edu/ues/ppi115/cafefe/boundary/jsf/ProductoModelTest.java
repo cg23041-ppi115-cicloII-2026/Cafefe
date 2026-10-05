@@ -119,10 +119,25 @@ public class ProductoModelTest {
     }
 
     @Test
+    public void testGuardarConPrecioCeroAvisaYNoGuarda() {
+        modelo.limpiar();
+        modelo.getRegistro().setNombre("Café");
+        modelo.getRegistro().setPrecioSugerido(BigDecimal.ZERO);
+
+        modelo.btnGuardarHandler();
+
+        assertEquals("El precio sugerido debe ser mayor a 0", unicoMensaje().getSummary());
+        assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
+        verify(productoRepository, never()).crear(any());
+        verify(productoRepository, never()).modificar(any());
+    }
+
+    @Test
     public void testGuardarCreaElProductoYSuRelacionConTipo() {
         modelo.limpiar();
         Producto p = modelo.getRegistro();
         p.setNombre("Café");
+        p.setPrecioSugerido(new BigDecimal("2.50"));
         UUID idTipo = UUID.randomUUID();
         modelo.setTipoSeleccionado(idTipo);
         TipoProducto tipo = new TipoProducto(idTipo);
@@ -148,6 +163,7 @@ public class ProductoModelTest {
         modelo.limpiar();
         Producto p = modelo.getRegistro();
         p.setNombre("Café");
+        p.setPrecioSugerido(new BigDecimal("2.50"));
         UUID idTipo = UUID.randomUUID();
         modelo.setTipoSeleccionado(idTipo);
         ProductoTipoProducto existente = new ProductoTipoProducto(UUID.randomUUID());
@@ -167,6 +183,7 @@ public class ProductoModelTest {
         modelo.limpiar();
         Producto p = modelo.getRegistro();
         p.setNombre("Café");
+        p.setPrecioSugerido(new BigDecimal("2.50"));
 
         modelo.btnGuardarHandler();
 
@@ -181,6 +198,7 @@ public class ProductoModelTest {
         modelo.limpiar();
         Producto p = modelo.getRegistro();
         p.setNombre("Café");
+        p.setPrecioSugerido(new BigDecimal("2.50"));
         when(productoRepository.findById(p.getIdProducto())).thenReturn(p);
 
         modelo.btnGuardarHandler();
@@ -195,6 +213,7 @@ public class ProductoModelTest {
         modelo.limpiar();
         Producto p = modelo.getRegistro();
         p.setNombre("Café");
+        p.setPrecioSugerido(new BigDecimal("2.50"));
         doThrow(new RuntimeException("boom")).when(productoRepository).crear(any());
 
         modelo.btnGuardarHandler();
@@ -209,6 +228,7 @@ public class ProductoModelTest {
         modelo.limpiar();
         Producto p = modelo.getRegistro();
         p.setNombre("Café");
+        p.setPrecioSugerido(new BigDecimal("2.50"));
         UUID idTipo = UUID.randomUUID();
         modelo.setTipoSeleccionado(idTipo);
         when(productoTipoProductoRepository.findByProducto(p.getIdProducto()))

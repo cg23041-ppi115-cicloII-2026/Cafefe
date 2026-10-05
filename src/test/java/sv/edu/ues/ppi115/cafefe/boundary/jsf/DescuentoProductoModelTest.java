@@ -156,6 +156,20 @@ public class DescuentoProductoModelTest {
     }
 
     @Test
+    public void testGuardarConValorCeroAvisaYNoGuarda() {
+        seleccionarDescuentoYProducto();
+        conDescuento(descuentoDe(tipo("Por fecha", true, 50)));
+        modelo.getRegistro().setValor(0);
+
+        modelo.btnGuardarHandler();
+
+        assertEquals("El valor no es válido. El valor debe ser mayor a 0",
+                unicoMensaje().getSummary());
+        assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
+        verify(descuentoProductoRepository, never()).crear(any());
+    }
+
+    @Test
     public void testGuardarConValorSobreElMaximoAvisaYNoGuarda() {
         seleccionarDescuentoYProducto();
         conDescuento(descuentoDe(tipo("Por fecha", true, 30)));
@@ -172,6 +186,7 @@ public class DescuentoProductoModelTest {
     public void testGuardarSinFechaInicialAvisaYNoGuarda() {
         seleccionarDescuentoYProducto();
         conDescuento(descuentoDe(tipo("Por fecha", true, null)));
+        modelo.getRegistro().setValor(20);
 
         modelo.btnGuardarHandler();
 
@@ -181,22 +196,51 @@ public class DescuentoProductoModelTest {
     }
 
     @Test
-    public void testGuardarSinFechaFinalAvisaYNoGuarda() {
+    public void testGuardarSinFechaFinalGuardaConVigenciaAbierta() {
         seleccionarDescuentoYProducto();
         conDescuento(descuentoDe(tipo("Por fecha", true, null)));
-        modelo.getRegistro().setFechaDesde(hace(1));
+        Producto producto = new Producto(UUID.randomUUID());
+        when(productoRepository.findById(modelo.getProductoSeleccionado()))
+                .thenReturn(producto);
+        DescuentoProducto r = modelo.getRegistro();
+        r.setValor(20);
+        r.setFechaDesde(hace(1));
+        r.setFechaHasta(null);
 
         modelo.btnGuardarHandler();
 
-        assertEquals("La fecha final no es válida. La fecha no puede quedar vacía",
-                unicoMensaje().getSummary());
-        verify(descuentoProductoRepository, never()).crear(any());
+        verify(descuentoProductoRepository, times(1)).crear(r);
+        assertNull(r.getFechaHasta());
+        assertEquals("Guardado correctamente", unicoMensaje().getSummary());
+        assertFalse(modelo.isFormVisible());
+    }
+
+    @Test
+    public void testGuardarSinFechaFinalNoValidaElRangoDelDescuento() {
+        seleccionarDescuentoYProducto();
+        Descuento descuento = descuentoDe(tipo("Por fecha", true, null));
+        descuento.setFechaHasta(hace(5));
+        conDescuento(descuento);
+        Producto producto = new Producto(UUID.randomUUID());
+        when(productoRepository.findById(modelo.getProductoSeleccionado()))
+                .thenReturn(producto);
+        DescuentoProducto r = modelo.getRegistro();
+        r.setValor(20);
+        r.setFechaDesde(hace(3));
+        r.setFechaHasta(null);
+
+        modelo.btnGuardarHandler();
+
+        verify(descuentoProductoRepository, times(1)).crear(r);
+        assertNull(r.getFechaHasta());
+        assertEquals("Guardado correctamente", unicoMensaje().getSummary());
     }
 
     @Test
     public void testGuardarConFechasInvertidasAvisaYNoGuarda() {
         seleccionarDescuentoYProducto();
         conDescuento(descuentoDe(tipo("Por fecha", true, null)));
+        modelo.getRegistro().setValor(20);
         modelo.getRegistro().setFechaDesde(hace(1));
         modelo.getRegistro().setFechaHasta(hace(5));
 
@@ -213,6 +257,7 @@ public class DescuentoProductoModelTest {
         Descuento descuento = descuentoDe(tipo("Por fecha", true, null));
         descuento.setFechaDesde(hace(10));
         conDescuento(descuento);
+        modelo.getRegistro().setValor(20);
         modelo.getRegistro().setFechaDesde(hace(20));
         modelo.getRegistro().setFechaHasta(hace(1));
 
@@ -230,6 +275,7 @@ public class DescuentoProductoModelTest {
         Descuento descuento = descuentoDe(tipo("Por fecha", true, null));
         descuento.setFechaHasta(hace(1));
         conDescuento(descuento);
+        modelo.getRegistro().setValor(20);
         modelo.getRegistro().setFechaDesde(hace(3));
         modelo.getRegistro().setFechaHasta(hace(0));
 

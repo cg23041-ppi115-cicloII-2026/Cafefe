@@ -80,6 +80,32 @@ public class TipoDescuentoModelTest {
     }
 
     @Test
+    public void testGuardarConMaximoMayorACienAvisaYNoGuarda() {
+        modelo.limpiar();
+        modelo.getRegistro().setNombre("Vip");
+        modelo.getRegistro().setDescuentoMaximo(150);
+
+        modelo.btnGuardarHandler();
+
+        assertEquals("El descuento máximo debe estar entre 0 y 100", unicoMensaje().getSummary());
+        assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
+        verify(tipoDescuentoRepository, never()).crear(any());
+    }
+
+    @Test
+    public void testGuardarConMaximoNegativoAvisaYNoGuarda() {
+        modelo.limpiar();
+        modelo.getRegistro().setNombre("Vip");
+        modelo.getRegistro().setDescuentoMaximo(-10);
+
+        modelo.btnGuardarHandler();
+
+        assertEquals("El descuento máximo debe estar entre 0 y 100", unicoMensaje().getSummary());
+        assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
+        verify(tipoDescuentoRepository, never()).crear(any());
+    }
+
+    @Test
     public void testGuardarValidoCreaElRegistro() {
         modelo.limpiar();
         TipoDescuento r = modelo.getRegistro();

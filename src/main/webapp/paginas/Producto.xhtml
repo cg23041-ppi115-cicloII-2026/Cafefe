@@ -226,7 +226,7 @@
                         <div class="card">
                             <div style="margin-bottom: 10px;">
                                 <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{productoCaracteristicaModel.btnNuevoHandler}"
-                                                 update="msgsPc pnlFormPc" styleClass="btn btn-primary"
+                                                 update="msgsPc pnlFormPc dlgSelPC" styleClass="btn btn-primary"
                                                  oncomplete="var e=document.querySelector('[id$=pnlFormPc]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                             </div>
                             <h3>Lista de Características del Producto</h3>
@@ -254,7 +254,7 @@
                             <h:panelGroup id="btnPc" layout="block" style="margin-top: 12px;">
                                 <comp:botonesTabla model="#{productoCaracteristicaModel}"
                                                    editUpdate="msgsPc pnlFormPc"
-                                                   deleteUpdate="msgsPc pcTabla btnPc pnlFormPc" />
+                                                   deleteUpdate="msgsPc pcTabla btnPc pnlFormPc dlgSelPC" />
                                 <h:outputText value="#{msg['crud.seleccionarFila']}"
                                               rendered="#{empty productoCaracteristicaModel.seleccion}"
                                               style="color:#777; font-style: italic;" />
@@ -299,11 +299,11 @@
                                     <div style="margin-top: 10px;">
                                         <p:commandButton value="#{msg['crud.guardar']}"
                                                          action="#{productoCaracteristicaModel.btnGuardarHandler}"
-                                                         update="msgsPc pnlFormPc pcTabla btnPc" styleClass="btn btn-primary" />
+                                                         update="msgsPc pnlFormPc pcTabla btnPc dlgSelPC" styleClass="btn btn-primary" />
                                         &#160;
                                         <p:commandButton value="#{msg['crud.cancelar']}"
                                                          action="#{productoCaracteristicaModel.btnCancelarHandler}"
-                                                         update="msgsPc pnlFormPc pcTabla btnPc" styleClass="btn" />
+                                                         update="msgsPc pnlFormPc pcTabla btnPc dlgSelPC" styleClass="btn" />
                                     </div>
                                 </div>
                             </h:panelGroup>
@@ -345,7 +345,7 @@
                         <div class="card">
                             <div style="margin-bottom: 10px;">
                                 <p:commandButton value="#{msg['crud.nuevoBoton']}" action="#{descuentoProductoModel.btnNuevoHandler}"
-                                                 update="msgsDescProd pnlFormDescProd" styleClass="btn btn-primary"
+                                                 update="msgsDescProd pnlFormDescProd dlgSelDesc" styleClass="btn btn-primary"
                                                  oncomplete="var e=document.querySelector('[id$=pnlFormDescProd]'); if(e){e.scrollIntoView({behavior:'smooth', block:'start'});}" />
                             </div>
                             <h3>Descuentos por Producto</h3>
@@ -370,8 +370,15 @@
                                 <p:column headerText="Valor">
                                     #{item.valor}
                                 </p:column>
-                                <p:column headerText="Observaciones">
-                                    #{item.observaciones}
+                                <p:column headerText="Vigente desde">
+                                    <h:outputText value="#{item.fechaDesde}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Vigente hasta">
+                                    <h:outputText value="#{item.fechaHasta}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
                                 </p:column>
                             </p:dataTable>
 
@@ -380,7 +387,7 @@
                                 <comp:botonesTabla model="#{descuentoProductoModel}"
                                                    mostrarEliminar="false"
                                                    editUpdate="msgsDescProd pnlFormDescProd"
-                                                   deleteUpdate="msgsDescProd tblDescProd botoneraDescProd pnlFormDescProd" />
+                                                   deleteUpdate="msgsDescProd tblDescProd botoneraDescProd pnlFormDescProd dlgSelDesc" />
                                 <h:outputText value="#{msg['crud.seleccionarFila']}"
                                               rendered="#{empty descuentoProductoModel.seleccion}"
                                               style="color:#777; font-style: italic;" />
@@ -440,12 +447,12 @@
                                     <div style="margin-top: 10px;">
                                         <p:commandButton value="#{msg['crud.guardar']}"
                                                          action="#{descuentoProductoModel.btnGuardarHandler}"
-                                                         update="msgsDescProd pnlFormDescProd tblDescProd botoneraDescProd"
+                                                         update="msgsDescProd pnlFormDescProd tblDescProd botoneraDescProd dlgSelDesc"
                                                          styleClass="btn btn-primary" />
                                         &#160;
                                         <p:commandButton value="#{msg['crud.cancelar']}"
                                                          action="#{descuentoProductoModel.btnCancelarHandler}"
-                                                         update="msgsDescProd pnlFormDescProd tblDescProd botoneraDescProd"
+                                                         update="msgsDescProd pnlFormDescProd tblDescProd botoneraDescProd dlgSelDesc"
                                                          styleClass="btn" />
                                     </div>
                                 </div>

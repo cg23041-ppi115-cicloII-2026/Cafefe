@@ -126,11 +126,17 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
                 return;
             }
 
-            // Valor: obligatorio y sin sobrepasar el maximo del tipo
+            // Valor: obligatorio, mayor a 0 y sin sobrepasar el maximo del tipo
             if (this.registro.getValor() == null) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                         FacesMessage.SEVERITY_WARN,
                         "El valor no es válido. El valor no puede ser nulo", null));
+                return;
+            }
+            if (this.registro.getValor() <= 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "El valor no es válido. El valor debe ser mayor a 0", null));
                 return;
             }
             Integer maximo = (tipo != null) ? tipo.getDescuentoMaximo() : null;
@@ -142,20 +148,15 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
                 return;
             }
 
-            // Fechas: no pueden quedar vacias
+            // Fechas: "desde" es obligatoria; "hasta" puede quedar vacia (descuento abierto)
             if (this.registro.getFechaDesde() == null) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                         FacesMessage.SEVERITY_WARN,
                         "La fecha inicial no es válida. La fecha no puede quedar vacía", null));
                 return;
             }
-            if (this.registro.getFechaHasta() == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
-                        FacesMessage.SEVERITY_WARN,
-                        "La fecha final no es válida. La fecha no puede quedar vacía", null));
-                return;
-            }
-            if (this.registro.getFechaDesde().after(this.registro.getFechaHasta())) {
+            if (this.registro.getFechaHasta() != null
+                    && this.registro.getFechaDesde().after(this.registro.getFechaHasta())) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                         FacesMessage.SEVERITY_WARN,
                         "La fecha final no es válida. La fecha de finalización no puede ser "
@@ -172,6 +173,7 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
                 return;
             }
             if (descuento != null && descuento.getFechaHasta() != null
+                    && this.registro.getFechaHasta() != null
                     && this.registro.getFechaHasta().after(descuento.getFechaHasta())) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                         FacesMessage.SEVERITY_WARN,

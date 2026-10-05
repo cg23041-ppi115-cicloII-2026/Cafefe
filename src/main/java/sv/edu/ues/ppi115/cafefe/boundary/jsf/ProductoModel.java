@@ -113,7 +113,7 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
 
     @Override
     public void btnGuardarHandler() {
-        // Validacion minima: nombre y precio son obligatorios
+        // Validacion minima: nombre obligatorio y precio obligatorio mayor a 0
         if (this.registro != null) {
             if (this.registro.getNombre() == null || this.registro.getNombre().trim().isEmpty()) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
@@ -123,6 +123,11 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
             if (this.registro.getPrecioSugerido() == null) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                         FacesMessage.SEVERITY_WARN, "El producto necesita precio sugerido", null));
+                return;
+            }
+            if (this.registro.getPrecioSugerido().signum() <= 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN, "El precio sugerido debe ser mayor a 0", null));
                 return;
             }
         }
