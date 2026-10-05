@@ -84,15 +84,15 @@
                                 <h:panelGrid id="prodForm" columns="3" cellpadding="5">
                                     <h:outputLabel for="idProd" value="ID:" />
                                     <p:inputText id="idProd" value="#{productoModel.registro.idProducto}" required="false" disabled="true" size="36" />
-                                    <p:messages for="idProd" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="nombre" value="Nombre:" />
                                     <p:inputText id="nombre" value="#{productoModel.registro.nombre}" />
-                                    <p:messages for="nombre" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="precio" value="Precio sugerido:" />
                                     <p:inputText id="precio" value="#{productoModel.registro.precioSugerido}" />
-                                    <p:messages for="precio" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="activo" value="Estado:" />
                                     <p:selectBooleanCheckbox id="activo"
@@ -104,7 +104,7 @@
                                     <p:inputTextarea id="comentarios"
                                                      value="#{productoModel.registro.comentarios}"
                                                      rows="3" cols="50" />
-                                    <p:messages for="comentarios" />
+                                    <h:panelGroup />
                                 </h:panelGrid>
 
                                 <div style="margin-top: 10px;">
@@ -150,7 +150,9 @@
                                     #{item.idTipoProducto.nombre}
                                 </p:column>
                                 <p:column headerText="Fecha">
-                                    #{item.fechaCreacion}
+                                    <h:outputText value="#{item.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                                    </h:outputText>
                                 </p:column>
                                 <p:column headerText="Observaciones">
                                     #{item.observaciones}
@@ -177,7 +179,7 @@
                                     <h:panelGrid columns="3" cellpadding="5">
                                         <h:outputLabel for="idPtp" value="ID:" />
                                         <p:inputText id="idPtp" value="#{productoTipoProductoModel.registro.idProductoTipoProducto}" required="false" disabled="true" size="36" />
-                                        <p:messages for="idPtp" />
+                                        <h:panelGroup />
 
                                         <h:outputLabel for="productoPtp" value="Producto:" />
                                         <p:selectOneMenu id="productoPtp"
@@ -199,7 +201,7 @@
                                         <p:inputTextarea id="ptpObservaciones"
                                                          value="#{productoTipoProductoModel.registro.observaciones}"
                                                          rows="3" cols="50" />
-                                        <p:messages for="ptpObservaciones" />
+                                        <h:panelGroup />
                                     </h:panelGrid>
 
                                     <div style="margin-top: 10px;">
@@ -270,7 +272,7 @@
                                     <h:panelGrid id="pcForm" columns="3" cellpadding="5">
                                         <h:outputLabel for="idPc" value="ID:" />
                                         <p:inputText id="idPc" value="#{productoCaracteristicaModel.registro.idProductoCaracteristica}" required="false" disabled="true" size="36" />
-                                        <p:messages for="idPc" />
+                                        <h:panelGroup />
 
                                         <h:outputLabel for="producto" value="Producto:" />
                                         <p:selectOneMenu id="producto"
@@ -293,7 +295,7 @@
 
                                         <h:outputLabel for="valor" value="Valor:" />
                                         <p:inputText id="valor" value="#{productoCaracteristicaModel.registro.valor}" />
-                                        <p:messages for="valor" />
+                                        <h:panelGroup />
                                     </h:panelGrid>
 
                                     <div style="margin-top: 10px;">
@@ -403,7 +405,7 @@
                                     <h:panelGrid columns="3" cellpadding="5">
                                         <h:outputLabel for="idDescProd" value="ID:" />
                                         <p:inputText id="idDescProd" value="#{descuentoProductoModel.registro.idDescuentoProducto}" required="false" disabled="true" size="36" />
-                                        <p:messages for="idDescProd" />
+                                        <h:panelGroup />
 
                                         <h:outputLabel for="txtDescElegido" value="Descuento:" />
                                         <h:panelGroup id="pnlSelDesc" layout="block">
@@ -426,7 +428,7 @@
                                         <h:outputLabel for="valorDesc" value="Valor:" />
                                         <p:inputText id="valorDesc" value="#{descuentoProductoModel.registro.valor}"
                                                      size="6" />
-                                        <p:messages for="valorDesc" />
+                                        <h:panelGroup />
 
                                         <h:outputLabel for="fechaDesdeProd" value="Vigente desde:" />
                                         <p:datePicker id="fechaDesdeProd" value="#{descuentoProductoModel.registro.fechaDesde}"
@@ -441,7 +443,7 @@
                                         <h:outputLabel for="observacionesProd" value="Observaciones:" />
                                         <p:inputTextarea id="observacionesProd" value="#{descuentoProductoModel.registro.observaciones}"
                                                          rows="3" cols="50" />
-                                        <p:messages for="observacionesProd" />
+                                        <h:panelGroup />
                                     </h:panelGrid>
 
                                     <div style="margin-top: 10px;">

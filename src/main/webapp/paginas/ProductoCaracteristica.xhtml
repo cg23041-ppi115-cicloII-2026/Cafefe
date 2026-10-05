@@ -77,11 +77,11 @@
                                 <h:panelGrid columns="3" cellpadding="5">
                                     <h:outputLabel for="idTc" value="ID:" />
                                     <p:inputText id="idTc" value="#{tipoCaracteristicaModel.registro.idTipoCaracteristica}" required="false" disabled="true" size="36" />
-                                    <p:messages for="idTc" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="nombre" value="Nombre:" />
                                     <p:inputText id="nombre" value="#{tipoCaracteristicaModel.registro.nombre}" />
-                                    <p:messages for="nombre" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="expresion" value="Expresión regular:" />
                                     <p:inputText id="expresion"
@@ -174,7 +174,7 @@
                                     <h:panelGrid columns="3" cellpadding="5">
                                         <h:outputLabel for="idCr" value="ID:" />
                                         <p:inputText id="idCr" value="#{caracteristicaModel.registro.idCaracteristica}" required="false" disabled="true" size="36" />
-                                        <p:messages for="idCr" />
+                                        <h:panelGroup />
 
                                         <h:outputLabel for="tipo" value="Tipo de característica:" />
                                         <p:selectOneMenu id="tipo"
@@ -186,7 +186,7 @@
 
                                         <h:outputLabel for="cNombre" value="Nombre:" />
                                         <p:inputText id="cNombre" value="#{caracteristicaModel.registro.nombre}"                                                     />
-                                        <p:messages for="cNombre" />
+                                        <h:panelGroup />
 
                                         <h:outputLabel for="cActivo" value="Estado:" />
                                         <p:selectBooleanCheckbox id="cActivo"

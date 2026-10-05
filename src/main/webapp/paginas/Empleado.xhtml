@@ -73,15 +73,15 @@
                                     
                                     <h:outputLabel for="id" value="ID:" />
                                     <p:inputText id="id" value="#{empleadoModel.registro.idEmpleado}" required="false" disabled="true" size="36"/>
-                                    <p:messages for="id" />
+                                    <h:panelGroup />
                                     
                                     <h:outputLabel for="nombre" value="Nombre:" />
                                     <p:inputText id="nombre" value="#{empleadoModel.registro.nombre}" />
-                                    <p:messages for="nombre" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="apellido" value="Apellido:" />
                                     <p:inputText id="apellido" value="#{empleadoModel.registro.apellido}" />
-                                    <p:messages for="apellido" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="activo" value="Estado:" />
                                     <p:selectBooleanCheckbox id="activo" value="#{empleadoModel.registro.activo}"
@@ -91,7 +91,7 @@
                                     <h:outputLabel for="comentarios" value="Comentarios:" />
                                     <p:inputTextarea id="comentarios" value="#{empleadoModel.registro.comentarios}"
                                                      rows="3" cols="50" />
-                                    <p:messages for="comentarios" />
+                                    <h:panelGroup />
                                 </h:panelGrid>
 
                                 <div style="margin-top: 10px;">
@@ -163,7 +163,7 @@
                                 <h:panelGrid columns="3" cellpadding="5">
                                     <h:outputLabel for="idAsig" value="ID:" />
                                     <p:inputText id="idAsig" value="#{empleadoRolModel.registro.idEmpleadoRol}" required="false" disabled="true" size="36" />
-                                    <p:messages for="idAsig" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="cboEmpleado" value="Empleado:" />
                                     <p:selectOneMenu id="cboEmpleado" value="#{empleadoRolModel.empleadoSeleccionado}">
@@ -177,13 +177,13 @@
                                         <f:selectItem itemLabel="Seleccione un Rol" itemValue="#{null}" />
                                         <f:selectItems value="#{empleadoRolModel.listaRoles}" />
                                     </p:selectOneMenu>
-                                    <p:messages for="cboRol" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="observacionesAsig" value="Observaciones:" />
                                     <p:inputTextarea id="observacionesAsig"
                                                      value="#{empleadoRolModel.registro.observaciones}"
                                                      rows="3" cols="50" />
-                                    <p:messages for="observacionesAsig" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="activoAsig" value="Estado:" />
                                     <p:selectBooleanCheckbox id="activoAsig"

@@ -39,7 +39,7 @@
                                 <h:outputLabel for="id" value="ID:" />
                                 <p:inputText id="id" value="#{ordenModel.registro.idOrden}"
                                              required="false" disabled="true" size="36" />
-                                <p:messages for="id" />
+                                <h:panelGroup />
 
                                 <h:outputLabel for="cboCobrador" value="Empleado:" />
                                 <p:selectOneMenu id="cboCobrador"
@@ -48,14 +48,14 @@
                                     <f:selectItem itemLabel="-- Elija quién realiza la orden --" itemValue="#{null}" />
                                     <f:selectItems value="#{ordenModel.listaCobradores}" />
                                 </p:selectOneMenu>
-                                <p:messages for="cboCobrador" />
+                                <h:panelGroup />
 
                                 <h:outputLabel for="fecha" value="Fecha de orden:" />
                                 <p:inputText id="fecha" value="#{ordenModel.registro.fechaCreacion}"
                                              required="false" disabled="true" size="36">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                 </p:inputText>
-                                <p:messages for="fecha" />
+                                <h:panelGroup />
                             </h:panelGrid>
 
                             <div style="margin-top: 10px;">
@@ -127,7 +127,7 @@
                                     <h:outputLabel for="idLinea" value="ID:" />
                                     <p:inputText id="idLinea" value="#{ordenProductoModel.registro.idOrdenProducto}"
                                                  required="false" disabled="true" size="36" />
-                                    <p:messages for="idLinea" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="txtProductoLinea" value="Producto:" />
                                     <h:panelGroup id="pnlSelProducto" layout="block">
@@ -143,13 +143,13 @@
                                     <h:outputLabel for="precioLinea" value="Precio:" />
                                     <p:inputText id="precioLinea" value="#{ordenProductoModel.registro.precio}"
                                                  size="36" />
-                                    <p:messages for="precioLinea" />
+                                    <h:panelGroup />
 
                                     <h:outputLabel for="obsLinea" value="Observaciones:" />
                                     <p:inputTextarea id="obsLinea"
                                                      value="#{ordenProductoModel.registro.observaciones}"
                                                      rows="3" cols="50" />
-                                    <p:messages for="obsLinea" />
+                                    <h:panelGroup />
                                 </h:panelGrid>
 
                                 <div style="margin-top: 10px;">

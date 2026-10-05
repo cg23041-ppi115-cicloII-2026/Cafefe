@@ -66,16 +66,16 @@
                         <h:panelGrid columns="3" cellpadding="5">
                             <h:outputLabel for="idTp" value="ID:" />
                             <p:inputText id="idTp" value="#{tipoProductoModel.registro.idTipoProducto}" required="false" disabled="true" size="36" />
-                            <p:messages for="idTp" />
+                            <h:panelGroup />
 
                             <h:outputLabel for="nombre" value="Nombre del Tipo:" />
                             <p:inputText id="nombre" value="#{tipoProductoModel.registro.nombre}" />
-                            <p:messages for="nombre" />
+                            <h:panelGroup />
 
                             <h:outputLabel for="observaciones" value="Observaciones:" />
                             <p:inputTextarea id="observaciones" value="#{tipoProductoModel.registro.observaciones}"
                                              rows="3" cols="50" />
-                            <p:messages for="observaciones" />
+                            <h:panelGroup />
 
                             <h:outputLabel for="activo" value="Estado:" />
                             <p:selectBooleanCheckbox id="activo" value="#{tipoProductoModel.registro.activo}"

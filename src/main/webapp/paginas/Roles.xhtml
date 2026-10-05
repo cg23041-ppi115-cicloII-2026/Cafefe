@@ -60,17 +60,17 @@
                         <h:panelGrid columns="3" cellpadding="5">
                             <h:outputLabel for="idRol" value="ID:" />
                             <p:inputText id="idRol" value="#{rolModel.registro.idRol}" required="false" disabled="true" size="36" />
-                            <p:messages for="idRol" />
+                            <h:panelGroup />
 
                             <h:outputLabel for="nombreRol" value="Nombre:" />
                             <p:inputText id="nombreRol" value="#{rolModel.registro.nombre}" />
-                            <p:messages for="nombreRol" />
+                            <h:panelGroup />
 
                             <h:outputLabel for="observacionesRol" value="Observaciones:" />
                             <p:inputTextarea id="observacionesRol"
                                              value="#{rolModel.registro.observaciones}"
                                              rows="3" cols="50" />
-                            <p:messages for="observacionesRol" />
+                            <h:panelGroup />
 
                             <h:outputLabel for="activoRol" value="Estado:" />
                             <p:selectBooleanCheckbox id="activoRol"
