@@ -32,7 +32,7 @@ public class EmpleadoRolRepository extends DefaultDAO<EmpleadoRol, UUID> {
     public List<EmpleadoRol> findCobradores() {
         return getEntityManager()
                 .createQuery("SELECT er FROM EmpleadoRol er "
-                        + "WHERE LOWER(er.idRol.nombre) IN ('cajero', 'gerente', 'administrador', 'mesero') "
+                        + "WHERE LOWER(er.idRol.nombre) IN ('cajero', 'gerente', 'administrador', 'mesero', 'camarero') "
                         + "ORDER BY er.idEmpleado.nombre", EmpleadoRol.class)
                 .getResultList();
     }
