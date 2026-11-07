@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 
 /**
  * Modelo abstracto genérico para controllers/beans de vistas JSF.
@@ -32,7 +32,7 @@ public abstract class AbstractModel<T, ID> implements Serializable {
     public abstract Object getIdByRegistro(T dato);
 
     // Conexión genérica con tu DefaultDAO
-    public abstract DefaultDAO<T, ID> getDao();
+    public abstract AbstractDataAccess<T> getDao();
 
     // ---------------------------------------------------------------
     // Paginador lazy: contar() + cargar() para p:dataTable lazy="true"

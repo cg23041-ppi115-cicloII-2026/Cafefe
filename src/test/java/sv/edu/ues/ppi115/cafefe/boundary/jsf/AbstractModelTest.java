@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 import sv.edu.ues.ppi115.cafefe.entity.TipoProducto;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 public class AbstractModelTest {
 
     @Mock
-    private DefaultDAO<TipoProducto, UUID> daoMock;
+    private AbstractDataAccess<TipoProducto> daoMock;
 
     private ContextoPrueba contexto;
 
