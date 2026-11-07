@@ -12,8 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.primefaces.event.TabChangeEvent;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoRepository;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoService;
+import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoService;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
 import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
@@ -39,10 +39,10 @@ public class DescuentoProductoModelTest {
     private DescuentoRepository descuentoRepository;
 
     @Mock
-    private ProductoRepository productoRepository;
+    private ProductoService productoRepository;
 
     @Mock
-    private TipoDescuentoRepository tipoDescuentoRepository;
+    private TipoDescuentoService tipoDescuentoRepository;
 
     @InjectMocks
     private DescuentoProductoModel modelo;

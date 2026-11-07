@@ -13,9 +13,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoTipoProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoService;
+import sv.edu.ues.ppi115.cafefe.control.ProductoTipoProductoService;
+import sv.edu.ues.ppi115.cafefe.control.TipoProductoService;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
 import sv.edu.ues.ppi115.cafefe.entity.ProductoTipoProducto;
 import sv.edu.ues.ppi115.cafefe.entity.TipoProducto;
@@ -50,14 +50,14 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
     }
 
     @Inject
-    private ProductoRepository productoRepository;
+    private ProductoService productoRepository;
 
     // Para el desplegable de tipos y para registrar la relacion al guardar
     @Inject
-    private TipoProductoRepository tipoProductoRepository;
+    private TipoProductoService tipoProductoRepository;
 
     @Inject
-    private ProductoTipoProductoRepository productoTipoProductoRepository;
+    private ProductoTipoProductoService productoTipoProductoRepository;
 
     // Tipo elegido en el desplegable (UUID; se convierte a entidad al guardar)
     private UUID tipoSeleccionado;

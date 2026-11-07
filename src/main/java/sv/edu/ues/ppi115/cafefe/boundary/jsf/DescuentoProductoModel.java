@@ -14,8 +14,8 @@ import org.primefaces.event.TabChangeEvent;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoService;
+import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoService;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
 import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
@@ -41,10 +41,10 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
     private DescuentoRepository descuentoRepository;
 
     @Inject
-    private ProductoRepository productoRepository;
+    private ProductoService productoRepository;
 
     @Inject
-    private TipoDescuentoRepository tipoDescuentoRepository;
+    private TipoDescuentoService tipoDescuentoRepository;
 
     // ---- Desplegables del formulario (mismo patron que ProductoModel) ----
     // tipoSeleccionado = primer nivel de la cascada de la ventana emergente

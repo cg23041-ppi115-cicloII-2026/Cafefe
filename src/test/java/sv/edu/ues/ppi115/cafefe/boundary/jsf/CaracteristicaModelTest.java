@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sv.edu.ues.ppi115.cafefe.control.CaracteristicaRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaRepository;
+import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaService;
 import sv.edu.ues.ppi115.cafefe.entity.Caracteristica;
 import sv.edu.ues.ppi115.cafefe.entity.TipoCaracteristica;
 
@@ -28,7 +28,7 @@ public class CaracteristicaModelTest {
     private CaracteristicaRepository caracteristicaRepository;
 
     @Mock
-    private TipoCaracteristicaRepository tipoCaracteristicaRepository;
+    private TipoCaracteristicaService tipoCaracteristicaRepository;
 
     @InjectMocks
     private CaracteristicaModel modelo;

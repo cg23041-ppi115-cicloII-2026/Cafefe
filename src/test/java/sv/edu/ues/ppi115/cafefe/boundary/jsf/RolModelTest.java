@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sv.edu.ues.ppi115.cafefe.control.RolRepository;
+import sv.edu.ues.ppi115.cafefe.control.RolService;
 import sv.edu.ues.ppi115.cafefe.entity.Rol;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class RolModelTest {
 
     @Mock
-    private RolRepository rolRepository;
+    private RolService rolRepository;
 
     @InjectMocks
     private RolModel modelo;

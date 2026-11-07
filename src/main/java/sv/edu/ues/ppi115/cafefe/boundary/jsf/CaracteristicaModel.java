@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.primefaces.event.TabChangeEvent;
-import sv.edu.ues.ppi115.cafefe.control.CaracteristicaRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaRepository;
+import sv.edu.ues.ppi115.cafefe.control.CaracteristicaService;
+import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaService;
 import sv.edu.ues.ppi115.cafefe.entity.Caracteristica;
 import sv.edu.ues.ppi115.cafefe.entity.TipoCaracteristica;
 
@@ -50,7 +50,7 @@ public class CaracteristicaModel extends AbstractModel<Caracteristica, UUID> imp
 
     // Para el desplegable de tipos de caracteristica
     @Inject
-    private TipoCaracteristicaRepository tipoCaracteristicaRepository;
+    private TipoCaracteristicaService tipoCaracteristicaRepository;
 
     // Tipo elegido en el desplegable (UUID; se convierte a entidad al guardar)
     private UUID tipoSeleccionado;

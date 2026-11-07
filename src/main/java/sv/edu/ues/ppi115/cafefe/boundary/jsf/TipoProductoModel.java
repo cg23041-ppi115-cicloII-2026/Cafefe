@@ -8,7 +8,7 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.UUID;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.TipoProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.TipoProductoService;
 import sv.edu.ues.ppi115.cafefe.entity.TipoProducto;
 
 @Named
@@ -18,7 +18,7 @@ public class TipoProductoModel extends AbstractModel<TipoProducto, UUID> impleme
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private TipoProductoRepository tipoProductoRepository;
+    private TipoProductoService tipoProductoRepository;
 
     @Override
     public DefaultDAO<TipoProducto, UUID> getDao() {

@@ -10,9 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sv.edu.ues.ppi115.cafefe.control.CaracteristicaRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoCaracteristicaRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoCaracteristicaService;
+import sv.edu.ues.ppi115.cafefe.control.ProductoService;
+import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaService;
 import sv.edu.ues.ppi115.cafefe.entity.Caracteristica;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
 import sv.edu.ues.ppi115.cafefe.entity.ProductoCaracteristica;
@@ -29,16 +29,16 @@ import static org.mockito.Mockito.*;
 public class ProductoCaracteristicaModelTest {
 
     @Mock
-    private ProductoCaracteristicaRepository productoCaracteristicaRepository;
+    private ProductoCaracteristicaService productoCaracteristicaRepository;
 
     @Mock
-    private ProductoRepository productoRepository;
+    private ProductoService productoRepository;
 
     @Mock
     private CaracteristicaRepository caracteristicaRepository;
 
     @Mock
-    private TipoCaracteristicaRepository tipoCaracteristicaRepository;
+    private TipoCaracteristicaService tipoCaracteristicaRepository;
 
     @InjectMocks
     private ProductoCaracteristicaModel modelo;

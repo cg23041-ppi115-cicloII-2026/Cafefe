@@ -8,11 +8,11 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.UUID;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoRepository;
+import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoService;
 import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
 
 /**
- * reutiliza AbstractModel (CRUD generico con ESTADO_CRUD) y TipoDescuentoRepository.
+ * reutiliza AbstractModel (CRUD generico con ESTADO_CRUD) y TipoDescuentoService.
  */
 @Named
 @ViewScoped
@@ -21,7 +21,7 @@ public class TipoDescuentoModel extends AbstractModel<TipoDescuento, UUID> imple
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private TipoDescuentoRepository tipoDescuentoRepository;
+    private TipoDescuentoService tipoDescuentoRepository;
 
     @Override
     public DefaultDAO<TipoDescuento, UUID> getDao() {

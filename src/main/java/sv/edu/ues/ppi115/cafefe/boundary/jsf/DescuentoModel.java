@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoRepository;
+import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoService;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
 import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
 
@@ -32,7 +32,7 @@ public class DescuentoModel extends AbstractModel<Descuento, UUID> implements Se
     private DescuentoRepository descuentoRepository;
 
     @Inject
-    private TipoDescuentoRepository tipoDescuentoRepository;
+    private TipoDescuentoService tipoDescuentoRepository;
 
     // ---- Desplegable de tipo de descuento (mismo patron que ProductoModel) ----
     private UUID tipoSeleccionado;

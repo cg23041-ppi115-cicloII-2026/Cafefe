@@ -6,7 +6,7 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.UUID;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.PagoRepository;
+import sv.edu.ues.ppi115.cafefe.control.PagoService;
 import sv.edu.ues.ppi115.cafefe.entity.Pago;
 
 @Named
@@ -16,7 +16,7 @@ public class PagoModel extends AbstractModel<Pago, UUID> implements Serializable
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private PagoRepository pagoRepository;
+    private PagoService pagoRepository;
 
     @Override
     public DefaultDAO<Pago, UUID> getDao() {

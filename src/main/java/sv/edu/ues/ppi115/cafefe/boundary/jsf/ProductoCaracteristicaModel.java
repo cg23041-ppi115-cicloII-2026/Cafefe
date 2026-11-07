@@ -14,9 +14,9 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.primefaces.event.TabChangeEvent;
 import sv.edu.ues.ppi115.cafefe.control.CaracteristicaRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoCaracteristicaRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoCaracteristicaService;
+import sv.edu.ues.ppi115.cafefe.control.ProductoService;
+import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaService;
 import sv.edu.ues.ppi115.cafefe.entity.Caracteristica;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
 import sv.edu.ues.ppi115.cafefe.entity.ProductoCaracteristica;
@@ -54,16 +54,16 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     }
 
     @Inject
-    private ProductoCaracteristicaRepository productoCaracteristicaRepository;
+    private ProductoCaracteristicaService productoCaracteristicaRepository;
 
     // Repositorios extra: solo para cargar las listas desplegables
     @Inject
-    private ProductoRepository productoRepository;
+    private ProductoService productoRepository;
 
     @Inject private CaracteristicaRepository caracteristicaRepository;
 
     @Inject
-    private TipoCaracteristicaRepository tipoCaracteristicaRepository;
+    private TipoCaracteristicaService tipoCaracteristicaRepository;
 
     // Selecciones de los desplegables (se guardan como UUID y se
     // convierten a las entidades Producto/Caracteristica al guardar)
@@ -101,7 +101,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     }
 
     @Override
-    public ProductoCaracteristicaRepository getDao() {
+    public ProductoCaracteristicaService getDao() {
         return productoCaracteristicaRepository;
     }
 

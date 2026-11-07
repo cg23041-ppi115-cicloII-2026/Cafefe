@@ -10,7 +10,7 @@ import jakarta.faces.convert.FacesConverter;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.RolRepository;
+import sv.edu.ues.ppi115.cafefe.control.RolService;
 import sv.edu.ues.ppi115.cafefe.entity.Rol;
 
 /**
@@ -32,7 +32,7 @@ import sv.edu.ues.ppi115.cafefe.entity.Rol;
 public class RolConverter implements Converter<Rol> {
 
     @Inject
-    private RolRepository rolRepository;
+    private RolService rolRepository;
 
     @Override
     public Rol getAsObject(FacesContext context, UIComponent component, String value) {

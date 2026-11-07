@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sv.edu.ues.ppi115.cafefe.control.EmpleadoRepository;
 import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolRepository;
-import sv.edu.ues.ppi115.cafefe.control.RolRepository;
+import sv.edu.ues.ppi115.cafefe.control.RolService;
 import sv.edu.ues.ppi115.cafefe.entity.Empleado;
 import sv.edu.ues.ppi115.cafefe.entity.EmpleadoRol;
 import sv.edu.ues.ppi115.cafefe.entity.Rol;
@@ -33,7 +33,7 @@ public class EmpleadoRolModelTest {
     private EmpleadoRepository empleadoRepository;
 
     @Mock
-    private RolRepository rolRepository;
+    private RolService rolRepository;
 
     @InjectMocks
     private EmpleadoRolModel modelo;

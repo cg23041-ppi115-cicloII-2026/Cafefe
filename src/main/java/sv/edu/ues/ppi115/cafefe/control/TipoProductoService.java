@@ -1,23 +1,24 @@
 package sv.edu.ues.ppi115.cafefe.control;
 
+import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import sv.edu.ues.ppi115.cafefe.entity.TipoProducto;
-import java.util.UUID;
 
 @Stateless
-public class TipoProductoRepository extends DefaultDAO<TipoProducto, UUID> {
+@LocalBean
+public class TipoProductoService extends AbstractDataAccess<TipoProducto> {
 
-    @PersistenceContext(unitName = "cafefe-PU")
-    private EntityManager em;
-
-    public TipoProductoRepository() {
-        super(TipoProducto.class);
-    }
+    @PersistenceContext(unitName = "CafefePU")
+    EntityManager em;
 
     @Override
     protected EntityManager getEntityManager() {
         return em;
+    }
+
+    public TipoProductoService() {
+        super(TipoProducto.class);
     }
 }

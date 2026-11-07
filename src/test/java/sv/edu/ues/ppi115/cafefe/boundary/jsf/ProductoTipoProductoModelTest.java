@@ -10,9 +10,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoTipoProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoService;
+import sv.edu.ues.ppi115.cafefe.control.ProductoTipoProductoService;
+import sv.edu.ues.ppi115.cafefe.control.TipoProductoService;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
 import sv.edu.ues.ppi115.cafefe.entity.ProductoTipoProducto;
 import sv.edu.ues.ppi115.cafefe.entity.TipoProducto;
@@ -28,13 +28,13 @@ import static org.mockito.Mockito.*;
 public class ProductoTipoProductoModelTest {
 
     @Mock
-    private ProductoTipoProductoRepository productoTipoProductoRepository;
+    private ProductoTipoProductoService productoTipoProductoRepository;
 
     @Mock
-    private ProductoRepository productoRepository;
+    private ProductoService productoRepository;
 
     @Mock
-    private TipoProductoRepository tipoProductoRepository;
+    private TipoProductoService tipoProductoRepository;
 
     @InjectMocks
     private ProductoTipoProductoModel modelo;

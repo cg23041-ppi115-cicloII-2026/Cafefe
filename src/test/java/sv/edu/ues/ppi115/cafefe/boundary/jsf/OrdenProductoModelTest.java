@@ -13,7 +13,7 @@ import org.primefaces.PrimeFaces;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoRepository;
 import sv.edu.ues.ppi115.cafefe.control.OrdenProductoRepository;
 import sv.edu.ues.ppi115.cafefe.control.OrdenRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoService;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
 import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
 import sv.edu.ues.ppi115.cafefe.entity.Orden;
@@ -42,7 +42,7 @@ public class OrdenProductoModelTest {
     private OrdenRepository ordenRepository;
 
     @Mock
-    private ProductoRepository productoRepository;
+    private ProductoService productoRepository;
 
     @Mock
     private DescuentoProductoRepository descuentoProductoRepository;

@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import org.primefaces.event.TabChangeEvent;
-import sv.edu.ues.ppi115.cafefe.control.ProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.ProductoTipoProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.ProductoService;
+import sv.edu.ues.ppi115.cafefe.control.ProductoTipoProductoService;
+import sv.edu.ues.ppi115.cafefe.control.TipoProductoService;
 import sv.edu.ues.ppi115.cafefe.entity.Producto;
 import sv.edu.ues.ppi115.cafefe.entity.ProductoTipoProducto;
 import sv.edu.ues.ppi115.cafefe.entity.TipoProducto;
@@ -34,14 +34,14 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private ProductoTipoProductoRepository productoTipoProductoRepository;
+    private ProductoTipoProductoService productoTipoProductoRepository;
 
     // Repositorios extra: solo para cargar las listas desplegables
     @Inject
-    private ProductoRepository productoRepository;
+    private ProductoService productoRepository;
 
     @Inject
-    private TipoProductoRepository tipoProductoRepository;
+    private TipoProductoService tipoProductoRepository;
 
     // Selecciones de los desplegables (se guardan como UUID y se
     // convierten a las entidades Producto/TipoProducto al guardar)
@@ -78,7 +78,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
     }
 
     @Override
-    public ProductoTipoProductoRepository getDao() {
+    public ProductoTipoProductoService getDao() {
         return productoTipoProductoRepository;
     }
 

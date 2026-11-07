@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
-import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoRepository;
+import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoService;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
 import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
 
@@ -29,7 +29,7 @@ public class DescuentoModelTest {
     private DescuentoRepository descuentoRepository;
 
     @Mock
-    private TipoDescuentoRepository tipoDescuentoRepository;
+    private TipoDescuentoService tipoDescuentoRepository;
 
     @InjectMocks
     private DescuentoModel modelo;

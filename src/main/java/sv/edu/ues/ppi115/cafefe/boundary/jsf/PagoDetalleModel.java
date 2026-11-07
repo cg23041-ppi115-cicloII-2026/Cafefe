@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.PagoDetalleRepository;
+import sv.edu.ues.ppi115.cafefe.control.PagoDetalleService;
 import sv.edu.ues.ppi115.cafefe.entity.PagoDetalle;
 
 @Named
@@ -17,7 +17,7 @@ public class PagoDetalleModel extends AbstractModel<PagoDetalle, UUID> implement
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private PagoDetalleRepository pagoDetalleRepository;
+    private PagoDetalleService pagoDetalleRepository;
 
     @Override
     public DefaultDAO<PagoDetalle, UUID> getDao() {

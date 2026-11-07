@@ -13,7 +13,7 @@ import java.util.UUID;
 import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
 import sv.edu.ues.ppi115.cafefe.control.EmpleadoRepository;
 import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolRepository;
-import sv.edu.ues.ppi115.cafefe.control.RolRepository;
+import sv.edu.ues.ppi115.cafefe.control.RolService;
 import sv.edu.ues.ppi115.cafefe.entity.Empleado;
 import sv.edu.ues.ppi115.cafefe.entity.EmpleadoRol;
 import sv.edu.ues.ppi115.cafefe.entity.Rol;
@@ -39,7 +39,7 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
     private EmpleadoRepository empleadoRepository;
 
     @Inject
-    private RolRepository rolRepository;
+    private RolService rolRepository;
 
     // ---- Formulario: combo empleado + combo rol ----
     private UUID empleadoSeleccionado;
