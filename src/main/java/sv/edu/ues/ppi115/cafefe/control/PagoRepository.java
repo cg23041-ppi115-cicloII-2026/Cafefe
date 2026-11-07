@@ -7,7 +7,7 @@ import sv.edu.ues.ppi115.cafefe.entity.Pago;
 import java.util.UUID;
 
 @Stateless
-public class PagoRepository extends DefaultDAO<Pago, UUID> {
+public class PagoRepository extends AbstractDataAccess<Pago, UUID> {
 
     @PersistenceContext(unitName = "cafefe-PU")
     private EntityManager em;

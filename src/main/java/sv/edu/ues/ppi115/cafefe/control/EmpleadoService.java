@@ -5,25 +5,20 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import sv.edu.ues.ppi115.cafefe.entity.Empleado;
-import java.util.UUID;
 
 @Stateless
 @LocalBean
-public class EmpleadoRepository extends DefaultDAO<Empleado, UUID> {
+public class EmpleadoService extends AbstractDataAccess<Empleado> {
 
-    @PersistenceContext(unitName = "cafefe-PU")
-    private EntityManager em;
-    
-    
-    public EmpleadoRepository() {
-        super(Empleado.class);
-    }
-    
+    @PersistenceContext(unitName = "CafefePU")
+    EntityManager em;
+
     @Override
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
+    public EmpleadoService() {
+        super(Empleado.class);
+    }
 }
-
-
