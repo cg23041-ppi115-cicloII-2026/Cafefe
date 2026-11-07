@@ -77,8 +77,8 @@ public class RolModelTest {
 
         assertEquals("Debe ingresar el nombre", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(rolRepository, never()).crear(any());
-        verify(rolRepository, never()).modificar(any());
+        verify(rolRepository, never()).create(any());
+        verify(rolRepository, never()).update(any());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class RolModelTest {
         modelo.btnGuardarHandler();
 
         assertEquals("Debe ingresar el nombre", unicoMensaje().getSummary());
-        verify(rolRepository, never()).crear(any());
+        verify(rolRepository, never()).create(any());
     }
 
     @Test
@@ -100,8 +100,8 @@ public class RolModelTest {
 
         modelo.btnGuardarHandler();
 
-        verify(rolRepository, times(1)).crear(r);
-        verify(rolRepository, never()).modificar(any());
+        verify(rolRepository, times(1)).create(r);
+        verify(rolRepository, never()).update(any());
         assertFalse(modelo.isFormVisible());
         assertEquals(ESTADO_CRUD.CREAR, modelo.getEstado());
         assertEquals("Guardado correctamente", unicoMensaje().getSummary());
@@ -112,7 +112,7 @@ public class RolModelTest {
     public void testGuardarCuandoElDaoFallaAvisaSinRomper() {
         modelo.limpiar();
         modelo.getRegistro().setNombre("Encargado");
-        doThrow(new RuntimeException("boom")).when(rolRepository).crear(any());
+        doThrow(new RuntimeException("boom")).when(rolRepository).create(any());
 
         modelo.btnGuardarHandler();
 

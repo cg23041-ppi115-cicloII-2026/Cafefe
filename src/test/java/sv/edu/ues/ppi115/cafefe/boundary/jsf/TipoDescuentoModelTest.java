@@ -63,7 +63,7 @@ public class TipoDescuentoModelTest {
 
         assertEquals("Debe ingresar el nombre", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoDescuentoRepository, never()).crear(any());
+        verify(tipoDescuentoRepository, never()).create(any());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class TipoDescuentoModelTest {
 
         assertEquals("Indique el descuento maximo", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoDescuentoRepository, never()).crear(any());
+        verify(tipoDescuentoRepository, never()).create(any());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TipoDescuentoModelTest {
 
         assertEquals("El descuento máximo debe estar entre 0 y 100", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoDescuentoRepository, never()).crear(any());
+        verify(tipoDescuentoRepository, never()).create(any());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class TipoDescuentoModelTest {
 
         assertEquals("El descuento máximo debe estar entre 0 y 100", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoDescuentoRepository, never()).crear(any());
+        verify(tipoDescuentoRepository, never()).create(any());
     }
 
     @Test
@@ -114,8 +114,8 @@ public class TipoDescuentoModelTest {
 
         modelo.btnGuardarHandler();
 
-        verify(tipoDescuentoRepository, times(1)).crear(r);
-        verify(tipoDescuentoRepository, never()).modificar(any());
+        verify(tipoDescuentoRepository, times(1)).create(r);
+        verify(tipoDescuentoRepository, never()).update(any());
         assertFalse(modelo.isFormVisible());
         assertEquals(ESTADO_CRUD.CREAR, modelo.getEstado());
         assertEquals("Guardado correctamente", unicoMensaje().getSummary());
@@ -126,14 +126,14 @@ public class TipoDescuentoModelTest {
     public void testGuardarCuandoElDaoFallaAvisaAlUsuario() {
         modelo.limpiar();
         modelo.getRegistro().setNombre("Vip");
-        doThrow(new RuntimeException("boom")).when(tipoDescuentoRepository).crear(any());
+        doThrow(new RuntimeException("boom")).when(tipoDescuentoRepository).create(any());
 
         modelo.btnGuardarHandler();
 
         assertEquals("No se pudo guardar: verifique los datos e intente de nuevo",
                 unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoDescuentoRepository, never()).modificar(any());
+        verify(tipoDescuentoRepository, never()).update(any());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class TipoDescuentoModelTest {
 
         modelo.btnEliminarHandler();
 
-        verify(tipoDescuentoRepository, times(1)).eliminar(t);
+        verify(tipoDescuentoRepository, times(1)).delete(t);
         assertEquals("Registro eliminado correctamente", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_INFO, contexto.mensajes.get(0).getSeverity());
     }
@@ -153,7 +153,7 @@ public class TipoDescuentoModelTest {
         TipoDescuento t = new TipoDescuento(UUID.randomUUID());
         modelo.setRegistro(t);
         modelo.setFormVisible(true);
-        doThrow(new RuntimeException("RESTRICT")).when(tipoDescuentoRepository).eliminar(t);
+        doThrow(new RuntimeException("RESTRICT")).when(tipoDescuentoRepository).delete(t);
 
         modelo.btnEliminarHandler();
 

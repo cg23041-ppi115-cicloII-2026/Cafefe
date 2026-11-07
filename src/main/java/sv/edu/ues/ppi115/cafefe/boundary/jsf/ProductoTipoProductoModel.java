@@ -82,9 +82,6 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
         return productoTipoProductoRepository;
     }
 
-    // ---------------------------------------------------------------
-    // Ciclo del CRUD adaptado a las relaciones
-    // ---------------------------------------------------------------
     @Override
     public void limpiar() {
         super.limpiar();
@@ -157,9 +154,6 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
         this.listaProductos = null;
     }
 
-    // ---------------------------------------------------------------
-    // Listas de los desplegables (carga perezosa: una vez por vista)
-    // ---------------------------------------------------------------
     public List<SelectItem> getListaProductos() {
         if (this.listaProductos == null) {
             this.listaProductos = new ArrayList<>();
@@ -186,9 +180,6 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
         return this.listaTipos;
     }
 
-    // ---------------------------------------------------------------
-    // Filtros
-    // ---------------------------------------------------------------
     public void buscarPorProducto() {
         UUID id = convertirUUID(filtroProducto);
         if (id != null) {
@@ -231,9 +222,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
         }
     }
 
-    // ---------------------------------------------------------------
-    // Getters y Setters
-    // ---------------------------------------------------------------
+
     public UUID getProductoSeleccionado() {
         return productoSeleccionado;
     }

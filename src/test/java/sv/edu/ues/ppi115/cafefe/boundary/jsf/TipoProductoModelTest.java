@@ -77,8 +77,8 @@ public class TipoProductoModelTest {
 
         assertEquals("Debe ingresar el nombre", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoProductoRepository, never()).crear(any());
-        verify(tipoProductoRepository, never()).modificar(any());
+        verify(tipoProductoRepository, never()).create(any());
+        verify(tipoProductoRepository, never()).update(any());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TipoProductoModelTest {
         modelo.btnGuardarHandler();
 
         assertEquals("Debe ingresar el nombre", unicoMensaje().getSummary());
-        verify(tipoProductoRepository, never()).crear(any());
+        verify(tipoProductoRepository, never()).create(any());
     }
 
     @Test
@@ -100,8 +100,8 @@ public class TipoProductoModelTest {
 
         modelo.btnGuardarHandler();
 
-        verify(tipoProductoRepository, times(1)).crear(t);
-        verify(tipoProductoRepository, never()).modificar(any());
+        verify(tipoProductoRepository, times(1)).create(t);
+        verify(tipoProductoRepository, never()).update(any());
         assertFalse(modelo.isFormVisible());
         assertEquals(ESTADO_CRUD.CREAR, modelo.getEstado());
         assertEquals("Guardado correctamente", unicoMensaje().getSummary());
@@ -112,14 +112,14 @@ public class TipoProductoModelTest {
     public void testGuardarCuandoElDaoFallaAvisaAlUsuario() {
         modelo.limpiar();
         modelo.getRegistro().setNombre("Bebida");
-        doThrow(new RuntimeException("boom")).when(tipoProductoRepository).crear(any());
+        doThrow(new RuntimeException("boom")).when(tipoProductoRepository).create(any());
 
         modelo.btnGuardarHandler();
 
         assertEquals("No se pudo guardar: verifique los datos e intente de nuevo",
                 unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoProductoRepository, never()).modificar(any());
+        verify(tipoProductoRepository, never()).update(any());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class TipoProductoModelTest {
         TipoProducto t = new TipoProducto(UUID.randomUUID());
         modelo.setRegistro(t);
         modelo.setFormVisible(true);
-        doThrow(new RuntimeException("RESTRICT")).when(tipoProductoRepository).eliminar(t);
+        doThrow(new RuntimeException("RESTRICT")).when(tipoProductoRepository).delete(t);
 
         modelo.btnEliminarHandler();
 

@@ -77,8 +77,8 @@ public class TipoCaracteristicaModelTest {
 
         assertEquals("Debe ingresar el nombre", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoCaracteristicaRepository, never()).crear(any());
-        verify(tipoCaracteristicaRepository, never()).modificar(any());
+        verify(tipoCaracteristicaRepository, never()).create(any());
+        verify(tipoCaracteristicaRepository, never()).update(any());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TipoCaracteristicaModelTest {
         modelo.btnGuardarHandler();
 
         assertEquals("Debe ingresar el nombre", unicoMensaje().getSummary());
-        verify(tipoCaracteristicaRepository, never()).crear(any());
+        verify(tipoCaracteristicaRepository, never()).create(any());
     }
 
     @Test
@@ -100,8 +100,8 @@ public class TipoCaracteristicaModelTest {
 
         modelo.btnGuardarHandler();
 
-        verify(tipoCaracteristicaRepository, times(1)).crear(t);
-        verify(tipoCaracteristicaRepository, never()).modificar(any());
+        verify(tipoCaracteristicaRepository, times(1)).create(t);
+        verify(tipoCaracteristicaRepository, never()).update(any());
         assertFalse(modelo.isFormVisible());
         assertEquals(ESTADO_CRUD.CREAR, modelo.getEstado());
         assertEquals("Guardado correctamente", unicoMensaje().getSummary());
@@ -112,14 +112,14 @@ public class TipoCaracteristicaModelTest {
     public void testGuardarCuandoElDaoFallaAvisaAlUsuario() {
         modelo.limpiar();
         modelo.getRegistro().setNombre("Tamaño");
-        doThrow(new RuntimeException("boom")).when(tipoCaracteristicaRepository).crear(any());
+        doThrow(new RuntimeException("boom")).when(tipoCaracteristicaRepository).create(any());
 
         modelo.btnGuardarHandler();
 
         assertEquals("No se pudo guardar: verifique los datos e intente de nuevo",
                 unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(tipoCaracteristicaRepository, never()).modificar(any());
+        verify(tipoCaracteristicaRepository, never()).update(any());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class TipoCaracteristicaModelTest {
         TipoCaracteristica t = new TipoCaracteristica(UUID.randomUUID());
         modelo.setRegistro(t);
         modelo.setFormVisible(true);
-        doThrow(new RuntimeException("RESTRICT")).when(tipoCaracteristicaRepository).eliminar(t);
+        doThrow(new RuntimeException("RESTRICT")).when(tipoCaracteristicaRepository).delete(t);
 
         modelo.btnEliminarHandler();
 

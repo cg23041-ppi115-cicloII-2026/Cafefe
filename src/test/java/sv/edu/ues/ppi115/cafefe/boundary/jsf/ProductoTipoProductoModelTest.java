@@ -84,8 +84,8 @@ public class ProductoTipoProductoModelTest {
 
         assertEquals("Debe elegir el producto y el tipo de producto", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_WARN, contexto.mensajes.get(0).getSeverity());
-        verify(productoTipoProductoRepository, never()).crear(any());
-        verify(productoTipoProductoRepository, never()).modificar(any());
+        verify(productoTipoProductoRepository, never()).create(any());
+        verify(productoTipoProductoRepository, never()).update(any());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ProductoTipoProductoModelTest {
         modelo.btnGuardarHandler();
 
         assertEquals("Debe elegir el producto y el tipo de producto", unicoMensaje().getSummary());
-        verify(productoTipoProductoRepository, never()).crear(any());
+        verify(productoTipoProductoRepository, never()).create(any());
     }
 
     @Test
@@ -114,10 +114,10 @@ public class ProductoTipoProductoModelTest {
 
         modelo.btnGuardarHandler();
 
-        verify(productoTipoProductoRepository, times(1)).crear(r);
+        verify(productoTipoProductoRepository, times(1)).create(r);
         ArgumentCaptor<ProductoTipoProducto> captor =
                 ArgumentCaptor.forClass(ProductoTipoProducto.class);
-        verify(productoTipoProductoRepository, times(1)).crear(captor.capture());
+        verify(productoTipoProductoRepository, times(1)).create(captor.capture());
         assertSame(producto, captor.getValue().getIdProducto());
         assertSame(tipo, captor.getValue().getIdTipoProducto());
         assertFalse(modelo.isFormVisible());
@@ -142,8 +142,8 @@ public class ProductoTipoProductoModelTest {
 
         modelo.btnGuardarHandler();
 
-        verify(productoTipoProductoRepository, never()).crear(any());
-        verify(productoTipoProductoRepository, times(1)).modificar(existente);
+        verify(productoTipoProductoRepository, never()).create(any());
+        verify(productoTipoProductoRepository, times(1)).update(existente);
         assertSame(producto, existente.getIdProducto());
         assertSame(tipo, existente.getIdTipoProducto());
         assertEquals("Registro actualizado con éxito", unicoMensaje().getSummary());
@@ -167,8 +167,8 @@ public class ProductoTipoProductoModelTest {
 
         modelo.btnGuardarHandler();
 
-        verify(productoTipoProductoRepository, never()).crear(any());
-        verify(productoTipoProductoRepository, times(1)).modificar(r);
+        verify(productoTipoProductoRepository, never()).create(any());
+        verify(productoTipoProductoRepository, times(1)).update(r);
         assertEquals("Registro actualizado con éxito", unicoMensaje().getSummary());
         assertEquals(FacesMessage.SEVERITY_INFO, contexto.mensajes.get(0).getSeverity());
     }
@@ -208,7 +208,7 @@ public class ProductoTipoProductoModelTest {
         ProductoTipoProducto r = new ProductoTipoProducto(UUID.randomUUID());
         modelo.setRegistro(r);
         modelo.setFormVisible(true);
-        doThrow(new RuntimeException("RESTRICT")).when(productoTipoProductoRepository).eliminar(r);
+        doThrow(new RuntimeException("RESTRICT")).when(productoTipoProductoRepository).delete(r);
 
         modelo.btnEliminarHandler();
 

@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 import sv.edu.ues.ppi115.cafefe.control.RolService;
 import sv.edu.ues.ppi115.cafefe.entity.Rol;
 
@@ -24,7 +24,7 @@ public class RolModel extends AbstractModel<Rol, UUID> implements Serializable {
     private RolService rolRepository;
 
     @Override
-    public DefaultDAO<Rol, UUID> getDao() {
+    public AbstractDataAccess<Rol> getDao() {
         return rolRepository;
     }
 

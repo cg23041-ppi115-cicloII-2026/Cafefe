@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaService;
 import sv.edu.ues.ppi115.cafefe.entity.TipoCaracteristica;
 
@@ -25,7 +25,7 @@ public class TipoCaracteristicaModel extends AbstractModel<TipoCaracteristica, U
     private TipoCaracteristicaService tipoCaracteristicaRepository;
 
     @Override
-    public DefaultDAO<TipoCaracteristica, UUID> getDao() {
+    public AbstractDataAccess<TipoCaracteristica> getDao() {
         return tipoCaracteristicaRepository;
     }
 
