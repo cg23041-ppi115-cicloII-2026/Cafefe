@@ -7,7 +7,7 @@ import java.util.function.Function;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 
 /**
  * Puente lazy generico entre p:dataTable (lazy="true" paginator="true")
@@ -24,14 +24,14 @@ public class LazyModel<T> extends LazyDataModel<T> {
 
     private static final long serialVersionUID = 1L;
 
-    private final DefaultDAO<T, ?> dao;
+    private final AbstractDataAccess<T> dao;
     private final Function<T, Object> idDe;
 
     /**
      * @param dao  repositorio que cuenta y pagina (DefaultDAO)
      * @param idDe funcion que extrae el id de un registro (getIdByRegistro)
      */
-    public LazyModel(DefaultDAO<T, ?> dao, Function<T, Object> idDe) {
+    public LazyModel(AbstractDataAccess<T> dao, Function<T, Object> idDe) {
         this.dao = dao;
         this.idDe = idDe;
     }
@@ -46,7 +46,7 @@ public class LazyModel<T> extends LazyDataModel<T> {
         if (dao == null) {
             return 0;
         }
-        Long total = dao.count();
+        Long total = dao.contar();
         return total != null ? total.intValue() : 0;
     }
 

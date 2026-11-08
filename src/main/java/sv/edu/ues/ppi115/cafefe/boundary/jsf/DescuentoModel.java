@@ -10,8 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
+import sv.edu.ues.ppi115.cafefe.control.DescuentoService;
 import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoService;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
 import sv.edu.ues.ppi115.cafefe.entity.TipoDescuento;
@@ -29,7 +29,7 @@ public class DescuentoModel extends AbstractModel<Descuento, UUID> implements Se
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private DescuentoRepository descuentoRepository;
+    private DescuentoService descuentoService;
 
     @Inject
     private TipoDescuentoService tipoDescuentoRepository;
@@ -39,8 +39,8 @@ public class DescuentoModel extends AbstractModel<Descuento, UUID> implements Se
     private List<SelectItem> listaTipos;
 
     @Override
-    public DefaultDAO<Descuento, UUID> getDao() {
-        return descuentoRepository;
+    public AbstractDataAccess<Descuento> getDao() {
+        return descuentoService;
     }
 
     @Override

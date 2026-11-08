@@ -6,7 +6,7 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 import sv.edu.ues.ppi115.cafefe.control.PagoDetalleService;
 import sv.edu.ues.ppi115.cafefe.entity.PagoDetalle;
 
@@ -20,7 +20,7 @@ public class PagoDetalleModel extends AbstractModel<PagoDetalle, UUID> implement
     private PagoDetalleService pagoDetalleRepository;
 
     @Override
-    public DefaultDAO<PagoDetalle, UUID> getDao() {
+    public AbstractDataAccess<PagoDetalle> getDao() {
         return pagoDetalleRepository;
     }
 

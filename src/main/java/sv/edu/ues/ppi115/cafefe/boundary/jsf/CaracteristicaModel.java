@@ -46,11 +46,11 @@ public class CaracteristicaModel extends AbstractModel<Caracteristica, UUID> imp
     }
 
     @Inject
-    private CaracteristicaRepository caracteristicaRepository;
+    private CaracteristicaService caracteristicaService;
 
     // Para el desplegable de tipos de caracteristica
     @Inject
-    private TipoCaracteristicaService tipoCaracteristicaRepository;
+    private TipoCaracteristicaService tipoCaracteristicaService;
 
     // Tipo elegido en el desplegable (UUID; se convierte a entidad al guardar)
     private UUID tipoSeleccionado;
@@ -68,7 +68,7 @@ public class CaracteristicaModel extends AbstractModel<Caracteristica, UUID> imp
 
     @Override
     public Caracteristica getRegistroById(Object id) {
-        return caracteristicaRepository.findById((UUID) id);
+        return caracteristicaService.findById((UUID) id);
     }
 
     @Override
@@ -77,8 +77,8 @@ public class CaracteristicaModel extends AbstractModel<Caracteristica, UUID> imp
     }
 
     @Override
-    public CaracteristicaRepository getDao() {
-        return caracteristicaRepository;
+    public CaracteristicaService getDao() {
+        return caracteristicaService;
     }
 
     // ---------------------------------------------------------------
@@ -115,13 +115,13 @@ public class CaracteristicaModel extends AbstractModel<Caracteristica, UUID> imp
         if (this.estado != ESTADO_CRUD.MODIFICAR
                 && this.registro != null
                 && this.registro.getIdCaracteristica() != null
-                && caracteristicaRepository.findById(this.registro.getIdCaracteristica()) != null) {
+                && caracteristicaService.findById(this.registro.getIdCaracteristica()) != null) {
             this.estado = ESTADO_CRUD.MODIFICAR;
         }
         try {
             if (this.registro != null) {
                 this.registro.setIdTipoCaracteristica(
-                        tipoCaracteristicaRepository.findById(tipoSeleccionado));
+                        tipoCaracteristicaService.findById(tipoSeleccionado));
             }
             super.btnGuardarHandler(); // guarda, recarga la tabla y limpia
         } catch (Exception e) {
@@ -178,7 +178,7 @@ public class CaracteristicaModel extends AbstractModel<Caracteristica, UUID> imp
     public List<SelectItem> getListaTipos() {
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
-            for (TipoCaracteristica t : tipoCaracteristicaRepository.findAll()) {
+            for (TipoCaracteristica t : tipoCaracteristicaService.findAll()) {
                 // inactivo: se muestra en gris pero no se puede elegir
                 boolean inactivo = Boolean.FALSE.equals(t.getActivo());
                 this.listaTipos.add(new SelectItem(t.getIdTipoCaracteristica(), t.getNombre(),

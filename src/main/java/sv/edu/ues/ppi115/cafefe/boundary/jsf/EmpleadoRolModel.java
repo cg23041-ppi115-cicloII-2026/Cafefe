@@ -10,9 +10,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.EmpleadoRepository;
-import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolRepository;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
+import sv.edu.ues.ppi115.cafefe.control.EmpleadoService;
+import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolService;
 import sv.edu.ues.ppi115.cafefe.control.RolService;
 import sv.edu.ues.ppi115.cafefe.entity.Empleado;
 import sv.edu.ues.ppi115.cafefe.entity.EmpleadoRol;
@@ -33,10 +33,10 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private EmpleadoRolRepository empleadoRolRepository;
+    private EmpleadoRolService empleadoRolService;
 
     @Inject
-    private EmpleadoRepository empleadoRepository;
+    private EmpleadoService empleadoService;
 
     @Inject
     private RolService rolRepository;
@@ -48,8 +48,8 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
     private List<SelectItem> listaRoles;
 
     @Override
-    public DefaultDAO<EmpleadoRol, UUID> getDao() {
-        return empleadoRolRepository;
+    public AbstractDataAccess<EmpleadoRol> getDao() {
+        return empleadoRolService;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
         }
         try {
             // Evita duplicados: una asignacion por (empleado, rol)
-            for (EmpleadoRol er : empleadoRolRepository.findAll()) {
+            for (EmpleadoRol er : empleadoRolService.findAll()) {
                 boolean propiaFila = this.registro.getIdEmpleadoRol() != null
                         && this.registro.getIdEmpleadoRol().equals(er.getIdEmpleadoRol());
                 if (!propiaFila
@@ -120,12 +120,12 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
                     return;
                 }
             }
-            this.registro.setIdEmpleado(empleadoRepository.findById(this.empleadoSeleccionado));
+            this.registro.setIdEmpleado(empleadoService.findById(this.empleadoSeleccionado));
             this.registro.setIdRol(rolRepository.findById(this.rolSeleccionado));
             if (this.estado == ESTADO_CRUD.MODIFICAR) {
-                empleadoRolRepository.modificar(this.registro);
+                empleadoRolService.update(this.registro);
             } else {
-                empleadoRolRepository.crear(this.registro);
+                empleadoRolService.create(this.registro);
             }
 
             // Confirmacion de exito: este guardar es personalizado (no pasa
@@ -190,7 +190,7 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
     public List<SelectItem> getListaEmpleados() {
         if (this.listaEmpleados == null) {
             this.listaEmpleados = new ArrayList<>();
-            for (Empleado e : empleadoRepository.findAll()) {
+            for (Empleado e : empleadoService.findAll()) {
                 boolean inactivo = Boolean.FALSE.equals(e.getActivo());
                 this.listaEmpleados.add(new SelectItem(
                         e.getIdEmpleado(),

@@ -101,6 +101,25 @@ public abstract class AbstractDataAccess<T> implements ServiceInterface<T> {
     }
 
     /**
+     * Busca todos los registros del repositorio. Si el repositorio es nulo se lanzará un NullPointerException. Cualquier otra excepción se encapsulará en una IllegalStateException.
+     * @return una lista con todos los registros encontrados
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
+    public List<T> findAll(){
+        EntityManager em = this.getEntityManager();
+        if (em == null){
+            throw new NullPointerException("El repositorio es nulo");
+        }
+        try {
+            return em.createNamedQuery(entityClass.getSimpleName() + ".findAll", entityClass)
+                    .getResultList();
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
      * Cuenta el número total de registros en el repositorio. Si el repositorio es nulo se lanzará una NullPointerException. Cualquier otra excepción se encapsulará en una IllegalStateException.
      * @return el número total de registros en el repositorio
      * @throws NullPointerException si el repositorio es nulo

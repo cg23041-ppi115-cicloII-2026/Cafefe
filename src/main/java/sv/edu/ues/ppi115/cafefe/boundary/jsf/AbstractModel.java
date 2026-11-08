@@ -96,10 +96,10 @@ public abstract class AbstractModel<T, ID> implements Serializable {
         boolean esModificacion = (this.estado == ESTADO_CRUD.MODIFICAR);
         if (this.estado == ESTADO_CRUD.MODIFICAR) {
             // Se está editando un registro existente (vino de "Editar")
-            getDao().modificar(this.registro);
+            getDao().update(this.registro);
         } else {
             // Es un registro nuevo
-            getDao().crear(this.registro);
+            getDao().create(this.registro);
         }
         this.cargarRegistros();
         this.limpiar(); 
@@ -114,7 +114,7 @@ public abstract class AbstractModel<T, ID> implements Serializable {
 
     public void btnModificarHandler() {
         if (this.registro != null && getDao() != null) {
-            getDao().modificar(this.registro);
+            getDao().update(this.registro);
             this.cargarRegistros();
             this.limpiar();
             this.formVisible = false;
@@ -123,7 +123,7 @@ public abstract class AbstractModel<T, ID> implements Serializable {
 
     public void btnEliminarHandler() {
         if (this.registro != null && getDao() != null) {
-            getDao().eliminar(this.registro);
+            getDao().delete(this.registro);
             this.cargarRegistros();
             this.limpiar();
             this.formVisible = false;

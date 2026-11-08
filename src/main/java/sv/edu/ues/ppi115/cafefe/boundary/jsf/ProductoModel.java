@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+    import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 import sv.edu.ues.ppi115.cafefe.control.ProductoService;
 import sv.edu.ues.ppi115.cafefe.control.ProductoTipoProductoService;
 import sv.edu.ues.ppi115.cafefe.control.TipoProductoService;
@@ -50,14 +50,14 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
     }
 
     @Inject
-    private ProductoService productoRepository;
+    private ProductoService productoService;
 
     // Para el desplegable de tipos y para registrar la relacion al guardar
     @Inject
-    private TipoProductoService tipoProductoRepository;
+    private TipoProductoService tipoProductoService;
 
     @Inject
-    private ProductoTipoProductoService productoTipoProductoRepository;
+    private ProductoTipoProductoService productoTipoProductoService;
 
     // Tipo elegido en el desplegable (UUID; se convierte a entidad al guardar)
     private UUID tipoSeleccionado;
@@ -71,8 +71,8 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
     private BigDecimal filtroPrecioMax;
 
     @Override
-    public DefaultDAO<Producto, UUID> getDao() {
-        return productoRepository;
+    public AbstractDataAccess<Producto> getDao() {
+        return productoService;
     }
 
     @Override
@@ -137,7 +137,7 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
         if (this.estado != ESTADO_CRUD.MODIFICAR
                 && this.registro != null
                 && this.registro.getIdProducto() != null
-                && productoRepository.findById(this.registro.getIdProducto()) != null) {
+                && productoService.findById(this.registro.getIdProducto()) != null) {
             this.estado = ESTADO_CRUD.MODIFICAR;
         }
         // Recuerda los datos ANTES de guardar: super() limpia el registro
@@ -150,16 +150,16 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
             // Si se elegio un tipo, deja registrada la relacion en
             // producto_tipo_producto (solo si aun no existe para no duplicar)
             if (idProducto != null && idTipo != null) {
-                boolean existe = productoTipoProductoRepository.findByProducto(idProducto).stream()
+                boolean existe = productoTipoProductoService.findByProducto(idProducto).stream()
                         .anyMatch(f -> f.getIdTipoProducto() != null
                                 && idTipo.equals(f.getIdTipoProducto().getIdTipoProducto()));
                 if (!existe) {
                     ProductoTipoProducto fila = new ProductoTipoProducto(UUID.randomUUID());
                     fila.setFechaCreacion(new Date());
                     fila.setObservaciones("");
-                    fila.setIdProducto(productoRepository.findById(idProducto));
-                    fila.setIdTipoProducto(tipoProductoRepository.findById(idTipo));
-                    productoTipoProductoRepository.crear(fila);
+                    fila.setIdProducto(productoService.findById(idProducto));
+                    fila.setIdTipoProducto(tipoProductoService.findById(idTipo));
+                    productoTipoProductoService.create(fila);
                 }
             }
         } catch (Exception e) {
@@ -180,7 +180,7 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
         this.tipoSeleccionado = null;
         if (this.registro != null) {
             List<ProductoTipoProducto> filas
-                    = productoTipoProductoRepository.findByProducto(this.registro.getIdProducto());
+                    = productoTipoProductoService.findByProducto(this.registro.getIdProducto());
             if (!filas.isEmpty() && filas.get(0).getIdTipoProducto() != null) {
                 this.tipoSeleccionado = filas.get(0).getIdTipoProducto().getIdTipoProducto();
             }
@@ -215,7 +215,7 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
     public List<SelectItem> getListaTipos() {
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
-            for (TipoProducto t : tipoProductoRepository.findAll()) {
+            for (TipoProducto t : tipoProductoService.findAll()) {
                 // inactivo: se muestra en gris pero no se puede elegir
                 boolean inactivo = Boolean.FALSE.equals(t.getActivo());
                 this.listaTipos.add(new SelectItem(t.getIdTipoProducto(), t.getNombre(),
@@ -236,19 +236,19 @@ public class ProductoModel extends AbstractModel<Producto, UUID> implements Seri
     // ---- Filtros opcionales ----
     public void buscarPorNombre() {
         if (filtroNombre != null && !filtroNombre.isEmpty()) {
-            this.registros = productoRepository.findByNombreLike(filtroNombre);
+            this.registros = productoService.findByNombreLike(filtroNombre);
         } else {
             this.cargarRegistros();
         }
     }
 
     public void buscarActivos() {
-        this.registros = productoRepository.findActivos();
+        this.registros = productoService.findActivos();
     }
 
     public void buscarPorPrecio() {
         if (filtroPrecioMin != null && filtroPrecioMax != null) {
-            this.registros = productoRepository.findByPrecioRange(filtroPrecioMin, filtroPrecioMax);
+            this.registros = productoService.findByPrecioRange(filtroPrecioMin, filtroPrecioMax);
         } else {
             this.cargarRegistros();
         }

@@ -7,9 +7,9 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 import sv.edu.ues.ppi115.cafefe.entity.Empleado;
-import sv.edu.ues.ppi115.cafefe.control.EmpleadoRepository;
+import sv.edu.ues.ppi115.cafefe.control.EmpleadoService;
 
 @Named
 @ViewScoped
@@ -18,7 +18,7 @@ public class EmpleadoModel extends AbstractModel<Empleado, UUID> implements Seri
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private EmpleadoRepository empleadoRepository;
+    private EmpleadoService empleadoService;
 
     @Override
     public Empleado instanciarRegistro() {
@@ -46,8 +46,8 @@ public class EmpleadoModel extends AbstractModel<Empleado, UUID> implements Seri
     }
 
     @Override
-    public DefaultDAO<Empleado, UUID> getDao() {
-        return empleadoRepository;
+    public AbstractDataAccess<Empleado> getDao() {
+        return empleadoService;
     }
 
     /**

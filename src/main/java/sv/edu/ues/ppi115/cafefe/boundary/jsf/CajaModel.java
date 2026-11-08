@@ -5,8 +5,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.CajaRepository;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
+import sv.edu.ues.ppi115.cafefe.control.CajaService;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
 import sv.edu.ues.ppi115.cafefe.entity.Caja;
 
 /**
@@ -19,10 +19,10 @@ public class CajaModel extends AbstractModel<Caja, UUID> implements Serializable
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private CajaRepository cajaRepository;
+    private CajaService cajaRepository;
 
     @Override
-    public DefaultDAO<Caja, UUID> getDao() {
+    public AbstractDataAccess<Caja> getDao() {
         return cajaRepository;
     }
 

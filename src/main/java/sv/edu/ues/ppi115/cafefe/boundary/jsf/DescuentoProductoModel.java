@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.primefaces.event.TabChangeEvent;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.DescuentoRepository;
-import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoRepository;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
+import sv.edu.ues.ppi115.cafefe.control.DescuentoService;
+import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoService;
 import sv.edu.ues.ppi115.cafefe.control.ProductoService;
 import sv.edu.ues.ppi115.cafefe.control.TipoDescuentoService;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
@@ -35,16 +35,16 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private DescuentoProductoRepository descuentoProductoRepository;
+    private DescuentoProductoService descuentoProductoService;
 
     @Inject
-    private DescuentoRepository descuentoRepository;
+    private DescuentoService descuentoService;
 
     @Inject
-    private ProductoService productoRepository;
+    private ProductoService productoService;
 
     @Inject
-    private TipoDescuentoService tipoDescuentoRepository;
+    private TipoDescuentoService tipoDescuentoService;
 
     // ---- Desplegables del formulario (mismo patron que ProductoModel) ----
     // tipoSeleccionado = primer nivel de la cascada de la ventana emergente
@@ -56,8 +56,8 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
     private List<SelectItem> listaProductos;
 
     @Override
-    public DefaultDAO<DescuentoProducto, UUID> getDao() {
-        return descuentoProductoRepository;
+    public AbstractDataAccess<DescuentoProducto> getDao() {
+        return descuentoProductoService;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
                 return;
             }
             // Datos del descuento elegido en el cascada
-            Descuento descuento = descuentoRepository.findById(this.descuentoSeleccionado);
+            Descuento descuento = descuentoService.findById(this.descuentoSeleccionado);
             TipoDescuento tipo = (descuento != null) ? descuento.getIdTipoDescuento() : null;
             String nombreTipo = (tipo != null && tipo.getNombre() != null)
                     ? tipo.getNombre() : "(sin tipo)";
@@ -183,7 +183,7 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
             }
             // FKs: aplica descuento y producto elegidos en los combos ANTES de persistir
             this.registro.setIdDescuento(descuento);
-            this.registro.setIdProducto(productoRepository.findById(this.productoSeleccionado));
+            this.registro.setIdProducto(productoService.findById(this.productoSeleccionado));
         }
         try {
             super.btnGuardarHandler(); // guarda, recarga la tabla y limpia
@@ -254,7 +254,7 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
     public List<SelectItem> getListaTipos() {
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
-            for (TipoDescuento t : tipoDescuentoRepository.findAll()) {
+            for (TipoDescuento t : tipoDescuentoService.findAll()) {
                 boolean inactivo = Boolean.FALSE.equals(t.getActivo());
                 this.listaTipos.add(new SelectItem(t.getIdTipoDescuento(),
                         t.getNombre(), null, inactivo));
@@ -271,9 +271,9 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
         if (this.listaDescuentos == null) {
             this.listaDescuentos = new ArrayList<>();
             if (this.tipoSeleccionado != null) {
-                TipoDescuento tipo = tipoDescuentoRepository.findById(this.tipoSeleccionado);
+                TipoDescuento tipo = tipoDescuentoService.findById(this.tipoSeleccionado);
                 UUID idTipo = (tipo != null) ? tipo.getIdTipoDescuento() : null;
-                for (Descuento d : descuentoRepository.findAll()) {
+                for (Descuento d : descuentoService.findAll()) {
                     if (idTipo != null && d.getIdTipoDescuento() != null
                             && idTipo.equals(d.getIdTipoDescuento().getIdTipoDescuento())) {
                         this.listaDescuentos.add(new SelectItem(
@@ -307,7 +307,7 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
         if (this.descuentoSeleccionado == null) {
             return "(ninguno)";
         }
-        Descuento d = descuentoRepository.findById(this.descuentoSeleccionado);
+        Descuento d = descuentoService.findById(this.descuentoSeleccionado);
         if (d == null) {
             return "(ninguno)";
         }
@@ -320,7 +320,7 @@ public class DescuentoProductoModel extends AbstractModel<DescuentoProducto, UUI
     public List<SelectItem> getListaProductos() {
         if (this.listaProductos == null) {
             this.listaProductos = new ArrayList<>();
-            for (Producto p : productoRepository.findAll()) {
+            for (Producto p : productoService.findAll()) {
                 // inactivo: se muestra en gris pero no se puede elegir
                 boolean inactivo = Boolean.FALSE.equals(p.getActivo());
                 this.listaProductos.add(new SelectItem(p.getIdProducto(), p.getNombre(),

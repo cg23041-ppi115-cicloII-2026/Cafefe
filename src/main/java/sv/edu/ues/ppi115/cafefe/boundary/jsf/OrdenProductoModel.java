@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import org.primefaces.PrimeFaces;
-import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.OrdenProductoRepository;
-import sv.edu.ues.ppi115.cafefe.control.OrdenRepository;
+import sv.edu.ues.ppi115.cafefe.control.DescuentoProductoService;
+import sv.edu.ues.ppi115.cafefe.control.OrdenProductoService;
+import sv.edu.ues.ppi115.cafefe.control.OrdenService;
 import sv.edu.ues.ppi115.cafefe.control.ProductoService;
 import sv.edu.ues.ppi115.cafefe.entity.Descuento;
 import sv.edu.ues.ppi115.cafefe.entity.DescuentoProducto;
@@ -50,16 +50,16 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private OrdenProductoRepository ordenProductoRepository;
+    private OrdenProductoService ordenProductoService;
 
     @Inject
-    private OrdenRepository ordenRepository;
+    private OrdenService ordenService;
 
     @Inject
-    private ProductoService productoRepository;
+    private ProductoService productoService;
 
     @Inject
-    private DescuentoProductoRepository descuentoProductoRepository;
+    private DescuentoProductoService descuentoProductoService;
 
     /** Texto escrito en el autoComplete de la ventana "Seleccionar Producto". */
     private String productoBusqueda;
@@ -78,8 +78,8 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
     }
 
     @Override
-    public OrdenProductoRepository getDao() {
-        return ordenProductoRepository;
+    public OrdenProductoService getDao() {
+        return ordenProductoService;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
 
     @Override
     public OrdenProducto getRegistroById(Object id) {
-        return ordenProductoRepository.findById((UUID) id);
+        return ordenProductoService.findById((UUID) id);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
      */
     public List<String> completarProductos(String texto) {
         List<String> nombres = new ArrayList<>();
-        for (Producto p : productoRepository.findActivos()) {
+        for (Producto p : productoService.findActivos()) {
             if (texto == null || texto.trim().isEmpty()
                     || (p.getNombre() != null
                     && p.getNombre().toLowerCase().contains(texto.trim().toLowerCase()))) {
@@ -139,7 +139,7 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
             return;
         }
         Producto encontrado = null;
-        for (Producto p : productoRepository.findActivos()) {
+        for (Producto p : productoService.findActivos()) {
             if (p.getNombre() != null
                     && p.getNombre().equalsIgnoreCase(this.productoBusqueda.trim())) {
                 encontrado = p;
@@ -176,7 +176,7 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
         if (this.registro == null || getDao() == null) {
             return;
         }
-        Orden orden = (idOrden != null) ? ordenRepository.findById(idOrden) : null;
+        Orden orden = (idOrden != null) ? ordenService.findById(idOrden) : null;
         if (orden == null) {
             mensaje(FacesMessage.SEVERITY_WARN,
                     "Primero guarde la orden en la pestaña Tomar Orden");
@@ -218,7 +218,7 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
         this.descuentosListos = false;
         PrimeFaces.current().ajax().addCallbackParam("listos", false);
         
-        Orden orden = (idOrden != null) ? ordenRepository.findById(idOrden) : null;
+        Orden orden = (idOrden != null) ? ordenService.findById(idOrden) : null;
         if (orden == null) {
             mensaje(FacesMessage.SEVERITY_WARN,
                     "Primero guarde la orden en la pestaña Tomar Orden");
@@ -248,16 +248,16 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
         if (this.listaDescuentosAplicables == null) {
             this.listaDescuentosAplicables = new ArrayList<>();
             Orden orden = (this.idOrdenDescuentos != null)
-                    ? ordenRepository.findById(this.idOrdenDescuentos) : null;
+                    ? ordenService.findById(this.idOrdenDescuentos) : null;
             if (orden != null) {
                 // Productos que componen la orden (sus lineas guardadas)
                 Set<UUID> productosOrden = new HashSet<>();
-                for (OrdenProducto linea : ordenProductoRepository.findByOrden(orden.getIdOrden())) {
+                for (OrdenProducto linea : ordenProductoService.findByOrden(orden.getIdOrden())) {
                     if (linea.getIdProducto() != null) {
                         productosOrden.add(linea.getIdProducto().getIdProducto());
                     }
                 }
-                for (DescuentoProducto dp : descuentoProductoRepository.findAll()) {
+                for (DescuentoProducto dp : descuentoProductoService.findAll()) {
                     if (dp.getIdProducto() == null || dp.getValor() == null
                             || !productosOrden.contains(dp.getIdProducto().getIdProducto())) {
                         continue;
@@ -294,8 +294,8 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
             return;
         }
         Orden orden = (this.idOrdenDescuentos != null)
-                ? ordenRepository.findById(this.idOrdenDescuentos) : null;
-        DescuentoProducto dp = descuentoProductoRepository
+                ? ordenService.findById(this.idOrdenDescuentos) : null;
+        DescuentoProducto dp = descuentoProductoService
                 .findById(this.descuentoAplicableSeleccionado);
         if (orden == null || dp == null) {
             mensaje(FacesMessage.SEVERITY_WARN,
@@ -322,7 +322,7 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
         }
         // Lineas de esta orden cuyo producto tenga el descuento asignado
         List<OrdenProducto> lineas = new ArrayList<>();
-        for (OrdenProducto linea : ordenProductoRepository.findByOrden(orden.getIdOrden())) {
+        for (OrdenProducto linea : ordenProductoService.findByOrden(orden.getIdOrden())) {
             if (linea.getIdProducto() != null && dp.getIdProducto() != null
                     && linea.getIdProducto().getIdProducto()
                             .equals(dp.getIdProducto().getIdProducto())) {
@@ -344,7 +344,7 @@ public class OrdenProductoModel extends AbstractModel<OrdenProducto, UUID> imple
                 String obs = linea.getObservaciones();
                 linea.setObservaciones(obs == null || obs.trim().isEmpty()
                         ? texto : obs + "; " + texto);
-                ordenProductoRepository.modificar(linea);
+                ordenProductoService.update(linea);
             }
         } catch (Exception e) {
             mensaje(FacesMessage.SEVERITY_WARN, "No se pudo aplicar el descuento");

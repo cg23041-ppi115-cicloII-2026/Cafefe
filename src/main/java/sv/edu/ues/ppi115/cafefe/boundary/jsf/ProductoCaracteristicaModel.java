@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.primefaces.event.TabChangeEvent;
-import sv.edu.ues.ppi115.cafefe.control.CaracteristicaRepository;
+import sv.edu.ues.ppi115.cafefe.control.CaracteristicaService;
 import sv.edu.ues.ppi115.cafefe.control.ProductoCaracteristicaService;
 import sv.edu.ues.ppi115.cafefe.control.ProductoService;
 import sv.edu.ues.ppi115.cafefe.control.TipoCaracteristicaService;
@@ -54,16 +54,16 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     }
 
     @Inject
-    private ProductoCaracteristicaService productoCaracteristicaRepository;
+    private ProductoCaracteristicaService productoCaracteristicaService;
 
     // Repositorios extra: solo para cargar las listas desplegables
     @Inject
-    private ProductoService productoRepository;
+    private ProductoService productoService;
 
-    @Inject private CaracteristicaRepository caracteristicaRepository;
+    @Inject private CaracteristicaService caracteristicaService;
 
     @Inject
-    private TipoCaracteristicaService tipoCaracteristicaRepository;
+    private TipoCaracteristicaService tipoCaracteristicaService;
 
     // Selecciones de los desplegables (se guardan como UUID y se
     // convierten a las entidades Producto/Caracteristica al guardar)
@@ -92,7 +92,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
 
     @Override
     public ProductoCaracteristica getRegistroById(Object id) {
-        return productoCaracteristicaRepository.findById((UUID) id);
+        return productoCaracteristicaService.findById((UUID) id);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
 
     @Override
     public ProductoCaracteristicaService getDao() {
-        return productoCaracteristicaRepository;
+        return productoCaracteristicaService;
     }
 
     // ---------------------------------------------------------------
@@ -135,7 +135,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
             // Sea cual sea la expresion guardada en tipo_caracteristica se
             // aplica aqui; si no existe o esta mal escrita, se detecta y
             // se bloquea el guardado con un aviso.
-            Caracteristica elegida = caracteristicaRepository.findById(this.caracteristicaSeleccionada);
+            Caracteristica elegida = caracteristicaService.findById(this.caracteristicaSeleccionada);
             TipoCaracteristica tipo = (elegida != null) ? elegida.getIdTipoCaracteristica() : null;
             String nombreTipo = (tipo != null && tipo.getNombre() != null)
                     ? tipo.getNombre() : "(sin tipo)";
@@ -173,12 +173,12 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
             // INSERT con ID duplicado.
             if (this.estado != ESTADO_CRUD.MODIFICAR
                     && this.registro.getIdProductoCaracteristica() != null
-                    && productoCaracteristicaRepository.findById(this.registro.getIdProductoCaracteristica()) != null) {
+                    && productoCaracteristicaService.findById(this.registro.getIdProductoCaracteristica()) != null) {
                 this.estado = ESTADO_CRUD.MODIFICAR;
             }
             // Convierte los UUID elegidos en las entidades reales
-            this.registro.setIdProducto(productoRepository.findById(productoSeleccionado));
-            this.registro.setIdCaracteristica(caracteristicaRepository.findById(caracteristicaSeleccionada));
+            this.registro.setIdProducto(productoService.findById(productoSeleccionado));
+            this.registro.setIdCaracteristica(caracteristicaService.findById(caracteristicaSeleccionada));
         }
         try {
             super.btnGuardarHandler();
@@ -257,7 +257,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     public List<SelectItem> getListaProductos() {
         if (this.listaProductos == null) {
             this.listaProductos = new ArrayList<>();
-            for (Producto p : productoRepository.findAll()) {
+            for (Producto p : productoService.findAll()) {
                 // inactivo: se muestra en gris pero no se puede elegir
                 boolean inactivo = Boolean.FALSE.equals(p.getActivo());
                 this.listaProductos.add(new SelectItem(p.getIdProducto(), p.getNombre(),
@@ -275,7 +275,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     public List<SelectItem> getListaTipos() {
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
-            for (TipoCaracteristica t : tipoCaracteristicaRepository.findAll()) {
+            for (TipoCaracteristica t : tipoCaracteristicaService.findAll()) {
                 boolean inactivo = Boolean.FALSE.equals(t.getActivo());
                 this.listaTipos.add(new SelectItem(t.getIdTipoCaracteristica(),
                         t.getNombre(), null, inactivo));
@@ -292,10 +292,10 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
         if (this.listaCaracteristicas == null) {
             this.listaCaracteristicas = new ArrayList<>();
             if (this.tipoSeleccionado != null) {
-                TipoCaracteristica tipo = tipoCaracteristicaRepository.findById(this.tipoSeleccionado);
+                TipoCaracteristica tipo = tipoCaracteristicaService.findById(this.tipoSeleccionado);
                 UUID idTipo = (tipo != null) ? tipo.getIdTipoCaracteristica() : null;
                 if (idTipo != null) {
-                    for (Caracteristica c : caracteristicaRepository.findAll()) {
+                    for (Caracteristica c : caracteristicaService.findAll()) {
                         if (c.getIdTipoCaracteristica() != null
                                 && idTipo.equals(c.getIdTipoCaracteristica().getIdTipoCaracteristica())) {
                             boolean inactivo = Boolean.FALSE.equals(c.getActivo());
@@ -331,7 +331,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
         if (this.caracteristicaSeleccionada == null) {
             return "(ninguno)";
         }
-        Caracteristica c = caracteristicaRepository.findById(this.caracteristicaSeleccionada);
+        Caracteristica c = caracteristicaService.findById(this.caracteristicaSeleccionada);
         if (c == null) {
             return "(ninguno)";
         }
@@ -344,7 +344,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     public void buscarPorProducto() {
         UUID id = convertirUUID(filtroProducto);
         if (id != null) {
-            this.registros = productoCaracteristicaRepository.findByProducto(id);
+            this.registros = productoCaracteristicaService.findByProducto(id);
         } else {
             this.cargarRegistros(); // vacio o texto invalido: se muestra todo
         }
@@ -353,7 +353,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
     public void buscarPorCaracteristica() {
         UUID id = convertirUUID(filtroCaracteristica);
         if (id != null) {
-            this.registros = productoCaracteristicaRepository.findByCaracteristica(id);
+            this.registros = productoCaracteristicaService.findByCaracteristica(id);
         } else {
             this.cargarRegistros();
         }
@@ -361,7 +361,7 @@ public class ProductoCaracteristicaModel extends AbstractModel<ProductoCaracteri
 
     public void buscarPorValor() {
         if (this.filtroValor != null && !this.filtroValor.trim().isEmpty()) {
-            this.registros = productoCaracteristicaRepository.findByValor(filtroValor.trim());
+            this.registros = productoCaracteristicaService.findByValor(filtroValor.trim());
         } else {
             this.cargarRegistros();
         }

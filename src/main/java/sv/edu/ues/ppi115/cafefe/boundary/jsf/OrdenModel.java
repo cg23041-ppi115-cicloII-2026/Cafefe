@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import sv.edu.ues.ppi115.cafefe.control.DefaultDAO;
-import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolRepository;
-import sv.edu.ues.ppi115.cafefe.control.OrdenRepository;
+import sv.edu.ues.ppi115.cafefe.control.AbstractDataAccess;
+import sv.edu.ues.ppi115.cafefe.control.EmpleadoRolService;
+import sv.edu.ues.ppi115.cafefe.control.OrdenService;
 import sv.edu.ues.ppi115.cafefe.entity.EmpleadoRol;
 import sv.edu.ues.ppi115.cafefe.entity.Orden;
 
@@ -37,10 +37,10 @@ public class OrdenModel extends AbstractModel<Orden, UUID> implements Serializab
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private OrdenRepository ordenRepository;
+    private OrdenService ordenService;
 
     @Inject
-    private EmpleadoRolRepository empleadoRolRepository;
+    private EmpleadoRolService empleadoRolService;
 
     // ---------------------------------------------------------------
     // Pestana 1 "Tomar Orden": cabecera de la orden
@@ -75,7 +75,7 @@ public class OrdenModel extends AbstractModel<Orden, UUID> implements Serializab
     public List<SelectItem> getListaCobradores() {
         if (this.listaCobradores == null) {
             this.listaCobradores = new ArrayList<>();
-            for (EmpleadoRol er : empleadoRolRepository.findCobradores()) {
+            for (EmpleadoRol er : empleadoRolService.findCobradores()) {
                 String etiqueta = er.getIdEmpleado().getNombre() + " "
                         + er.getIdEmpleado().getApellido()
                         + " (" + er.getIdRol().getNombre() + ")";
@@ -108,7 +108,7 @@ public class OrdenModel extends AbstractModel<Orden, UUID> implements Serializab
                     FacesMessage.SEVERITY_WARN, "Elija quien realiza la orden", null));
             return;
         }
-        EmpleadoRol atiende = empleadoRolRepository.findById(this.cobradorSeleccionado);
+        EmpleadoRol atiende = empleadoRolService.findById(this.cobradorSeleccionado);
         if (atiende == null) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_WARN,
@@ -117,7 +117,7 @@ public class OrdenModel extends AbstractModel<Orden, UUID> implements Serializab
         }
         this.registro.setIdEmpleadoRol(atiende);
         this.registro.setFechaCreacion(new Date());
-        getDao().crear(this.registro);
+        getDao().create(this.registro);
 
         // La orden guardada queda visible y el formulario se bloquea;
         // la siguiente se arranca con el boton "Nuevo Ordenes".
@@ -158,8 +158,8 @@ public class OrdenModel extends AbstractModel<Orden, UUID> implements Serializab
     }
 
     @Override
-    public DefaultDAO<Orden, UUID> getDao() {
-        return ordenRepository;
+    public AbstractDataAccess<Orden> getDao() {
+        return ordenService;
     }
 
     @Override
