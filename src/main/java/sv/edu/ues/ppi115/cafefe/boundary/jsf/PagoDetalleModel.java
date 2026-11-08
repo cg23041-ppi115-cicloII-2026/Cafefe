@@ -17,11 +17,11 @@ public class PagoDetalleModel extends AbstractModel<PagoDetalle, UUID> implement
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private PagoDetalleService pagoDetalleRepository;
+    private PagoDetalleService pagoDetalleService;
 
     @Override
     public AbstractDataAccess<PagoDetalle> getDao() {
-        return pagoDetalleRepository;
+        return pagoDetalleService;
     }
 
     @Override

@@ -16,11 +16,11 @@ public class PagoModel extends AbstractModel<Pago, UUID> implements Serializable
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private PagoService pagoRepository;
+    private PagoService pagoService;
 
     @Override
     public AbstractDataAccess<Pago> getDao() {
-        return pagoRepository;
+        return pagoService;
     }
 
     @Override

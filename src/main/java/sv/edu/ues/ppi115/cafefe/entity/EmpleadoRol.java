@@ -30,7 +30,11 @@ import java.util.UUID;
 @NamedQueries({
     @NamedQuery(name = "EmpleadoRol.findAll", query = "SELECT e FROM EmpleadoRol e"),
     @NamedQuery(name = "EmpleadoRol.findByActivo", query = "SELECT e FROM EmpleadoRol e WHERE e.activo = :activo"),
-    @NamedQuery(name = "EmpleadoRol.findByObservaciones", query = "SELECT e FROM EmpleadoRol e WHERE e.observaciones = :observaciones")})
+    @NamedQuery(name = "EmpleadoRol.findByObservaciones", query = "SELECT e FROM EmpleadoRol e WHERE e.observaciones = :observaciones"),
+    @NamedQuery(name = "EmpleadoRol.findCobradores",
+            query = "SELECT e FROM EmpleadoRol e JOIN e.idRol r "
+                  + "WHERE LOWER(r.nombre) IN ('cajero', 'gerente', 'administrador', 'mesero') "
+                  + "ORDER BY e.idEmpleado.nombre, e.idEmpleado.apellido")})
 public class EmpleadoRol implements Serializable {
 
     private static final long serialVersionUID = 1L;

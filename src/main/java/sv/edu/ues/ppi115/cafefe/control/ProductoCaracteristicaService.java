@@ -52,6 +52,83 @@ public class ProductoCaracteristicaService extends AbstractDataAccess<ProductoCa
     }
 
     /**
+     * Busca TODAS las características de un producto, sin paginar (la
+     * variante paginada es para el recurso REST).
+     * @param idProducto identificador del producto
+     * @return lista de características del producto
+     * @throws IllegalArgumentException si el identificador es inválido
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
+    public List<ProductoCaracteristica> findByProducto(UUID idProducto) {
+        if (idProducto == null) {
+            throw new IllegalArgumentException("Parámetros inválidos");
+        }
+        try {
+            if (em != null) {
+                return em.createNamedQuery("ProductoCaracteristica.findByProducto",
+                                ProductoCaracteristica.class)
+                        .setParameter("idProducto", idProducto)
+                        .getResultList();
+            }
+            throw new NullPointerException("El repositorio es nulo");
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Busca las características asignadas a una característica, sin paginar.
+     * @param idCaracteristica identificador de la característica
+     * @return lista de características encontradas
+     * @throws IllegalArgumentException si el identificador es inválido
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
+    public List<ProductoCaracteristica> findByCaracteristica(UUID idCaracteristica) {
+        if (idCaracteristica == null) {
+            throw new IllegalArgumentException("Parámetros inválidos");
+        }
+        try {
+            if (em != null) {
+                return em.createNamedQuery("ProductoCaracteristica.findByCaracteristica",
+                                ProductoCaracteristica.class)
+                        .setParameter("idCaracteristica", idCaracteristica)
+                        .getResultList();
+            }
+            throw new NullPointerException("El repositorio es nulo");
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
+     * Busca las características cuyo valor sea EXACTAMENTE el indicado,
+     * sin paginar.
+     * @param valor valor a buscar
+     * @return lista de características con ese valor
+     * @throws IllegalArgumentException si el valor es nulo
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
+    public List<ProductoCaracteristica> findByValor(String valor) {
+        if (valor == null) {
+            throw new IllegalArgumentException("Parámetros inválidos");
+        }
+        try {
+            if (em != null) {
+                return em.createNamedQuery("ProductoCaracteristica.findByValor",
+                                ProductoCaracteristica.class)
+                        .setParameter("valor", valor)
+                        .getResultList();
+            }
+            throw new NullPointerException("El repositorio es nulo");
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
      * Cuenta características por producto.
      * @param idProducto identificador del producto
      * @return total de características encontradas

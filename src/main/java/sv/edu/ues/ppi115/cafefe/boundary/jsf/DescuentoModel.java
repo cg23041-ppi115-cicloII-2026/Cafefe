@@ -32,7 +32,7 @@ public class DescuentoModel extends AbstractModel<Descuento, UUID> implements Se
     private DescuentoService descuentoService;
 
     @Inject
-    private TipoDescuentoService tipoDescuentoRepository;
+    private TipoDescuentoService tipoDescuentoService;
 
     // ---- Desplegable de tipo de descuento (mismo patron que ProductoModel) ----
     private UUID tipoSeleccionado;
@@ -97,7 +97,7 @@ public class DescuentoModel extends AbstractModel<Descuento, UUID> implements Se
                 return;
             }
             // FK: aplica el tipo elegido en el combo ANTES de persistir
-            this.registro.setIdTipoDescuento(tipoDescuentoRepository.findById(this.tipoSeleccionado));
+            this.registro.setIdTipoDescuento(tipoDescuentoService.findById(this.tipoSeleccionado));
         }
         try {
             super.btnGuardarHandler(); // guarda, recarga la tabla y limpia
@@ -144,7 +144,7 @@ public class DescuentoModel extends AbstractModel<Descuento, UUID> implements Se
     public List<SelectItem> getListaTipos() {
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
-            for (TipoDescuento t : tipoDescuentoRepository.findAll()) {
+            for (TipoDescuento t : tipoDescuentoService.findAll()) {
                 // inactivo: se muestra en gris pero no se puede elegir
                 boolean inactivo = Boolean.FALSE.equals(t.getActivo());
                 this.listaTipos.add(new SelectItem(t.getIdTipoDescuento(), t.getNombre(),
