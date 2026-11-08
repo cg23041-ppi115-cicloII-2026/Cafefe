@@ -19,11 +19,11 @@ public class CajaModel extends AbstractModel<Caja, UUID> implements Serializable
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private CajaService cajaRepository;
+    private CajaService cajaService;
 
     @Override
     public AbstractDataAccess<Caja> getDao() {
-        return cajaRepository;
+        return cajaService;
     }
 
     @Override

@@ -50,6 +50,30 @@ public class OrdenProductoService extends AbstractDataAccess<OrdenProducto> {
         throw new IllegalArgumentException("Parámetros inválidos");
     }
     /**
+     * Busca TODAS las lineas de una orden, sin paginar: el detalle de una
+     * orden es corto y se pide completo (la variante paginada es para el
+     * recurso REST).
+     * @param idOrden identificador de la orden
+     * @return lista de lineas de la orden
+     * @throws IllegalArgumentException si el identificador es inválido
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
+    public List<OrdenProducto> findByOrden(UUID idOrden) {
+        if (idOrden != null) {
+            try {
+                if (em != null) {
+                    return em.createNamedQuery("OrdenProducto.findByOrden", OrdenProducto.class)
+                            .setParameter("idOrden", idOrden)
+                            .getResultList();
+                }
+                throw new NullPointerException("El repositorio es nulo");
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        throw new IllegalArgumentException("Parámetros inválidos");
+    }
+    /**
      * Cuenta productos por orden.
      * @param idOrden identificador de la orden
      * @return total de productos encontrados

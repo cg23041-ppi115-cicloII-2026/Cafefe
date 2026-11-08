@@ -39,7 +39,7 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
     private EmpleadoService empleadoService;
 
     @Inject
-    private RolService rolRepository;
+    private RolService rolService;
 
     // ---- Formulario: combo empleado + combo rol ----
     private UUID empleadoSeleccionado;
@@ -121,7 +121,7 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
                 }
             }
             this.registro.setIdEmpleado(empleadoService.findById(this.empleadoSeleccionado));
-            this.registro.setIdRol(rolRepository.findById(this.rolSeleccionado));
+            this.registro.setIdRol(rolService.findById(this.rolSeleccionado));
             if (this.estado == ESTADO_CRUD.MODIFICAR) {
                 empleadoRolService.update(this.registro);
             } else {
@@ -209,7 +209,7 @@ public class EmpleadoRolModel extends AbstractModel<EmpleadoRol, UUID> implement
     public List<SelectItem> getListaRoles() {
         if (this.listaRoles == null) {
             this.listaRoles = new ArrayList<>();
-            for (Rol r : rolRepository.findAll()) {
+            for (Rol r : rolService.findAll()) {
                 boolean inactivo = Boolean.FALSE.equals(r.getActivo());
                 this.listaRoles.add(new SelectItem(r.getIdRol(), r.getNombre(),
                         null, inactivo));

@@ -52,6 +52,32 @@ public class ProductoTipoProductoService extends AbstractDataAccess<ProductoTipo
     }
 
     /**
+     * Busca TODOS los tipos asignados a un producto, sin paginar (la
+     * variante paginada es para el recurso REST).
+     * @param idProducto identificador del producto
+     * @return lista de tipos de producto del producto
+     * @throws IllegalArgumentException si el identificador es inválido
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
+    public List<ProductoTipoProducto> findByProducto(UUID idProducto) {
+        if (idProducto == null) {
+            throw new IllegalArgumentException("Parámetros inválidos");
+        }
+        try {
+            if (em == null) {
+                throw new NullPointerException("El repositorio es nulo");
+            }
+            return em.createNamedQuery("ProductoTipoProducto.findByProducto",
+                            ProductoTipoProducto.class)
+                    .setParameter("idProducto", idProducto)
+                    .getResultList();
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    /**
      * Cuenta tipos de producto asociados a un producto.
      * @param idProducto identificador del producto
      * @return total de tipos de producto encontrados

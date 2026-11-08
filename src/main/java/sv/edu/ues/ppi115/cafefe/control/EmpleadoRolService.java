@@ -141,5 +141,25 @@ public class EmpleadoRolService extends AbstractDataAccess<EmpleadoRol> {
             throw new IllegalStateException(ex);
         }
     }
+
+    /**
+     * Asignaciones que pueden TOMAR orden: empleados con rol cajero, gerente,
+     * administrador o mesero (lista fija, sin campo en la BD). Devuelve tambien
+     * las inactivas: el combo las muestra en gris y no deja elegirlas.
+     * @return lista de asignaciones que pueden tomar orden
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
+    public List<EmpleadoRol> findCobradores() {
+        try {
+            if (em != null) {
+                return em.createNamedQuery("EmpleadoRol.findCobradores", EmpleadoRol.class)
+                        .getResultList();
+            }
+            throw new NullPointerException("El repositorio es nulo");
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
 }
  
