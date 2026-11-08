@@ -125,7 +125,7 @@ public abstract class AbstractDataAccess<T> implements ServiceInterface<T> {
      * @throws NullPointerException si el repositorio es nulo
      * @throws IllegalStateException si ocurre cualquier otra excepción
      */
-    public Long contar() throws IllegalStateException {
+      public Long contar() throws IllegalStateException {
         try {
             EntityManager em = getEntityManager();
 
@@ -133,8 +133,9 @@ public abstract class AbstractDataAccess<T> implements ServiceInterface<T> {
                 throw new IllegalStateException("Error al acceder al repositorio");
             }
 
-            TypedQuery<Long> query = em.createNamedQuery(
-                    entityClass.getSimpleName() + ".countAll", Long.class);
+            TypedQuery<Long> query = em.createQuery(
+                    "SELECT COUNT(x) FROM " + entityClass.getSimpleName() + " x",
+                    Long.class);
             return query.getSingleResult();
 
         } catch (Exception e) {

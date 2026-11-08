@@ -119,22 +119,7 @@ public class ProductoTipoProductoService extends AbstractDataAccess<ProductoTipo
             throw new IllegalStateException(ex);
         }
     }
-    public List<ProductoTipoProducto> findByProducto(UUID idProducto) {
-    if (idProducto == null) {
-        throw new IllegalArgumentException("Parámetros inválidos");
-    }
-    try {
-        if (em == null) {
-            throw new NullPointerException("El repositorio es nulo");
-        }
-        return em.createNamedQuery("ProductoTipoProducto.findByProducto", ProductoTipoProducto.class)
-                .setParameter("idProducto", idProducto)
-                .getResultList();
-    } catch (Exception ex) {
-        throw new IllegalStateException(ex);
-    }
-}
-
+ 
 public List<ProductoTipoProducto> findByTipoProducto(UUID idTipoProducto) {
     if (idTipoProducto == null) {
         throw new IllegalArgumentException("Parámetros inválidos");
