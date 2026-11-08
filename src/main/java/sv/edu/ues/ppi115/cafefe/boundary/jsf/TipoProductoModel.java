@@ -18,11 +18,11 @@ public class TipoProductoModel extends AbstractModel<TipoProducto, UUID> impleme
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private TipoProductoService tipoProductoRepository;
+    private TipoProductoService tipoProductoService;
 
     @Override
     public AbstractDataAccess<TipoProducto> getDao() {
-        return tipoProductoRepository;
+        return tipoProductoService;
     }
 
     @Override

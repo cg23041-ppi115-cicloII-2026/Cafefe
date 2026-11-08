@@ -32,7 +32,7 @@ import sv.edu.ues.ppi115.cafefe.entity.Rol;
 public class RolConverter implements Converter<Rol> {
 
     @Inject
-    private RolService rolRepository;
+    private RolService rolService;
 
     @Override
     public Rol getAsObject(FacesContext context, UIComponent component, String value) {
@@ -40,7 +40,7 @@ public class RolConverter implements Converter<Rol> {
             return null;
         }
         try {
-            return rolRepository.findById(UUID.fromString(value.trim()));
+            return rolService.findById(UUID.fromString(value.trim()));
         } catch (IllegalArgumentException e) {
             throw new ConverterException(new FacesMessage(
                     FacesMessage.SEVERITY_ERROR, "Conversion Error", "Rol no valido."));

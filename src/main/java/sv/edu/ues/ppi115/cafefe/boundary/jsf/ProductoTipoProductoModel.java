@@ -34,14 +34,14 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private ProductoTipoProductoService productoTipoProductoRepository;
+    private ProductoTipoProductoService productoTipoProductoService;
 
     // Repositorios extra: solo para cargar las listas desplegables
     @Inject
-    private ProductoService productoRepository;
+    private ProductoService productoService;
 
     @Inject
-    private TipoProductoService tipoProductoRepository;
+    private TipoProductoService tipoProductoService;
 
     // Selecciones de los desplegables (se guardan como UUID y se
     // convierten a las entidades Producto/TipoProducto al guardar)
@@ -69,7 +69,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
 
     @Override
     public ProductoTipoProducto getRegistroById(Object id) {
-        return productoTipoProductoRepository.findById((UUID) id);
+        return productoTipoProductoService.findById((UUID) id);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
 
     @Override
     public ProductoTipoProductoService getDao() {
-        return productoTipoProductoRepository;
+        return productoTipoProductoService;
     }
 
     @Override
@@ -102,12 +102,12 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
             }
             if (this.estado != ESTADO_CRUD.MODIFICAR
                     && this.registro.getIdProductoTipoProducto() != null
-                    && productoTipoProductoRepository.findById(this.registro.getIdProductoTipoProducto()) != null) {
+                    && productoTipoProductoService.findById(this.registro.getIdProductoTipoProducto()) != null) {
                 this.estado = ESTADO_CRUD.MODIFICAR;
             }
             // Convierte los UUID elegidos en las entidades reales
-            this.registro.setIdProducto(productoRepository.findById(productoSeleccionado));
-            this.registro.setIdTipoProducto(tipoProductoRepository.findById(tipoSeleccionado));
+            this.registro.setIdProducto(productoService.findById(productoSeleccionado));
+            this.registro.setIdTipoProducto(tipoProductoService.findById(tipoSeleccionado));
         }
         super.btnGuardarHandler();
     }
@@ -157,7 +157,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
     public List<SelectItem> getListaProductos() {
         if (this.listaProductos == null) {
             this.listaProductos = new ArrayList<>();
-            for (Producto p : productoRepository.findAll()) {
+            for (Producto p : productoService.findAll()) {
                 // inactivo: se muestra en gris pero no se puede elegir
                 boolean inactivo = Boolean.FALSE.equals(p.getActivo());
                 this.listaProductos.add(new SelectItem(p.getIdProducto(), p.getNombre(),
@@ -170,7 +170,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
     public List<SelectItem> getListaTipos() {
         if (this.listaTipos == null) {
             this.listaTipos = new ArrayList<>();
-            for (TipoProducto t : tipoProductoRepository.findAll()) {
+            for (TipoProducto t : tipoProductoService.findAll()) {
                 // inactivo: se muestra en gris pero no se puede elegir
                 boolean inactivo = Boolean.FALSE.equals(t.getActivo());
                 this.listaTipos.add(new SelectItem(t.getIdTipoProducto(), t.getNombre(),
@@ -183,7 +183,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
     public void buscarPorProducto() {
         UUID id = convertirUUID(filtroProducto);
         if (id != null) {
-            this.registros = productoTipoProductoRepository.findByProducto(id);
+            this.registros = productoTipoProductoService.findByProducto(id);
         } else {
             this.cargarRegistros(); // vacio o texto invalido: se muestra todo
         }
@@ -192,7 +192,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
     public void buscarPorTipoProducto() {
         UUID id = convertirUUID(filtroTipoProducto);
         if (id != null) {
-            this.registros = productoTipoProductoRepository.findByTipoProducto(id);
+            this.registros = productoTipoProductoService.findByTipoProducto(id);
         } else {
             this.cargarRegistros();
         }
@@ -200,7 +200,7 @@ public class ProductoTipoProductoModel extends AbstractModel<ProductoTipoProduct
 
     public void buscarPorObservaciones() {
         if (this.filtroObservaciones != null && !this.filtroObservaciones.trim().isEmpty()) {
-            this.registros = productoTipoProductoRepository.findByObservaciones(filtroObservaciones.trim());
+            this.registros = productoTipoProductoService.findByObservaciones(filtroObservaciones.trim());
         } else {
             this.cargarRegistros();
         }

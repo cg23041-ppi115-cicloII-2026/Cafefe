@@ -21,11 +21,11 @@ public class TipoDescuentoModel extends AbstractModel<TipoDescuento, UUID> imple
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private TipoDescuentoService tipoDescuentoRepository;
+    private TipoDescuentoService tipoDescuentoService;
 
     @Override
     public AbstractDataAccess<TipoDescuento> getDao() {
-        return tipoDescuentoRepository;
+        return tipoDescuentoService;
     }
 
     @Override

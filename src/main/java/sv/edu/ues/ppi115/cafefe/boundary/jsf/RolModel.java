@@ -21,11 +21,11 @@ public class RolModel extends AbstractModel<Rol, UUID> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private RolService rolRepository;
+    private RolService rolService;
 
     @Override
     public AbstractDataAccess<Rol> getDao() {
-        return rolRepository;
+        return rolService;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class RolModel extends AbstractModel<Rol, UUID> implements Serializable {
     }
 
     public void buscarPorNombre(String nombre) {
-        this.registros = rolRepository.findByNombre(nombre);
+        this.registros = rolService.findByNombre(nombre);
     }
 
     /**
