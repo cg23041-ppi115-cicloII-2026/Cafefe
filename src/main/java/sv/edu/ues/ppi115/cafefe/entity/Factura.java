@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
@@ -32,10 +33,15 @@ import java.util.UUID;
 @Table(name = "factura", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Factura.findAll", query = "SELECT f FROM Factura f"),
+    @NamedQuery(name = "Factura.countAll", query = "SELECT COUNT(f) FROM Factura f"),
     @NamedQuery(name = "Factura.findByCliente", query = "SELECT f FROM Factura f WHERE f.cliente = :cliente"),
     @NamedQuery(name = "Factura.findByFechaFacturacion", query = "SELECT f FROM Factura f WHERE f.fechaFacturacion = :fechaFacturacion"),
     @NamedQuery(name = "Factura.findByEstado", query = "SELECT f FROM Factura f WHERE f.estado = :estado"),
-    @NamedQuery(name = "Factura.findByObservaciones", query = "SELECT f FROM Factura f WHERE f.observaciones = :observaciones")})
+    @NamedQuery(name = "Factura.findByObservaciones", query = "SELECT f FROM Factura f WHERE f.observaciones = :observaciones"),
+    @NamedQuery(name = "Factura.findByCaja", query = "SELECT f FROM Factura f LEFT JOIN FETCH f.idCaja LEFT JOIN FETCH f.idEmpleadoRol WHERE f.idCaja.idCaja = :idCaja ORDER BY f.idFactura"),
+    @NamedQuery(name = "Factura.contarPorCaja", query = "SELECT COUNT(f) FROM Factura f WHERE f.idCaja.idCaja = :idCaja"),
+    @NamedQuery(name = "Factura.findByEmpleadoRol", query = "SELECT f FROM Factura f LEFT JOIN FETCH f.idCaja LEFT JOIN FETCH f.idEmpleadoRol WHERE f.idEmpleadoRol.idEmpleadoRol = :idEmpleadoRol ORDER BY f.idFactura"),
+    @NamedQuery(name = "Factura.contarPorEmpleadoRol", query = "SELECT COUNT(f) FROM Factura f WHERE f.idEmpleadoRol.idEmpleadoRol = :idEmpleadoRol")})
 public class Factura implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -113,7 +119,7 @@ public class Factura implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+     @JsonbTransient
     public List<Pago> getPagoList() {
         return pagoList;
     }
@@ -121,7 +127,7 @@ public class Factura implements Serializable {
     public void setPagoList(List<Pago> pagoList) {
         this.pagoList = pagoList;
     }
-
+    @JsonbTransient
     public List<FacturaOrdenProducto> getFacturaOrdenProductoList() {
         return facturaOrdenProductoList;
     }

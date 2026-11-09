@@ -13,6 +13,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @Table(name = "empleado", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Empleado.findAll", query = "SELECT e FROM Empleado e"),
+    @NamedQuery(name = "Empleado.countAll", query = "SELECT COUNT(e) FROM Empleado e"),
     @NamedQuery(name = "Empleado.findByNombre", query = "SELECT e FROM Empleado e WHERE e.nombre = :nombre"),
     @NamedQuery(name = "Empleado.findByApellido", query = "SELECT e FROM Empleado e WHERE e.apellido = :apellido"),
     @NamedQuery(name = "Empleado.findByActivo", query = "SELECT e FROM Empleado e WHERE e.activo = :activo"),
@@ -99,7 +101,7 @@ public class Empleado implements Serializable {
     public void setComentarios(String comentarios) {
         this.comentarios = comentarios;
     }
-
+@JsonbTransient
     public List<EmpleadoRol> getEmpleadoRolList() {
         return empleadoRolList;
     }

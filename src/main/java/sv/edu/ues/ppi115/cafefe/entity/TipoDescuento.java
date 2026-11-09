@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.json.bind.annotation.JsonbTransient;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @Table(name = "tipo_descuento", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "TipoDescuento.findAll", query = "SELECT t FROM TipoDescuento t"),
+    @NamedQuery(name = "TipoDescuento.countAll", query = "SELECT COUNT(t) FROM TipoDescuento t"),
     @NamedQuery(name = "TipoDescuento.findByNombre", query = "SELECT t FROM TipoDescuento t WHERE t.nombre = :nombre"),
     @NamedQuery(name = "TipoDescuento.findByActivo", query = "SELECT t FROM TipoDescuento t WHERE t.activo = :activo"),
     @NamedQuery(name = "TipoDescuento.findByDescuentoMaximo", query = "SELECT t FROM TipoDescuento t WHERE t.descuentoMaximo = :descuentoMaximo"),
@@ -98,7 +100,7 @@ public class TipoDescuento implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+    @JsonbTransient
     public List<Descuento> getDescuentoList() {
         return descuentoList;
     }

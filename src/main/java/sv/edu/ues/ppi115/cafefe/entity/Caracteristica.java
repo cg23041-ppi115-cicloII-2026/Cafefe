@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -29,10 +30,12 @@ import java.util.UUID;
 @Table(name = "caracteristica", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Caracteristica.findAll", query = "SELECT c FROM Caracteristica c"),
+    @NamedQuery(name = "Caracteristica.countAll", query = "SELECT COUNT(c) FROM Caracteristica c"),
     @NamedQuery(name = "Caracteristica.findByNombre", query = "SELECT c FROM Caracteristica c WHERE c.nombre = :nombre"),
     @NamedQuery(name = "Caracteristica.findByActivo", query = "SELECT c FROM Caracteristica c WHERE c.activo = :activo"),
     @NamedQuery(name = "Caracteristica.findByObservaciones", query = "SELECT c FROM Caracteristica c WHERE c.observaciones = :observaciones"),
-    @NamedQuery(name = "Caracteristica.findByTipoCaracteristica", query = "SELECT c FROM Caracteristica c WHERE c.idTipoCaracteristica.idTipoCaracteristica = :idTipoCaracteristica")})
+    @NamedQuery(name = "Caracteristica.findByTipoCaracteristica", query = "SELECT c FROM Caracteristica c WHERE c.idTipoCaracteristica.idTipoCaracteristica = :idTipoCaracteristica"),
+    @NamedQuery(name = "Caracteristica.contarPorTipoCaracteristica", query = "SELECT COUNT(c) FROM Caracteristica c WHERE c.idTipoCaracteristica.idTipoCaracteristica = :idTipoCaracteristica")})
 public class Caracteristica implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -101,7 +104,7 @@ public class Caracteristica implements Serializable {
     public void setIdTipoCaracteristica(TipoCaracteristica idTipoCaracteristica) {
         this.idTipoCaracteristica = idTipoCaracteristica;
     }
-
+     @JsonbTransient
     public List<ProductoCaracteristica> getProductoCaracteristicaList() {
         return productoCaracteristicaList;
     }

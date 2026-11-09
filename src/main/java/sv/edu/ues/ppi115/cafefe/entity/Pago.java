@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -29,8 +30,11 @@ import java.util.UUID;
 @Table(name = "pago", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Pago.findAll", query = "SELECT p FROM Pago p"),
+    @NamedQuery(name = "Pago.countAll", query = "SELECT COUNT(p) FROM Pago p"),
     @NamedQuery(name = "Pago.findByEstado", query = "SELECT p FROM Pago p WHERE p.estado = :estado"),
-    @NamedQuery(name = "Pago.findByObservaciones", query = "SELECT p FROM Pago p WHERE p.observaciones = :observaciones")})
+    @NamedQuery(name = "Pago.findByObservaciones", query = "SELECT p FROM Pago p WHERE p.observaciones = :observaciones"),
+    @NamedQuery(name = "Pago.findByFactura", query = "SELECT p FROM Pago p LEFT JOIN FETCH p.idFactura f LEFT JOIN FETCH f.idCaja LEFT JOIN FETCH f.idEmpleadoRol WHERE p.idFactura.idFactura = :idFactura ORDER BY p.idPago"),
+    @NamedQuery(name = "Pago.contarPorFactura", query = "SELECT COUNT(p) FROM Pago p WHERE p.idFactura.idFactura = :idFactura")})
 public class Pago implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -89,7 +93,7 @@ public class Pago implements Serializable {
     public void setIdFactura(Factura idFactura) {
         this.idFactura = idFactura;
     }
-
+    @JsonbTransient
     public List<PagoDetalle> getPagoDetalleList() {
         return pagoDetalleList;
     }

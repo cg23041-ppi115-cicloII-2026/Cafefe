@@ -26,9 +26,12 @@ import java.util.UUID;
 @Table(name = "producto_caracteristica", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "ProductoCaracteristica.findAll", query = "SELECT p FROM ProductoCaracteristica p"),
+    @NamedQuery(name = "ProductoCaracteristica.countAll", query = "SELECT COUNT(p) FROM ProductoCaracteristica p"),
     @NamedQuery(name = "ProductoCaracteristica.findByValor", query = "SELECT p FROM ProductoCaracteristica p WHERE p.valor = :valor"),
     @NamedQuery(name = "ProductoCaracteristica.findByProducto", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idProducto.idProducto = :idProducto"),
-    @NamedQuery(name = "ProductoCaracteristica.findByCaracteristica", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idCaracteristica.idCaracteristica = :idCaracteristica")})
+    @NamedQuery(name = "ProductoCaracteristica.findByCaracteristica", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idCaracteristica.idCaracteristica = :idCaracteristica"),
+    @NamedQuery(name = "ProductoCaracteristica.contarPorProducto", query = "SELECT COUNT(p) FROM ProductoCaracteristica p WHERE p.idProducto.idProducto = :idProducto"),
+    @NamedQuery(name = "ProductoCaracteristica.findByIdYProducto", query = "SELECT p FROM ProductoCaracteristica p WHERE p.idProductoCaracteristica = :id AND p.idProducto.idProducto = :idProducto")})
 public class ProductoCaracteristica implements Serializable {
 
     private static final long serialVersionUID = 1L;

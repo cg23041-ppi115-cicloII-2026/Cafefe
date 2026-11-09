@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +32,10 @@ import java.util.UUID;
 @Table(name = "orden", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Orden.findAll", query = "SELECT o FROM Orden o"),
-    @NamedQuery(name = "Orden.findByFechaCreacion", query = "SELECT o FROM Orden o WHERE o.fechaCreacion = :fechaCreacion")})
+    @NamedQuery(name = "Orden.countAll", query = "SELECT COUNT(o) FROM Orden o"),
+    @NamedQuery(name = "Orden.findByFechaCreacion", query = "SELECT o FROM Orden o WHERE o.fechaCreacion = :fechaCreacion"),
+    @NamedQuery(name = "Orden.findByEmpleadoRol", query = "SELECT o FROM Orden o WHERE o.idEmpleadoRol.idEmpleadoRol = :idEmpleadoRol ORDER BY o.idOrden"),
+    @NamedQuery(name = "Orden.contarPorEmpleadoRol", query = "SELECT COUNT(o) FROM Orden o WHERE o.idEmpleadoRol.idEmpleadoRol = :idEmpleadoRol")})
 public class Orden implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,7 +78,7 @@ public class Orden implements Serializable {
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-
+    @JsonbTransient
     public List<OrdenProducto> getOrdenProductoList() {
         return ordenProductoList;
     }

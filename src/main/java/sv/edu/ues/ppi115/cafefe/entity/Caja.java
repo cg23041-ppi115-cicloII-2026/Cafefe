@@ -4,6 +4,7 @@
  */
 package sv.edu.ues.ppi115.cafefe.entity;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -87,7 +88,7 @@ public class Caja implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+    @JsonbTransient
     public List<Factura> getFacturaList() {
         return facturaList;
     }

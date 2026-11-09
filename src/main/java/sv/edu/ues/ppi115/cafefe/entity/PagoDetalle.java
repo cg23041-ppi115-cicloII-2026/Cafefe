@@ -28,7 +28,11 @@ import java.util.UUID;
 @Table(name = "pago_detalle", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "PagoDetalle.findAll", query = "SELECT p FROM PagoDetalle p"),
+    @NamedQuery(name = "PagoDetalle.countAll", query = "SELECT COUNT(p) FROM PagoDetalle p"),
     @NamedQuery(name = "PagoDetalle.findByMonto", query = "SELECT p FROM PagoDetalle p WHERE p.monto = :monto"),
+    @NamedQuery(name = "PagoDetalle.findByPago", query = "SELECT p FROM PagoDetalle p WHERE p.idPago.idPago = :idPago ORDER BY p.idPagoDetalle"),
+    @NamedQuery(name = "PagoDetalle.findByIdYPago", query = "SELECT p FROM PagoDetalle p WHERE p.idPagoDetalle = :id AND p.idPago.idPago = :idPago"),
+    @NamedQuery(name = "PagoDetalle.contarPorPago", query = "SELECT COUNT(p) FROM PagoDetalle p WHERE p.idPago.idPago = :idPago"),
     @NamedQuery(name = "PagoDetalle.findByTipoPago", query = "SELECT p FROM PagoDetalle p WHERE p.tipoPago = :tipoPago"),
     @NamedQuery(name = "PagoDetalle.findByObservaciones", query = "SELECT p FROM PagoDetalle p WHERE p.observaciones = :observaciones"),
     @NamedQuery(name = "PagoDetalle.findByReferenciaExterna", query = "SELECT p FROM PagoDetalle p WHERE p.referenciaExterna = :referenciaExterna")})

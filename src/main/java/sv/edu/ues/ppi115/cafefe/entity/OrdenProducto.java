@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,10 +31,14 @@ import java.util.UUID;
 @Table(name = "orden_producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "OrdenProducto.findAll", query = "SELECT o FROM OrdenProducto o"),
+    @NamedQuery(name = "OrdenProducto.countAll", query = "SELECT COUNT(o) FROM OrdenProducto o"),
     @NamedQuery(name = "OrdenProducto.findByPrecio", query = "SELECT o FROM OrdenProducto o WHERE o.precio = :precio"),
     @NamedQuery(name = "OrdenProducto.findByObservaciones", query = "SELECT o FROM OrdenProducto o WHERE o.observaciones = :observaciones"),
     @NamedQuery(name = "OrdenProducto.findByOrden", query = "SELECT o FROM OrdenProducto o WHERE o.idOrden.idOrden = :idOrden"),
-    @NamedQuery(name = "OrdenProducto.findByProducto", query = "SELECT o FROM OrdenProducto o WHERE o.idProducto.idProducto = :idProducto")})
+    @NamedQuery(name = "OrdenProducto.findByProducto", query = "SELECT o FROM OrdenProducto o WHERE o.idProducto.idProducto = :idProducto"),
+    @NamedQuery(name = "OrdenProducto.contarPorOrden", query = "SELECT COUNT(o) FROM OrdenProducto o WHERE o.idOrden.idOrden = :idOrden"),
+    @NamedQuery(name = "OrdenProducto.contarPorProducto", query = "SELECT COUNT(o) FROM OrdenProducto o WHERE o.idProducto.idProducto = :idProducto"),
+    @NamedQuery(name = "OrdenProducto.findByIdYOrden", query = "SELECT o FROM OrdenProducto o WHERE o.idOrdenProducto = :id AND o.idOrden.idOrden = :idOrden")})
 public class OrdenProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -87,7 +92,7 @@ public class OrdenProducto implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+    @JsonbTransient
     public List<FacturaOrdenProducto> getFacturaOrdenProductoList() {
         return facturaOrdenProductoList;
     }

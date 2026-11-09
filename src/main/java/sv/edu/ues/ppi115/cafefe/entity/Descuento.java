@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -32,6 +33,7 @@ import java.util.UUID;
 @Table(name = "descuento", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Descuento.findAll", query = "SELECT d FROM Descuento d"),
+    @NamedQuery(name = "Descuento.countAll", query = "SELECT COUNT(d) FROM Descuento d"),
     @NamedQuery(name = "Descuento.findByNombre", query = "SELECT d FROM Descuento d WHERE d.nombre = :nombre"),
     @NamedQuery(name = "Descuento.findByFechaDesde", query = "SELECT d FROM Descuento d WHERE d.fechaDesde = :fechaDesde"),
     @NamedQuery(name = "Descuento.findByFechaHasta", query = "SELECT d FROM Descuento d WHERE d.fechaHasta = :fechaHasta"),
@@ -116,7 +118,7 @@ public class Descuento implements Serializable {
     public void setIdTipoDescuento(TipoDescuento idTipoDescuento) {
         this.idTipoDescuento = idTipoDescuento;
     }
-
+  @JsonbTransient
     public List<DescuentoProducto> getDescuentoProductoList() {
         return descuentoProductoList;
     }

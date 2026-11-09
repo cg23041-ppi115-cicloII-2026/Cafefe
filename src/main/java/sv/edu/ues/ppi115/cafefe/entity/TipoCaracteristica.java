@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.json.bind.annotation.JsonbTransient;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @Table(name = "tipo_caracteristica", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "TipoCaracteristica.findAll", query = "SELECT t FROM TipoCaracteristica t"),
+    @NamedQuery(name = "TipoCaracteristica.countAll", query = "SELECT COUNT(t) FROM TipoCaracteristica t"),
     @NamedQuery(name = "TipoCaracteristica.findByNombre", query = "SELECT t FROM TipoCaracteristica t WHERE t.nombre = :nombre"),
     @NamedQuery(name = "TipoCaracteristica.findByExpresionRegular", query = "SELECT t FROM TipoCaracteristica t WHERE t.expresionRegular = :expresionRegular"),
     @NamedQuery(name = "TipoCaracteristica.findByActivo", query = "SELECT t FROM TipoCaracteristica t WHERE t.activo = :activo"),
@@ -99,7 +101,7 @@ public class TipoCaracteristica implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+    @JsonbTransient
     public List<Caracteristica> getCaracteristicaList() {
         return caracteristicaList;
     }

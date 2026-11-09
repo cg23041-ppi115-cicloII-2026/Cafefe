@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @Table(name = "tipo_producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "TipoProducto.findAll", query = "SELECT t FROM TipoProducto t"),
+    @NamedQuery(name = "TipoProducto.countAll", query = "SELECT COUNT(t) FROM TipoProducto t"),
     @NamedQuery(name = "TipoProducto.findByNombre", query = "SELECT t FROM TipoProducto t WHERE t.nombre = :nombre"),
     @NamedQuery(name = "TipoProducto.findByActivo", query = "SELECT t FROM TipoProducto t WHERE t.activo = :activo"),
     @NamedQuery(name = "TipoProducto.findByObservaciones", query = "SELECT t FROM TipoProducto t WHERE t.observaciones = :observaciones")})
@@ -87,7 +89,7 @@ public class TipoProducto implements Serializable {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
+    @JsonbTransient
     public List<ProductoTipoProducto> getProductoTipoProductoList() {
         return productoTipoProductoList;
     }

@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.json.bind.annotation.JsonbTransient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @Table(name = "producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "Producto.findAll", query = "SELECT p FROM Producto p"),
+    @NamedQuery(name = "Producto.countAll", query = "SELECT COUNT(p) FROM Producto p"),
     @NamedQuery(name = "Producto.findByNombre", query = "SELECT p FROM Producto p WHERE p.nombre = :nombre"),
     @NamedQuery(name = "Producto.findByActivo", query = "SELECT p FROM Producto p WHERE p.activo = :activo"),
     @NamedQuery(name = "Producto.findByComentarios", query = "SELECT p FROM Producto p WHERE p.comentarios = :comentarios"),
@@ -117,7 +119,7 @@ public class Producto implements Serializable {
     public void setPrecioSugerido(BigDecimal precioSugerido) {
         this.precioSugerido = precioSugerido;
     }
-
+    @JsonbTransient
     public List<ProductoCaracteristica> getProductoCaracteristicaList() {
         return productoCaracteristicaList;
     }
@@ -125,7 +127,7 @@ public class Producto implements Serializable {
     public void setProductoCaracteristicaList(List<ProductoCaracteristica> productoCaracteristicaList) {
         this.productoCaracteristicaList = productoCaracteristicaList;
     }
-
+    @JsonbTransient
     public List<OrdenProducto> getOrdenProductoList() {
         return ordenProductoList;
     }
@@ -133,7 +135,7 @@ public class Producto implements Serializable {
     public void setOrdenProductoList(List<OrdenProducto> ordenProductoList) {
         this.ordenProductoList = ordenProductoList;
     }
-
+    @JsonbTransient
     public List<DescuentoProducto> getDescuentoProductoList() {
         return descuentoProductoList;
     }
@@ -141,7 +143,7 @@ public class Producto implements Serializable {
     public void setDescuentoProductoList(List<DescuentoProducto> descuentoProductoList) {
         this.descuentoProductoList = descuentoProductoList;
     }
-
+    @JsonbTransient
     public List<ProductoTipoProducto> getProductoTipoProductoList() {
         return productoTipoProductoList;
     }

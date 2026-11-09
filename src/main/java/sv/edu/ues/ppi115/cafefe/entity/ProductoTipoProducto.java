@@ -29,9 +29,12 @@ import java.util.UUID;
 @Table(name = "producto_tipo_producto", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "ProductoTipoProducto.findAll", query = "SELECT p FROM ProductoTipoProducto p"),
+    @NamedQuery(name = "ProductoTipoProducto.countAll", query = "SELECT COUNT(p) FROM ProductoTipoProducto p"),
     @NamedQuery(name = "ProductoTipoProducto.findByFechaCreacion", query = "SELECT p FROM ProductoTipoProducto p WHERE p.fechaCreacion = :fechaCreacion"),
     @NamedQuery(name = "ProductoTipoProducto.findByObservaciones", query = "SELECT p FROM ProductoTipoProducto p WHERE p.observaciones = :observaciones"),
     @NamedQuery(name = "ProductoTipoProducto.findByProducto", query = "SELECT p FROM ProductoTipoProducto p WHERE p.idProducto.idProducto = :idProducto"),
+    @NamedQuery(name = "ProductoTipoProducto.contarPorProducto", query = "SELECT COUNT(p) FROM ProductoTipoProducto p WHERE p.idProducto.idProducto = :idProducto"),
+    @NamedQuery(name = "ProductoTipoProducto.findByIdYProducto", query = "SELECT p FROM ProductoTipoProducto p WHERE p.idProductoTipoProducto = :id AND p.idProducto.idProducto = :idProducto"),
     @NamedQuery(name = "ProductoTipoProducto.findByTipoProducto", query = "SELECT p FROM ProductoTipoProducto p WHERE p.idTipoProducto.idTipoProducto = :idTipoProducto")})
 public class ProductoTipoProducto implements Serializable {
 

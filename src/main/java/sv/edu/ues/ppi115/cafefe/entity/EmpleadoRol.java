@@ -15,6 +15,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
@@ -29,12 +30,14 @@ import java.util.UUID;
 @Table(name = "empleado_rol", catalog = "cafeteria", schema = "public")
 @NamedQueries({
     @NamedQuery(name = "EmpleadoRol.findAll", query = "SELECT e FROM EmpleadoRol e"),
+    @NamedQuery(name = "EmpleadoRol.countAll", query = "SELECT COUNT(e) FROM EmpleadoRol e"),
     @NamedQuery(name = "EmpleadoRol.findByActivo", query = "SELECT e FROM EmpleadoRol e WHERE e.activo = :activo"),
     @NamedQuery(name = "EmpleadoRol.findByObservaciones", query = "SELECT e FROM EmpleadoRol e WHERE e.observaciones = :observaciones"),
-    @NamedQuery(name = "EmpleadoRol.findCobradores",
-            query = "SELECT e FROM EmpleadoRol e JOIN e.idRol r "
-                  + "WHERE LOWER(r.nombre) IN ('cajero', 'gerente', 'administrador', 'mesero') "
-                  + "ORDER BY e.idEmpleado.nombre, e.idEmpleado.apellido")})
+    @NamedQuery(name = "EmpleadoRol.findByEmpleado", query = "SELECT e FROM EmpleadoRol e WHERE e.idEmpleado.idEmpleado = :idEmpleado ORDER BY e.idEmpleadoRol"),
+    @NamedQuery(name = "EmpleadoRol.contarPorEmpleado", query = "SELECT COUNT(e) FROM EmpleadoRol e WHERE e.idEmpleado.idEmpleado = :idEmpleado"),
+    @NamedQuery(name = "EmpleadoRol.findByRol", query = "SELECT e FROM EmpleadoRol e WHERE e.idRol.idRol = :idRol ORDER BY e.idEmpleadoRol"),
+    @NamedQuery(name = "EmpleadoRol.contarPorRol", query = "SELECT COUNT(e) FROM EmpleadoRol e WHERE e.idRol.idRol = :idRol"),
+    @NamedQuery(name = "EmpleadoRol.findByIdYEmpleado", query = "SELECT e FROM EmpleadoRol e WHERE e.idEmpleadoRol = :id AND e.idEmpleado.idEmpleado = :idEmpleado")})
 public class EmpleadoRol implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -105,7 +108,7 @@ public class EmpleadoRol implements Serializable {
     public void setIdRol(Rol idRol) {
         this.idRol = idRol;
     }
-
+     @JsonbTransient
     public List<Factura> getFacturaList() {
         return facturaList;
     }
@@ -113,7 +116,7 @@ public class EmpleadoRol implements Serializable {
     public void setFacturaList(List<Factura> facturaList) {
         this.facturaList = facturaList;
     }
-
+    @JsonbTransient
     public List<Orden> getOrdenList() {
         return ordenList;
     }
