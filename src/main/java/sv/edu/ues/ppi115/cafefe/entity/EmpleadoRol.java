@@ -36,6 +36,7 @@ import java.util.UUID;
     @NamedQuery(name = "EmpleadoRol.findByEmpleado", query = "SELECT e FROM EmpleadoRol e WHERE e.idEmpleado.idEmpleado = :idEmpleado ORDER BY e.idEmpleadoRol"),
     @NamedQuery(name = "EmpleadoRol.contarPorEmpleado", query = "SELECT COUNT(e) FROM EmpleadoRol e WHERE e.idEmpleado.idEmpleado = :idEmpleado"),
     @NamedQuery(name = "EmpleadoRol.findByRol", query = "SELECT e FROM EmpleadoRol e WHERE e.idRol.idRol = :idRol ORDER BY e.idEmpleadoRol"),
+    @NamedQuery(name = "EmpleadoRol.findCobradores", query = "SELECT e FROM EmpleadoRol e WHERE e.idRol.nombre = 'Cajero'"),
     @NamedQuery(name = "EmpleadoRol.contarPorRol", query = "SELECT COUNT(e) FROM EmpleadoRol e WHERE e.idRol.idRol = :idRol"),
     @NamedQuery(name = "EmpleadoRol.findByIdYEmpleado", query = "SELECT e FROM EmpleadoRol e WHERE e.idEmpleadoRol = :id AND e.idEmpleado.idEmpleado = :idEmpleado")})
 public class EmpleadoRol implements Serializable {
