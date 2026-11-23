@@ -13,15 +13,18 @@ import org.mockito.Mockito;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import sv.edu.ues.ppi115.cafefe.entity.Caja;
 
 public class CajaServiceTest {
 
-    protected List<Caja> findResult ;
+    protected List<Caja> findResult;
 
-        public CajaServiceTest() {
+    public CajaServiceTest() {
         findResult = Arrays.asList(new Caja[]{
-                new Caja(UUID.randomUUID()), new Caja(UUID.randomUUID()), new Caja(UUID.randomUUID())
+            new Caja(UUID.randomUUID()), new Caja(UUID.randomUUID()), new Caja(UUID.randomUUID())
         });
     }
 
@@ -31,8 +34,8 @@ public class CajaServiceTest {
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         Caja caja = new Caja();
         CajaService cut = new CajaService();
-        assertThrows(IllegalArgumentException.class, ()->cut.create(null));
-        assertThrows(IllegalStateException.class, ()->cut.create(caja));
+        assertThrows(IllegalArgumentException.class, () -> cut.create(null));
+        assertThrows(IllegalStateException.class, () -> cut.create(caja));
         cut.em = mockEM;
         cut.create(caja);
         System.out.println("CajaServiceTest.crearTest");
@@ -44,8 +47,8 @@ public class CajaServiceTest {
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         Caja eliminado = new Caja(UUID.randomUUID());
         CajaService cut = new CajaService();
-        assertThrows(IllegalArgumentException.class, ()->cut.delete(null));
-        assertThrows(IllegalStateException.class, ()->cut.delete(eliminado));
+        assertThrows(IllegalArgumentException.class, () -> cut.delete(null));
+        assertThrows(IllegalStateException.class, () -> cut.delete(eliminado));
         Mockito.when(mockEM.contains(eliminado)).thenReturn(true);
         cut.em = mockEM;
         cut.delete(eliminado);
@@ -58,14 +61,14 @@ public class CajaServiceTest {
     }
 
     @Test
-    public void buscarPorRango(){
+    public void buscarPorRango() {
         System.out.println("CajaServiceTest.buscarPorRango");
         int first = 0;
         int max = 1000;
         CajaService cut = new CajaService();
-        assertThrows(IllegalArgumentException.class, ()->cut.findRange(-1,10));
-        assertThrows(IllegalArgumentException.class, ()->cut.findRange(10,-1));
-        assertThrows(IllegalStateException.class, ()->cut.findRange(first,max));
+        assertThrows(IllegalArgumentException.class, () -> cut.findRange(-1, 10));
+        assertThrows(IllegalArgumentException.class, () -> cut.findRange(10, -1));
+        assertThrows(IllegalStateException.class, () -> cut.findRange(first, max));
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         TypedQuery tqQuery = Mockito.mock(TypedQuery.class);
         Mockito.when(tqQuery.getResultList()).thenReturn(findResult);
@@ -73,22 +76,29 @@ public class CajaServiceTest {
         Mockito.when(tqQuery.setMaxResults(max)).thenReturn(tqQuery);
         Mockito.when(mockEM.createNamedQuery("Caja.findAll", Caja.class)).thenReturn(tqQuery);
         cut.em = mockEM;
-        List<Caja> encontrados = cut.findRange(first,max);
+        List<Caja> encontrados = cut.findRange(first, max);
         assertNotNull(encontrados);
         assertEquals(findResult.size(), encontrados.size());
     }
 
     @Test
     void contarTest() {
-        System.out.println("CajaServiceTest.count");
         CajaService cut = new CajaService();
         Exception exception = assertThrows(IllegalStateException.class, () -> {
             cut.contar();
         });
         EntityManager emMock = Mockito.mock(EntityManager.class);
+        CriteriaBuilder cbMock = Mockito.mock(CriteriaBuilder.class);
+        CriteriaQuery<Long> cqMock = Mockito.mock(CriteriaQuery.class);
+        Root<Caja> rootMock = Mockito.mock(Root.class);
+        jakarta.persistence.criteria.Expression<Long> exMock = Mockito.mock(jakarta.persistence.criteria.Expression.class);
+        Mockito.when(cqMock.from(Caja.class)).thenReturn(rootMock);
+        Mockito.when(cbMock.count(rootMock)).thenReturn(exMock);
+        Mockito.when(cbMock.createQuery(Long.class)).thenReturn(cqMock);
         TypedQuery<Long> tqMock = Mockito.mock(TypedQuery.class);
         Mockito.when(tqMock.getSingleResult()).thenReturn(2L);
-        Mockito.when(emMock.createNamedQuery("Caja.countAll", Long.class)).thenReturn(tqMock);
+        Mockito.when(emMock.createQuery(cqMock)).thenReturn(tqMock);
+        Mockito.when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
         cut.em = emMock;
         cut.contar();
     }
@@ -113,17 +123,17 @@ public class CajaServiceTest {
     }
 
     @Test
-    public void testFindById(){
+    public void testFindById() {
         System.out.println("findById");
-        UUID id=UUID.randomUUID();
+        UUID id = UUID.randomUUID();
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         CajaService cut = new CajaService();
-        assertThrows(IllegalStateException.class,()->cut.findById(id));
+        assertThrows(IllegalStateException.class, () -> cut.findById(id));
 
-        cut.em=mockEM;
+        cut.em = mockEM;
         Caja resultado = cut.findById(id);
         assertNull(resultado);
 
-        assertThrows(IllegalArgumentException.class,()->cut.findById(null));
+        assertThrows(IllegalArgumentException.class, () -> cut.findById(null));
     }
 }
